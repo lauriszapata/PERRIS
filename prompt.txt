@@ -1,0 +1,253 @@
+Quiero que IMPLEMENTES directamente en este proyecto (repositorio actual) un bot de trading para Binance Futures USD-M en velas de 15 minutos con apalancamiento fijo de 3×. Debes modificar los archivos necesarios, crear los módulos que falten y dejar el bot completamente funcional, sin mostrar solo el código suelto. Usa el código existente y refactoriza donde corresponda. 
+
+El bot debe operar LONG y SHORT con una gestión dinámica híbrida, filtros profesionales de entrada, seguridad avanzada y manejo de errores. No asumas nada fuera de este documento.
+
+===================================================
+1. OBJETIVO DEL BOT
+===================================================
+- Capturar movimientos promedio de ~2% por operación.
+- Mantener drawdown bajo.
+- Evitar sobreoperar.
+- Operar SOLO con confirmación de tendencia real.
+- Usar gestión híbrida: ATR + parciales + EMAs + estructura + trailing.
+- Operar tanto LONG como SHORT de forma simétrica.
+- Ser robusto a errores, desconexiones y condiciones adversas de mercado.
+
+===================================================
+2. REGLAS GENERALES
+===================================================
+- El bot SOLO toma decisiones al cierre de la vela de 15 minutos.
+- Nunca operar intra-vela.
+- Nunca abrir posiciones si hay errores de conexión, datos congelados o latencia excesiva.
+- Usar logs detallados y estado persistente para recuperar la operación si el bot se reinicia.
+
+===================================================
+3. FILTROS DE ENTRADA (OBLIGATORIOS)
+===================================================
+Antes de abrir una operación, el bot debe verificar TODOS estos filtros:
+
+--- VOLATILIDAD ---
+- ATR(14) ∈ [0.20%, 2.5%].
+
+--- VELOCIDAD DE OPERACIONES ---
+- No más de 3 operaciones en la última hora (anti-sobreoperación).
+
+--- HORARIOS PROBLEMÁTICOS ---
+- No operar 2 min antes/2 min después de noticias de alta volatilidad.
+- No operar en el cierre diario (00:00 UTC).
+
+--- RIESGO POR EXPOSICIÓN ---
+- No operar si ya hay más de 3 símbolos abiertos simultáneamente.
+
+--- LIQUIDEZ Y SPREAD (NUEVOS) ---
+- Spread (ask - bid)/precio < 0.03%.
+- La liquidez visible en los primeros 5 niveles debe cubrir el tamaño de la orden.
+
+--- FUNDING RATE (NUEVO) ---
+- Evitar LONG si funding > +0.03%.
+- Evitar SHORT si funding < –0.03%.
+
+--- RANGO EXTREMO (NUEVO) ---
+- No abrir si las últimas 12 velas tienen rango total < 0.6 × ATR_entry.
+
+--- HEALTH CHECK (NUEVO) ---
+- Si la data de API tiene retraso > 2 segundos → no abrir operaciones.
+- Si latencia > 500 ms → pausar señales.
+
+===================================================
+4. SISTEMA DE ENTRADA (LOS 8 INDICADORES)
+===================================================
+La operación SOLO se abre si se cumplen simultáneamente los 8 indicadores siguientes + todos los filtros previos:
+
+1. EMA8 cruza EMA21 en la dirección de la entrada:
+   - LONG → EMA8 > EMA21
+   - SHORT → EMA8 < EMA21
+
+2. Tendencia local (EMA50):
+   - LONG → precio > EMA50
+   - SHORT → precio < EMA50
+
+3. Tendencia mayor (EMA200):
+   - LONG → EMA50 > EMA200
+   - SHORT → EMA50 < EMA200
+
+4. ADX(14) ≥ 20 (fuerza de tendencia)
+
+5. RSI(14):
+   - LONG → RSI > 50
+   - SHORT → RSI < 50
+
+6. MACD-Hist:
+   - LONG → histograma > 0
+   - SHORT → histograma < 0
+
+7. Volumen:
+   - volumen actual ≥ 0.8 × promedio de volumen de 20 velas
+
+8. Estructura:
+   - LONG → último swing = HL (mínimo creciente)
+   - SHORT → último swing = LH (máximo decreciente)
+
+Si alguno falla → NO entrar.
+
+===================================================
+5. GESTIÓN DINÁMICA HÍBRIDA (UNA VEZ DENTRO)
+===================================================
+
+---------------------------------------------------
+PRIORIDADES DE ACCIÓN (DE MAYOR A MENOR)
+---------------------------------------------------
+1) Stop Loss ejecutado
+2) Ruptura de estructura (HL/LH)
+3) Cruce duro EMA20–EMA50
+4) ATR extrema (ATR_actual > 1.8 × ATR_entry)
+5) Parciales (P1 y P2)
+6) Pendiente EMA20
+7) Trailing ATR
+8) Tiempo máximo
+
+---------------------------------------------------
+REGLAS LONG
+---------------------------------------------------
+Stop inicial:
+- ATR_entry = ATR(14)
+- SL_inicial = entry_price - 2.5 × ATR_entry
+- Límite: distancia entre 0.4% y 1.1%
+- Crear STOP_MARKET inmediato.
+
+Trailing ATR:
+- P_max = máximo desde entrada
+- SL_propuesto = P_max - 2.2 × ATR_actual
+- SL_actual = max(SL_actual, SL_propuesto)
+- Antes de P1 no permitir SL > entry_price - fees.
+
+Parcial 1:
+- entry × 1.010 (+1%)
+- cerrar 25%
+- SL = break-even + fees
+
+Parcial 2:
+- entry × 1.018 (+1.8%)
+- cerrar 35%
+- SL = entry × 1.010 (+1%)
+
+Salida por tendencia:
+- pendiente = EMA20_actual - EMA20_prev
+- salida suave: pendiente ≤ 0 durante 2 velas + cierre < EMA20
+- salida dura: EMA20 < EMA50 → cerrar todo
+
+Estructura LONG:
+- Detectar HL
+- Si cierre < HL - 0.5 × ATR_actual → cierre total
+
+---------------------------------------------------
+REGLAS SHORT
+---------------------------------------------------
+Simétricas:
+
+- SL_inicial = entry + 2.5 × ATR_entry (límites iguales)
+- P_min = mínimo desde entrada
+- SL_propuesto = P_min + 2.2 × ATR_actual
+- SL = min(SL_actual, SL_propuesto)
+
+Parcial 1 SHORT:
+- entry × 0.990
+- cerrar 25%
+- SL = break-even - fees
+
+Parcial 2 SHORT:
+- entry × 0.982
+- cerrar 35%
+- SL = entry × 0.990
+
+Salida suave SHORT:
+- pendiente ≥ 0 durante 2 velas + cierre > EMA20
+
+Salida dura SHORT:
+- EMA20 > EMA50
+
+Estructura SHORT:
+- Detectar LH
+- Si cierre > LH + 0.5 × ATR_actual → cierre total
+
+===================================================
+6. REGLAS DE SEGURIDAD
+===================================================
+Stop diario:
+- Si equity cae –3% en el día → pausar 24h.
+
+Tiempo máximo:
+- Si >40 velas (~10h) y |PnL| < 0.2% → cerrar por ineficiencia.
+
+ATR extrema:
+- Si ATR_actual > 1.8 × ATR_entry → cerrar todo.
+
+Health check:
+- latencia > 500 ms → pausar señales
+- retraso > 2s en data → pausar señales
+
+===================================================
+7. ESTADO PERSISTENTE
+===================================================
+Guardar y restaurar:
+- operación abierta (sí/no)
+- tipo (LONG/SHORT)
+- entry
+- tamaño total y tamaño restante
+- parciales ejecutados (P1/P2)
+- SL_actual
+- ATR_entry
+- HL/LH
+- P_max/P_min
+- timestamps
+- id único
+
+===================================================
+8. LOGS DETALLADOS
+===================================================
+Registrar:
+- Razones exactas de entrada
+- Indicadores al momento de entrada (todos)
+- ATR_entry y ATR_actual
+- Parciales ejecutados
+- Cambios de SL
+- Motivo de salida
+- Spread y funding al entrar
+- Errores de Binance y reintentos
+- Health check fallido
+- Reinicios del bot
+
+===================================================
+9. MANEJO DE ERRORES Y RECONEXIONES
+===================================================
+- Reintentar cada orden hasta 3 veces.
+- Verificar si la orden fue creada antes de reintentar.
+- Cancelar órdenes duplicadas o huérfanas.
+- Pausar nuevas entradas ante errores críticos.
+- Reanudar automáticamente cuando la API se estabilice.
+
+===================================================
+10. ARQUITECTURA DEL CÓDIGO
+===================================================
+Crear o refactorizar módulos:
+
+- EntryFilters
+- VolatilityFilters
+- LiquiditySpreadFilters
+- FundingFilter
+- TrendManager
+- StructureManager
+- ATRManager
+- RiskManager
+- OrderExecutor
+- StateHandler
+- Logger
+
+===================================================
+11. ENTREGA FINAL
+===================================================
+- Implementa todo directamente en el código.
+- Modifica archivos existentes.
+- Crea los nuevos módulos necesarios.
+- Deja el bot listo para ejecutar.
+- Al final, dame un resumen de los archivos cambiados y los módulos creados.
