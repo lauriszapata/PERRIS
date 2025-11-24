@@ -397,69 +397,105 @@ class BotLogic:
                 
                 # Close the specified percentage
                 amount = pos_data['size'] * close_pct
-                self.executor.close_position(symbol, direction, amount)
-                partials[level_name] = True
-                executed_any = True
+                close_order = self.executor.close_position(symbol, direction, amount)
                 
-                # Record partial close timestamp
-                self.state.add_trade_timestamp(time.time())
-                
-                # Accumulate Realized PnL
-                pos_data['accumulated_pnl'] += profit_usd
-                logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
-                
-                # Log Partial Closure to CSV
-                try:
-                    pnl_usd = profit_usd # Calculated above
-                    # For partials, we use the partial amount for size logging
-                    CSVManager.log_closure(
-                        symbol, direction, entry, current_price, amount, 
-                        f"Partial {display_name}", pnl_usd, pnl_pct, 
-                        time.time() - pos_data['entry_time']
-                    )
-                    CSVManager.log_finance(
-                        symbol, direction, amount, entry, current_price, 
-                        pnl_usd, time.time() - pos_data['entry_time']
-                    )
-                except Exception as e:
-                    logger.error(f"Failed to log partial CSV: {e}")
-                
-                # Update stop-loss (progressive profit protection)
-                if i == 0:  # P1: Move SL to break-even
-                    if direction == "LONG":
-                        new_sl = entry * 1.001
-                    else:
-                        new_sl = entry * 0.999
+                # Check if close was successful
+                if close_order:
+                    # Update position size to reflect the close
+                    pos_data['size'] -= amount
+                    logger.info(f"📉 Updated position size: {pos_data['size']:.6f} remaining ({(pos_data['size']/(pos_data['size']+amount)*100):.1f}% of previous)")
                     
-                    if (direction == "LONG" and new_sl > pos_data['sl_price']) or \
-                       (direction == "SHORT" and new_sl < pos_data['sl_price']):
-                        logger.info(f"🛡️ Moving SL to Break-Even: {new_sl:.4f}")
-                        self.executor.set_stop_loss(symbol, direction, new_sl)
-                        pos_data['sl_price'] = new_sl
-                        pos_data['last_sl_update'] = time.time()
-                
-                else:  # P2+: Move SL to previous level price
-                    prev_level_pct = Config.TAKE_PROFIT_LEVELS[i-1]['pct']
-                    if direction == "LONG":
-                        new_sl = entry * (1 + prev_level_pct)
-                    else:
-                        new_sl = entry * (1 - prev_level_pct)
+                    partials[level_name] = True
+                    executed_any = True
                     
-                    if (direction == "LONG" and new_sl > pos_data['sl_price']) or \
-                       (direction == "SHORT" and new_sl < pos_data['sl_price']):
-                        logger.info(f"🛡️ Moving SL to P{i} Level: {new_sl:.4f} ({prev_level_pct:.1%})")
-                        self.executor.set_stop_loss(symbol, direction, new_sl)
-                        pos_data['sl_price'] = new_sl
-                        pos_data['last_sl_update'] = time.time()
-                
-                # Save updated position
-                self.state.set_position(symbol, pos_data)
-                
-                # Log remaining position
-                total_closed = sum(Config.TAKE_PROFIT_LEVELS[j]['close_pct'] 
-                                  for j in range(i+1) if partials.get(f"p{j+1}", False))
-                remaining_pct = 100 * (1 - total_closed)
-                logger.info(f"📊 Remaining position: {remaining_pct:.0f}%")
+                    # Record partial close timestamp
+                    self.state.add_trade_timestamp(time.time())
+                    
+                    # Accumulate Realized PnL
+                    pos_data['accumulated_pnl'] += profit_usd
+                    logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
+                    
+                    # Log Partial Closure to CSV
+                    try:
+                        pnl_usd = profit_usd # Calculated above
+                        # For partials, we use the partial amount for size logging
+                        CSVManager.log_closure(
+                            symbol, direction, entry, current_price, amount, 
+                            f"Partial {display_name}", pnl_usd, pnl_pct, 
+                            time.time() - pos_data['entry_time']
+                        )
+                        CSVManager.log_finance(
+                            symbol, direction, amount, entry, current_price, 
+                            pnl_usd, time.time() - pos_data['entry_time']
+                        )
+                    except Exception as e:
+                        logger.error(f"Failed to log partial CSV: {e}")
+                    
+                    # Update stop-loss (progressive profit protection)
+                    if i == 0:  # P1: Move SL to break-even
+                        if direction == "LONG":
+                            new_sl = entry * 1.001
+                        else:
+                            new_sl = entry * 0.999
+                        
+                        if (direction == "LONG" and new_sl > pos_data['sl_price']) or \
+                           (direction == "SHORT" and new_sl < pos_data['sl_price']):
+                            logger.info(f"🛡️ Moving SL to Break-Even: {new_sl:.4f}")
+                            self.executor.set_stop_loss(symbol, direction, new_sl)
+                            pos_data['sl_price'] = new_sl
+                            pos_data['last_sl_update'] = time.time()
+                    
+                    else:  # P2+: Move SL to previous level price
+                        prev_level_pct = Config.TAKE_PROFIT_LEVELS[i-1]['pct']
+                        if direction == "LONG":
+                            new_sl = entry * (1 + prev_level_pct)
+                        else:
+                            new_sl = entry * (1 - prev_level_pct)
+                        
+                        if (direction == "LONG" and new_sl > pos_data['sl_price']) or \
+                           (direction == "SHORT" and new_sl < pos_data['sl_price']):
+                            logger.info(f"🛡️ Moving SL to P{i} Level: {new_sl:.4f} ({prev_level_pct:.1%})")
+                            self.executor.set_stop_loss(symbol, direction, new_sl)
+                            pos_data['sl_price'] = new_sl
+                            pos_data['last_sl_update'] = time.time()
+                    
+                    # Save updated position
+                    self.state.set_position(symbol, pos_data)
+                    
+                    # Log remaining position
+                    total_closed = sum(Config.TAKE_PROFIT_LEVELS[j]['close_pct'] 
+                                      for j in range(i+1) if partials.get(f"p{j+1}", False))
+                    remaining_pct = 100 * (1 - total_closed)
+                    logger.info(f"📊 Remaining position: {remaining_pct:.0f}%")
+                else:
+                    # Partial close failed - sync with exchange
+                    logger.warning(f"⚠️ Partial close failed for {symbol}. Syncing position with exchange...")
+                    try:
+                        # Fetch actual position from exchange
+                        positions = self.client.get_position(symbol)
+                        target_side = 'long' if direction == 'LONG' else 'short'
+                        
+                        actual_size = 0
+                        for p in positions:
+                            if float(p['contracts']) > 0:
+                                pos_side = p.get('side')
+                                if pos_side and pos_side.lower() == target_side:
+                                    actual_size = float(p['contracts'])
+                                    break
+                                elif not pos_side:
+                                    actual_size = float(p['contracts'])
+                                    break
+                        
+                        if actual_size > 0:
+                            logger.info(f"🔄 Synced position size: {actual_size:.6f} (was {pos_data['size']:.6f})")
+                            pos_data['size'] = actual_size
+                            self.state.set_position(symbol, pos_data)
+                        else:
+                            logger.warning(f"❌ No position found on exchange for {symbol}. Clearing local state.")
+                            self.state.clear_position(symbol)
+                            return False
+                    except Exception as e:
+                        logger.error(f"Failed to sync position after failed close: {e}")
                 
                 # Only execute one level per check
                 break
@@ -490,39 +526,75 @@ class BotLogic:
                 
                 # Close the dynamic percentage (5%)
                 amount = pos_data['size'] * Config.DYNAMIC_SCALPING_CLOSE_PCT
-                self.executor.close_position(symbol, direction, amount)
-                pos_data['last_dynamic_level'] = next_dynamic_level
-                executed_any = True
+                close_order = self.executor.close_position(symbol, direction, amount)
                 
-                # Record partial close timestamp
-                self.state.add_trade_timestamp(time.time())
-                
-                # Accumulate Realized PnL
-                pos_data['accumulated_pnl'] += profit_usd
-                logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
-                
-                # Move SL to previous dynamic level
-                prev_dynamic_pct = Config.DYNAMIC_SCALPING_START + ((next_dynamic_level - 1) * Config.DYNAMIC_SCALPING_INCREMENT)
-                if direction == "LONG":
-                    new_sl = entry * (1 + prev_dynamic_pct)
+                # Check if close was successful
+                if close_order:
+                    # Update position size to reflect the close
+                    pos_data['size'] -= amount
+                    logger.info(f"📉 Updated position size: {pos_data['size']:.6f} remaining ({(pos_data['size']/(pos_data['size']+amount)*100):.1f}% of previous)")
+                    
+                    pos_data['last_dynamic_level'] = next_dynamic_level
+                    executed_any = True
+                    
+                    # Record partial close timestamp
+                    self.state.add_trade_timestamp(time.time())
+                    
+                    # Accumulate Realized PnL
+                    pos_data['accumulated_pnl'] += profit_usd
+                    logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
+                    
+                    # Move SL to previous dynamic level
+                    prev_dynamic_pct = Config.DYNAMIC_SCALPING_START + ((next_dynamic_level - 1) * Config.DYNAMIC_SCALPING_INCREMENT)
+                    if direction == "LONG":
+                        new_sl = entry * (1 + prev_dynamic_pct)
+                    else:
+                        new_sl = entry * (1 - prev_dynamic_pct)
+                    
+                    if (direction == "LONG" and new_sl > pos_data['sl_price']) or \
+                       (direction == "SHORT" and new_sl < pos_data['sl_price']):
+                        logger.info(f"🛡️ Moving SL to D{next_dynamic_level-1} Level: {new_sl:.4f} ({prev_dynamic_pct:.1%})")
+                        self.executor.set_stop_loss(symbol, direction, new_sl)
+                        pos_data['sl_price'] = new_sl
+                        pos_data['last_sl_update'] = time.time()
+                    
+                    # Save updated position
+                    self.state.set_position(symbol, pos_data)
+                    
+                    # Calculate remaining position
+                    total_fixed_closed = sum(level['close_pct'] for level in Config.TAKE_PROFIT_LEVELS)
+                    total_dynamic_closed = next_dynamic_level * Config.DYNAMIC_SCALPING_CLOSE_PCT
+                    remaining_pct = 100 * (1 - total_fixed_closed - total_dynamic_closed)
+                    logger.info(f"📊 Remaining position: {remaining_pct:.0f}% (Dynamic level {next_dynamic_level})")
                 else:
-                    new_sl = entry * (1 - prev_dynamic_pct)
-                
-                if (direction == "LONG" and new_sl > pos_data['sl_price']) or \
-                   (direction == "SHORT" and new_sl < pos_data['sl_price']):
-                    logger.info(f"🛡️ Moving SL to D{next_dynamic_level-1} Level: {new_sl:.4f} ({prev_dynamic_pct:.1%})")
-                    self.executor.set_stop_loss(symbol, direction, new_sl)
-                    pos_data['sl_price'] = new_sl
-                    pos_data['last_sl_update'] = time.time()
-                
-                # Save updated position
-                self.state.set_position(symbol, pos_data)
-                
-                # Calculate remaining position
-                total_fixed_closed = sum(level['close_pct'] for level in Config.TAKE_PROFIT_LEVELS)
-                total_dynamic_closed = next_dynamic_level * Config.DYNAMIC_SCALPING_CLOSE_PCT
-                remaining_pct = 100 * (1 - total_fixed_closed - total_dynamic_closed)
-                logger.info(f"📊 Remaining position: {remaining_pct:.0f}% (Dynamic level {next_dynamic_level})")
+                    # Dynamic partial close failed - sync with exchange
+                    logger.warning(f"⚠️ Dynamic partial close failed for {symbol}. Syncing position with exchange...")
+                    try:
+                        # Fetch actual position from exchange
+                        positions = self.client.get_position(symbol)
+                        target_side = 'long' if direction == 'LONG' else 'short'
+                        
+                        actual_size = 0
+                        for p in positions:
+                            if float(p['contracts']) > 0:
+                                pos_side = p.get('side')
+                                if pos_side and pos_side.lower() == target_side:
+                                    actual_size = float(p['contracts'])
+                                    break
+                                elif not pos_side:
+                                    actual_size = float(p['contracts'])
+                                    break
+                        
+                        if actual_size > 0:
+                            logger.info(f"🔄 Synced position size: {actual_size:.6f} (was {pos_data['size']:.6f})")
+                            pos_data['size'] = actual_size
+                            self.state.set_position(symbol, pos_data)
+                        else:
+                            logger.warning(f"❌ No position found on exchange for {symbol}. Clearing local state.")
+                            self.state.clear_position(symbol)
+                            return False
+                    except Exception as e:
+                        logger.error(f"Failed to sync position after failed dynamic close: {e}")
         
         return executed_any
 
