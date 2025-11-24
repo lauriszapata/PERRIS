@@ -278,50 +278,56 @@ class BotLogic:
                         early_exit_triggered = True
                 
                 if early_exit_triggered:
-                    self.executor.close_position(symbol, direction, size)
+                    close_order = self.executor.close_position(symbol, direction, size)
                     
-                    # Log Closure
-                    try:
-                        exit_price = current_price
-                        pnl_usd = (exit_price - entry_price) * size if direction == "LONG" else (entry_price - exit_price) * size
-                        pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
-                        duration = time.time() - pos_data['entry_time']
-                        
-                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, size, "Early Invalidation (Real-Time)", pnl_usd, pnl_pct, duration)
-                        CSVManager.log_finance(symbol, direction, size, entry_price, exit_price, pnl_usd, duration)
-                        
-                        # ML Update (Total PnL - Commissions)
-                        total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
-                        
-                        # Commission Calculation (Entry + Exit Volume * Rate)
-                        total_volume = (size * entry_price) + (current_price * size)
-                        commission = total_volume * Config.COMMISSION_RATE
-                        net_pnl_usd = total_pnl_usd - commission
-                        
-                        initial_margin = (size * entry_price) / Config.LEVERAGE
-                        net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
-                        
-                        # Max PnL Calculation
-                        if direction == "LONG":
-                            max_pnl_pct = (pos_data['p_max'] - entry_price) / entry_price
-                        else:
-                            max_pnl_pct = (entry_price - pos_data['p_min']) / entry_price
-                        
-                        # Build partial data for ML
-                        partial_data = {
-                            'partial_pnl_usd': pos_data.get('accumulated_pnl', 0),
-                            'final_pnl_usd': total_pnl_usd,
-                            'levels_hit': [k for k, v in pos_data.get('partials', {}).items() if v]
-                        }
-                        
-                        logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
-                        
-                        # Save Tuner State
-                        self.state.state['tuner'] = self.tuner.get_state()
-                        self.state.save_state()
-                    except Exception as e:
-                        logger.error(f"Failed to log closure CSV: {e}")
+                    # Log Closure with ACTUAL exit price
+                    if close_order:
+                        try:
+                            # Get ACTUAL exit price from Binance
+                            exit_price = close_order.get('average') or close_order.get('price') or current_price
+                            actual_size = close_order.get('filled') or size
+                            
+                            logger.info(f"✅ Early Exit Filled | Exit: {exit_price:.4f} | Size: {actual_size:.6f}")
+                            
+                            pnl_usd = (exit_price - entry_price) * actual_size if direction == "LONG" else (entry_price - exit_price) * actual_size
+                            pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
+                            duration = time.time() - pos_data['entry_time']
+                            
+                            CSVManager.log_closure(symbol, direction, entry_price, exit_price, actual_size, "Early Invalidation (Real-Time)", pnl_usd, pnl_pct, duration)
+                            CSVManager.log_finance(symbol, direction, actual_size, entry_price, exit_price, pnl_usd, duration)
+                            
+                            # ML Update (Total PnL - Commissions)
+                            total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
+                            
+                            # Commission Calculation (Entry + Exit Volume * Rate)
+                            total_volume = (actual_size * entry_price) + (exit_price * actual_size)
+                            commission = total_volume * Config.COMMISSION_RATE
+                            net_pnl_usd = total_pnl_usd - commission
+                            
+                            initial_margin = (actual_size * entry_price) / Config.LEVERAGE
+                            net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                            
+                            # Max PnL Calculation
+                            if direction == "LONG":
+                                max_pnl_pct = (pos_data['p_max'] - entry_price) / entry_price
+                            else:
+                                max_pnl_pct = (entry_price - pos_data['p_min']) / entry_price
+                            
+                            # Build partial data for ML
+                            partial_data = {
+                                'partial_pnl_usd': pos_data.get('accumulated_pnl', 0),
+                                'final_pnl_usd': total_pnl_usd,
+                                'levels_hit': [k for k, v in pos_data.get('partials', {}).items() if v]
+                            }
+                            
+                            logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                            self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
+                            
+                            # Save Tuner State
+                            self.state.state['tuner'] = self.tuner.get_state()
+                            self.state.save_state()
+                        except Exception as e:
+                            logger.error(f"Failed to log closure CSV: {e}")
 
                     self.state.clear_position(symbol)
                     continue # Skip logging and next steps for this symbol
@@ -414,9 +420,24 @@ class BotLogic:
                 
                 # Check if close was successful
                 if close_order:
-                    # Update position size to reflect the close
-                    pos_data['size'] -= amount
-                    logger.info(f"📉 Updated position size: {pos_data['size']:.6f} remaining ({(pos_data['size']/(pos_data['size']+amount)*100):.1f}% of previous)")
+                    # Get ACTUAL exit price from Binance order response
+                    actual_exit_price = close_order.get('average') or close_order.get('price') or current_price
+                    actual_closed_amount = close_order.get('filled') or amount
+                    
+                    # Log the actual execution details
+                    logger.info(f"✅ Partial Close Filled | Exit: {actual_exit_price:.4f} | Amount: {actual_closed_amount:.6f}")
+                    
+                    # Recalculate PnL with ACTUAL exit price
+                    if direction == "LONG":
+                        actual_pnl_pct = (actual_exit_price - entry) / entry
+                        actual_profit_usd = (actual_exit_price - entry) * actual_closed_amount
+                    else:
+                        actual_pnl_pct = (entry - actual_exit_price) / entry
+                        actual_profit_usd = (entry - actual_exit_price) * actual_closed_amount
+                    
+                    # Update position size to reflect the actual close
+                    pos_data['size'] -= actual_closed_amount
+                    logger.info(f"📉 Updated position size: {pos_data['size']:.6f} remaining ({(pos_data['size']/(pos_data['size']+actual_closed_amount)*100):.1f}% of previous)")
                     
                     partials[level_name] = True
                     executed_any = True
@@ -425,21 +446,19 @@ class BotLogic:
                     self.state.add_trade_timestamp(time.time())
                     
                     # Accumulate Realized PnL
-                    pos_data['accumulated_pnl'] += profit_usd
-                    logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
+                    pos_data['accumulated_pnl'] += actual_profit_usd
+                    logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD (Actual: {actual_profit_usd:.2f} USD from this partial)")
                     
-                    # Log Partial Closure to CSV
+                    # Log Partial Closure to CSV with ACTUAL values
                     try:
-                        pnl_usd = profit_usd # Calculated above
-                        # For partials, we use the partial amount for size logging
                         CSVManager.log_closure(
-                            symbol, direction, entry, current_price, amount, 
-                            f"Partial {display_name}", pnl_usd, pnl_pct, 
+                            symbol, direction, entry, actual_exit_price, actual_closed_amount, 
+                            f"Partial {display_name}", actual_profit_usd, actual_pnl_pct, 
                             time.time() - pos_data['entry_time']
                         )
                         CSVManager.log_finance(
-                            symbol, direction, amount, entry, current_price, 
-                            pnl_usd, time.time() - pos_data['entry_time']
+                            symbol, direction, actual_closed_amount, entry, actual_exit_price, 
+                            actual_profit_usd, time.time() - pos_data['entry_time']
                         )
                     except Exception as e:
                         logger.error(f"Failed to log partial CSV: {e}")
@@ -551,9 +570,22 @@ class BotLogic:
                 
                 # Check if close was successful
                 if close_order:
-                    # Update position size to reflect the close
-                    pos_data['size'] -= amount
-                    logger.info(f"📉 Updated position size: {pos_data['size']:.6f} remaining ({(pos_data['size']/(pos_data['size']+amount)*100):.1f}% of previous)")
+                    # Get ACTUAL exit price from Binance order response
+                    actual_exit_price = close_order.get('average') or close_order.get('price') or current_price
+                    actual_closed_amount = close_order.get('filled') or amount
+                    
+                    # Log the actual execution details
+                    logger.info(f"✅ Dynamic Close Filled | Exit: {actual_exit_price:.4f} | Amount: {actual_closed_amount:.6f}")
+                    
+                    # Recalculate PnL with ACTUAL exit price
+                    if direction == "LONG":
+                        actual_profit_usd = (actual_exit_price - entry) * actual_closed_amount
+                    else:
+                        actual_profit_usd = (entry - actual_exit_price) * actual_closed_amount
+                    
+                    # Update position size to reflect the actual close
+                    pos_data['size'] -= actual_closed_amount
+                    logger.info(f"📉 Updated position size: {pos_data['size']:.6f} remaining ({(pos_data['size']/(pos_data['size']+actual_closed_amount)*100):.1f}% of previous)")
                     
                     pos_data['last_dynamic_level'] = next_dynamic_level
                     executed_any = True
@@ -562,8 +594,8 @@ class BotLogic:
                     self.state.add_trade_timestamp(time.time())
                     
                     # Accumulate Realized PnL
-                    pos_data['accumulated_pnl'] += profit_usd
-                    logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
+                    pos_data['accumulated_pnl'] += actual_profit_usd
+                    logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD (Actual: {actual_profit_usd:.2f} USD from this dynamic partial)")
                     
                     # Move SL to previous dynamic level
                     prev_dynamic_pct = Config.DYNAMIC_SCALPING_START + ((next_dynamic_level - 1) * Config.DYNAMIC_SCALPING_INCREMENT)
@@ -586,7 +618,7 @@ class BotLogic:
                     self.tuner.update_partial(
                         symbol=symbol,
                         level_name=f"D{next_dynamic_level}",
-                        partial_pnl_usd=profit_usd,
+                        partial_pnl_usd=actual_profit_usd,
                         current_total_pnl=pos_data['accumulated_pnl']
                     )
                     
@@ -849,7 +881,7 @@ class BotLogic:
             logger.error("Position size 0, aborting entry.")
             return
 
-        logger.info(f"Executing {direction} | Size: {position_size:.4f} | Entry: {entry_price} | SL: {sl_price}")
+        logger.info(f"Executing {direction} | Size: {position_size:.4f} | Estimated Entry: {entry_price} | SL: {sl_price}")
         
         # Enforce Leverage again before entry (Safety)
         self.client.set_leverage(symbol, 1)
@@ -857,15 +889,23 @@ class BotLogic:
         # Execute
         order = self.executor.open_position(symbol, direction, position_size)
         if order:
-            # Save State
+            # Get ACTUAL fill price from Binance order response
+            # CCXT normalizes the response; 'average' contains the actual fill price
+            actual_entry_price = order.get('average') or order.get('price') or entry_price
+            actual_size = order.get('filled') or position_size
+            
+            # Log the actual execution details
+            logger.info(f"✅ Order Filled | Actual Entry: {actual_entry_price:.4f} | Actual Size: {actual_size:.6f}")
+            
+            # Save State with ACTUAL values from Binance
             pos_data = {
                 "direction": direction,
-                "entry_price": entry_price,
-                "size": position_size,
+                "entry_price": actual_entry_price,  # Use actual fill price from Binance
+                "size": actual_size,  # Use actual filled size from Binance
                 "sl_price": sl_price,
                 "atr_entry": atr,
-                "p_max": entry_price, # Track highest favorable price (for trailing)
-                "p_min": entry_price, # Track lowest favorable price (for trailing)
+                "p_max": actual_entry_price, # Track highest favorable price (for trailing)
+                "p_min": actual_entry_price, # Track lowest favorable price (for trailing)
                 "partials": {f"p{i+1}": False for i in range(len(Config.TAKE_PROFIT_LEVELS))},  # Dynamic based on config
                 "entry_time": time.time(),
                 "last_sl_update": time.time()  # Track when SL was last updated
@@ -879,7 +919,7 @@ class BotLogic:
             # Set Initial SL
             self.executor.set_stop_loss(symbol, direction, sl_price)
             
-            # Log to CSV
+            # Log to CSV with ACTUAL execution price
             try:
                 # Extract indicator values for logging
                 indicators = {
@@ -889,7 +929,7 @@ class BotLogic:
                     'MACD_signal': last['MACD_signal'],
                     'volume': last['volume']
                 }
-                CSVManager.log_entry(symbol, direction, entry_price, position_size, sl_price, atr, indicators)
+                CSVManager.log_entry(symbol, direction, actual_entry_price, actual_size, sl_price, atr, indicators)
             except Exception as e:
                 logger.error(f"Failed to log entry CSV: {e}")
 
