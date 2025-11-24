@@ -32,14 +32,14 @@ class ATRManager:
     def calculate_trailing_stop(current_sl, extreme_price, current_atr, direction, entry_price):
         """
         Trailing ATR:
-        LONG: SL_propuesto = P_max - 1.8 × ATR_actual
-        SHORT: SL_propuesto = P_min + 1.8 × ATR_actual
+        LONG: SL_propuesto = P_max - 1.5 × ATR_actual
+        SHORT: SL_propuesto = P_min + 1.5 × ATR_actual
         """
         if direction == "LONG":
-            sl_prop = extreme_price - (1.8 * current_atr)
+            sl_prop = extreme_price - (1.5 * current_atr)
             # Before P1 (handled in logic), do not allow SL > entry - fees.
             # We return the proposed SL, the logic will handle the constraint.
             return max(current_sl, sl_prop)
         else:
-            sl_prop = extreme_price + (1.8 * current_atr)
+            sl_prop = extreme_price + (1.5 * current_atr)
             return min(current_sl, sl_prop)

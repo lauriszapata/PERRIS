@@ -1,5 +1,6 @@
 from config import Config
 from modules.logger import logger
+from modules.managers.correlation_manager import CorrelationManager
 
 class RiskManager:
     @staticmethod
@@ -29,6 +30,13 @@ class RiskManager:
             logger.info(f"Max Trades Per Hour Reached: {len(trades_last_hour)}")
             return False
         return True
+
+    @staticmethod
+    def check_portfolio_correlation(new_symbol, current_positions, client):
+        """
+        Check if adding new_symbol increases portfolio correlation risk beyond limits.
+        """
+        return CorrelationManager.check_correlation(new_symbol, current_positions, client)
 
     @staticmethod
     def calculate_position_size(entry_price, sl_price, balance, client, symbol, current_positions):

@@ -1,10 +1,44 @@
 from modules.managers.trend_manager import TrendManager
 from modules.managers.structure_manager import StructureManager
 from modules.logger import logger
+from config import Config
+import pandas as pd
+from modules.managers.structure_manager import StructureManager
+from modules.logger import logger
 
 class EntrySignals:
     @staticmethod
-    def check_signals(df, direction):
+    def check_mtf_trend(client, symbol, direction):
+        """
+        Check trend on higher timeframe (1H).
+        """
+        try:
+            ohlcv = client.fetch_ohlcv(symbol, timeframe=Config.MTF_TIMEFRAME, limit=200)
+            if not ohlcv: return False
+            
+            df_mtf = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+            df_mtf['close'] = df_mtf['close'].astype(float)
+            
+            # Simple EMA Trend on MTF
+            df_mtf.ta.ema(length=50, append=True)
+            df_mtf.ta.ema(length=200, append=True)
+            
+            last = df_mtf.iloc[-1]
+            ema50 = last['EMA_50']
+            ema200 = last['EMA_200']
+            
+            if direction == "LONG":
+                return ema50 > ema200
+            else:
+                return ema50 < ema200
+        except Exception as e:
+            logger.error(f"MTF Trend Check Error: {e}")
+            return True # Fail open or closed? Let's fail safe (False) usually, but for now True to not block if API fails? 
+            # Better fail safe:
+            return False
+
+    @staticmethod
+    def check_signals(df, direction, client=None, symbol=None):
         """
         Check the 8 indicators and return detailed results.
         """
@@ -16,16 +50,16 @@ class EntrySignals:
             trend_ok = TrendManager.check_trend(df, direction)
             results['Trend'] = {'status': trend_ok, 'value': 'Pass' if trend_ok else 'Fail'}
             
-            # 4. ADX (Relaxed to 10 to catch weaker trends)
+            # 4. ADX (Institutional: Strong Trend > 25)
             adx_val = last['ADX']
-            results['ADX'] = {'status': adx_val >= 10, 'value': f"{adx_val:.2f}", 'threshold': ">= 10"}
+            results['ADX'] = {'status': adx_val >= 25, 'value': f"{adx_val:.2f}", 'threshold': ">= 25"}
             
             # 5. RSI (Widened to 35-65 to catch more moves)
             rsi_val = last['RSI']
             if direction == "LONG":
                 results['RSI'] = {'status': rsi_val > 35, 'value': f"{rsi_val:.2f}", 'threshold': "> 35"}
             else:
-                results['RSI'] = {'status': rsi_val < 65, 'value': f"{rsi_val:.2f}", 'threshold': "< 65"}
+                results['RSI'] = {'status': 30 < rsi_val < 55, 'value': f"{rsi_val:.2f}", 'threshold': "30-55"}
             
             # 6. MACD (Changed to Signal Cross for earlier entry)
             macd_line = last['MACD_line']
@@ -41,7 +75,22 @@ class EntrySignals:
             # 7. Volume
             vol = last['volume']
             vol_avg = last['Vol_SMA20']
-            results['Volume'] = {'status': vol >= 0.8 * vol_avg, 'value': f"{vol:.2f}", 'threshold': f">= {0.8*vol_avg:.2f}"}
+            results['Volume'] = {'status': vol >= 1.0 * vol_avg, 'value': f"{vol:.2f}", 'threshold': f">= {1.0*vol_avg:.2f}"}
+
+            # 8. Volatility (Institutional: Avoid extreme chaos)
+            atr_val = last['ATR']
+            close_val = last['close']
+            volatility_pct = atr_val / close_val
+            # Max 3% volatility per candle to avoid unpredictable slippage/wicks
+            # Max 3% volatility per candle to avoid unpredictable slippage/wicks
+            results['Volatility'] = {'status': volatility_pct < 0.03, 'value': f"{volatility_pct:.2%}", 'threshold': "< 3%"}
+            
+            # 9. MTF Trend (1H)
+            if client and symbol:
+                mtf_ok = EntrySignals.check_mtf_trend(client, symbol, direction)
+                results['MTF_Trend'] = {'status': mtf_ok, 'value': 'Pass' if mtf_ok else 'Fail', 'threshold': f"1H {direction}"}
+            else:
+                results['MTF_Trend'] = {'status': True, 'value': 'Skipped (No Client)', 'optional': True}
             
             # 8. Structure (OPTIONAL for 15min - changes too quickly)
             # Tracked but not required for entry

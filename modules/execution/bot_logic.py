@@ -7,6 +7,7 @@ from modules.indicators import Indicators
 from modules.entry_signals import EntrySignals
 from modules.managers.risk_manager import RiskManager
 from modules.managers.atr_manager import ATRManager
+from modules.managers.structure_manager import StructureManager
 from modules.filters.volatility import VolatilityFilters
 from modules.filters.liquidity import LiquiditySpreadFilters
 from modules.filters.funding import FundingFilter
@@ -14,12 +15,14 @@ from modules.filters.health_check import HealthCheck
 from modules.filters.time_filter import TimeFilter
 from modules.filters.news_filter import NewsFilter
 from modules.reporting.csv_manager import CSVManager
+from modules.ml.adaptive_tuner import AdaptiveTuner
 
 class BotLogic:
     def __init__(self, client, state_handler, order_executor):
         self.client = client
         self.state = state_handler
         self.executor = order_executor
+        self.tuner = AdaptiveTuner()
 
     def run(self):
         logger.info("Bot started. Initializing Hybrid Frequency Loop...")
@@ -28,7 +31,7 @@ class BotLogic:
         self._sync_positions()
         
         logger.info("✅ Health Check: 1s")
-        logger.info("✅ Position Monitor: 3s")
+        logger.info("✅ Position Monitor: 2s")
         logger.info("✅ Strategy/Entry: 15m (Candle Close)")
         
         last_health_check = 0
@@ -80,9 +83,9 @@ class BotLogic:
                     time.sleep(1)
                     continue
                 
-                # 2. Position Monitor (Every 3s)
-                # Checks SL, TP, Partials in real-time
-                if now - last_monitor_check >= 3:
+                # 2. Position Monitor (Every 2s)
+                # Checks SL, TP, Partials, and Early Invalidation in real-time
+                if now - last_monitor_check >= 2:
                     self._monitor_positions()
                     last_monitor_check = now
                     
@@ -221,6 +224,68 @@ class BotLogic:
                 if not current_price: continue
                 
                 self._check_partials(symbol, pos_data, current_price)
+            
+                direction = pos_data['direction']
+                entry_price = pos_data['entry_price']
+                atr_entry = pos_data['atr_entry']
+                size = pos_data['size']
+                sl_price = pos_data['sl_price']
+                
+                # --- BREAKEVEN TRIGGER ---
+                # If profit > BREAKEVEN_TRIGGER_PCT (0.6%), move SL to Entry
+                # Only if SL is not already at or better than Entry
+                pnl_pct_current = (current_price - entry_price) / entry_price if direction == "LONG" else (entry_price - current_price) / entry_price
+                
+                if pnl_pct_current >= Config.BREAKEVEN_TRIGGER_PCT:
+                    is_breakeven = False
+                    if direction == "LONG":
+                        if sl_price < entry_price: # SL is below entry (risk)
+                            new_sl = entry_price * 1.001 # Entry + small buffer
+                            self.executor.set_stop_loss(symbol, direction, new_sl)
+                            pos_data['sl_price'] = new_sl
+                            self.state.set_position(symbol, pos_data)
+                            logger.info(f"🛡️ BREAKEVEN TRIGGERED for {symbol}: SL moved to {new_sl:.4f} (Profit {pnl_pct_current:.2%})")
+                    else: # SHORT
+                        if sl_price > entry_price: # SL is above entry (risk)
+                            new_sl = entry_price * 0.999 # Entry - small buffer
+                            self.executor.set_stop_loss(symbol, direction, new_sl)
+                            pos_data['sl_price'] = new_sl
+                            self.state.set_position(symbol, pos_data)
+                            logger.info(f"🛡️ BREAKEVEN TRIGGERED for {symbol}: SL moved to {new_sl:.4f} (Profit {pnl_pct_current:.2%})")
+
+                # --- REAL-TIME EARLY INVALIDATION (1.5 ATR) ---
+                # Check if price moved > 1.5 ATR against us
+                
+                early_exit_triggered = False
+                if direction == "LONG":
+                    if current_price < entry_price - (1.5 * atr_entry):
+                        logger.info(f"🚨 REAL-TIME EXIT: Early Invalidation (Price {current_price:.4f} < Entry {entry_price:.4f} - 1.5 ATR)")
+                        early_exit_triggered = True
+                else: # SHORT
+                    if current_price > entry_price + (1.5 * atr_entry):
+                        logger.info(f"🚨 REAL-TIME EXIT: Early Invalidation (Price {current_price:.4f} > Entry {entry_price:.4f} + 1.5 ATR)")
+                        early_exit_triggered = True
+                
+                if early_exit_triggered:
+                    self.executor.close_position(symbol, direction, size)
+                    
+                    # Log Closure
+                    try:
+                        exit_price = current_price
+                        pnl_usd = (exit_price - entry_price) * size if direction == "LONG" else (entry_price - exit_price) * size
+                        pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
+                        duration = time.time() - pos_data['entry_time']
+                        
+                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, size, "Early Invalidation (Real-Time)", pnl_usd, pnl_pct, duration)
+                        CSVManager.log_finance(symbol, direction, size, entry_price, exit_price, pnl_usd, duration)
+                        
+                        # ML Update
+                        self.tuner.update_trade(pnl_pct, time.time())
+                    except Exception as e:
+                        logger.error(f"Failed to log closure CSV: {e}")
+
+                    self.state.clear_position(symbol)
+                    continue # Skip logging and next steps for this symbol
                 
                 if should_log:
                     entry = pos_data['entry_price']
@@ -614,6 +679,11 @@ class BotLogic:
         # Risk Check
         if not RiskManager.check_max_symbols(self.state.state['positions']):
             return
+
+        # Correlation Check
+        if not RiskManager.check_portfolio_correlation(symbol, self.state.state['positions'], self.client):
+            logger.warning(f"Entry rejected for {symbol}: High correlation with existing portfolio.")
+            return
             
         balance_data = self.client.get_balance()
         if not balance_data: return
@@ -708,6 +778,8 @@ class BotLogic:
             
         # --- EXIT CONDITIONS (Priority Order) ---
         
+        # 0. Early Invalidation (Moved to Real-Time Monitor)
+        
         # 1. ATR Extreme (ATR_actual > 1.8 * ATR_entry)
         if closed_atr > 1.8 * atr_entry:
             logger.info(f"🚨 EXIT: ATR Extreme ({closed_atr:.2f} > 1.8x {atr_entry:.2f})")
@@ -722,23 +794,61 @@ class BotLogic:
                 
                 CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "ATR Extreme", pnl_usd, pnl_pct, duration)
                 CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                
+                # ML Update
+                self.tuner.update_trade(pnl_pct, time.time())
             except Exception as e:
                 logger.error(f"Failed to log closure CSV: {e}")
 
             self.state.clear_position(symbol)
             return
 
-        # 2. Structure Break (HL/LH)
-        # Need HL/LH from StructureManager. We can re-calculate or store it.
-        # Ideally, we should have stored the HL/LH that validated the entry, 
-        # but structure evolves. Let's use the most recent validated structure.
-        # For simplicity, we'll check if the price breaks the swing level stored in position (if we stored it).
-        # If not stored, we might need to re-detect.
-        # User spec: "si cierre < HL - 0.5*ATR_actual"
-        # Let's assume we need to find the current major HL/LH.
-        # For now, we'll skip complex structure re-detection here to avoid lag, 
-        # unless we add it to the state.
-        # TODO: Add dynamic structure tracking.
+        # 2. Structure Break (Swing High/Low)
+        swings = StructureManager.get_last_swings(df)
+        if swings:
+            if direction == "LONG":
+                # Bullish Structure Break: Close < Last Swing Low
+                if swings['swing_low'] and closed_close < swings['swing_low']:
+                    logger.info(f"📉 EXIT: Structure Break (Close {closed_close:.2f} < Swing Low {swings['swing_low']:.2f})")
+                    self.executor.close_position(symbol, direction, position['size'])
+                    
+                    # Log Closure
+                    try:
+                        exit_price = closed_close
+                        pnl_usd = (exit_price - entry_price) * position['size']
+                        pnl_pct = (exit_price - entry_price) / entry_price
+                        duration = time.time() - entry_time
+                        
+                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Structure Break (Swing Low)", pnl_usd, pnl_pct, duration)
+                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        
+                        # ML Update
+                        self.tuner.update_trade(pnl_pct, time.time())
+                    except Exception as e:
+                        logger.error(f"Failed to log closure CSV: {e}")
+
+                    self.state.clear_position(symbol)
+                    return
+            else: # SHORT
+                # Bearish Structure Break: Close > Last Swing High
+                if swings['swing_high'] and closed_close > swings['swing_high']:
+                    logger.info(f"📈 EXIT: Structure Break (Close {closed_close:.2f} > Swing High {swings['swing_high']:.2f})")
+                    self.executor.close_position(symbol, direction, position['size'])
+                    
+                    # Log Closure
+                    try:
+                        exit_price = closed_close
+                        pnl_usd = (entry_price - exit_price) * position['size']
+                        pnl_pct = (entry_price - exit_price) / entry_price
+                        duration = time.time() - entry_time
+                        
+                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Structure Break (Swing High)", pnl_usd, pnl_pct, duration)
+                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                    except Exception as e:
+                        logger.error(f"Failed to log closure CSV: {e}")
+
+                    self.state.clear_position(symbol)
+                    return
         
         # 3. Hard Exit (EMA20 vs EMA50 Cross)
         ema20 = closed_candle['EMA20']
@@ -781,7 +891,30 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
-        # 4. Time Exit (>40 candles and |PnL| < 0.2%)
+        # 4. Stagnation Exit (>45m & Negative PnL)
+        # If trade is open for 3 candles (45m) and is losing money, cut it.
+        time_elapsed = time.time() - entry_time
+        current_pnl_pct = (closed_close - entry_price) / entry_price if direction == "LONG" else (entry_price - closed_close) / entry_price
+        
+        if time_elapsed > 45 * 60 and current_pnl_pct < 0:
+            logger.info(f"⏳ EXIT: Stagnation (Negative PnL {current_pnl_pct:.2%} after 45m)")
+            self.executor.close_position(symbol, direction, position['size'])
+            
+            # Log Closure
+            try:
+                exit_price = closed_close
+                pnl_usd = (exit_price - entry_price) * position['size'] if direction == "LONG" else (entry_price - exit_price) * position['size']
+                duration = time.time() - entry_time
+                
+                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Stagnation Exit", pnl_usd, current_pnl_pct, duration)
+                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+            except Exception as e:
+                logger.error(f"Failed to log closure CSV: {e}")
+
+            self.state.clear_position(symbol)
+            return
+
+        # 5. Time Exit (>40 candles and |PnL| < 0.2%)
         # 40 candles * 15 min = 600 min = 36000 seconds
         time_elapsed = time.time() - entry_time
         if time_elapsed > 36000:
