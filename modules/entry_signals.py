@@ -16,23 +16,27 @@ class EntrySignals:
             trend_ok = TrendManager.check_trend(df, direction)
             results['Trend'] = {'status': trend_ok, 'value': 'Pass' if trend_ok else 'Fail'}
             
-            # 4. ADX (optimal for 15min trending moves)
+            # 4. ADX (Relaxed to 10 to catch weaker trends)
             adx_val = last['ADX']
-            results['ADX'] = {'status': adx_val >= 15, 'value': f"{adx_val:.2f}", 'threshold': ">= 15"}
+            results['ADX'] = {'status': adx_val >= 10, 'value': f"{adx_val:.2f}", 'threshold': ">= 10"}
             
-            # 5. RSI (widened from 45-55 to 40-60 for more signals)
+            # 5. RSI (Widened to 35-65 to catch more moves)
             rsi_val = last['RSI']
             if direction == "LONG":
-                results['RSI'] = {'status': rsi_val > 40, 'value': f"{rsi_val:.2f}", 'threshold': "> 40"}
+                results['RSI'] = {'status': rsi_val > 35, 'value': f"{rsi_val:.2f}", 'threshold': "> 35"}
             else:
-                results['RSI'] = {'status': rsi_val < 60, 'value': f"{rsi_val:.2f}", 'threshold': "< 60"}
+                results['RSI'] = {'status': rsi_val < 65, 'value': f"{rsi_val:.2f}", 'threshold': "< 65"}
             
-            # 6. MACD
-            macd_hist = last['MACD_hist']
+            # 6. MACD (Changed to Signal Cross for earlier entry)
+            macd_line = last['MACD_line']
+            macd_signal = last['MACD_signal']
+            
             if direction == "LONG":
-                results['MACD'] = {'status': macd_hist > 0, 'value': f"{macd_hist:.4f}", 'threshold': "> 0"}
+                # Bullish Cross: Line > Signal
+                results['MACD'] = {'status': macd_line > macd_signal, 'value': f"L:{macd_line:.4f}/S:{macd_signal:.4f}", 'threshold': "Line > Sig"}
             else:
-                results['MACD'] = {'status': macd_hist < 0, 'value': f"{macd_hist:.4f}", 'threshold': "< 0"}
+                # Bearish Cross: Line < Signal
+                results['MACD'] = {'status': macd_line < macd_signal, 'value': f"L:{macd_line:.4f}/S:{macd_signal:.4f}", 'threshold': "Line < Sig"}
             
             # 7. Volume
             vol = last['volume']

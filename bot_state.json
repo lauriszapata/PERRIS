@@ -1,15 +1,8 @@
 {
     "positions": {},
     "daily_pnl": 0.0,
-    "last_reset_time": 1763922605.459685,
-    "trades_last_hour": [
-        1763929265.5954938,
-        1763929400.8642828,
-        1763929403.646996,
-        1763929409.548803,
-        1763929536.127986,
-        1763929538.853108
-    ],
+    "last_reset_time": 1763942405.4881122,
+    "trades_last_hour": [],
     "is_paused": false,
     "pause_reason": null,
     "pause_until": null

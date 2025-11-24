@@ -24,14 +24,14 @@ class TrendManager:
             else:
                 trend_local = last['close'] < last['EMA50']
             
-            # 3. Trend Major (Faster: EMA20 vs EMA50)
-            trend_major = False
-            if direction == "LONG":
-                trend_major = last['EMA20'] > last['EMA50']
-            else:
-                trend_major = last['EMA20'] < last['EMA50']
+            # 3. Trend Major (REMOVED: Too strict/lagging for 15m scalping)
+            # trend_major = False
+            # if direction == "LONG":
+            #     trend_major = last['EMA20'] > last['EMA50']
+            # else:
+            #     trend_major = last['EMA20'] < last['EMA50']
                 
-            return ema8_cross and trend_local and trend_major
+            return ema8_cross and trend_local # Removed trend_major
             
         except Exception as e:
             logger.error(f"Error checking trend: {e}")

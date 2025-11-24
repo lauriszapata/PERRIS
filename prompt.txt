@@ -251,3 +251,6 @@ Crear o refactorizar módulos:
 - Crea los nuevos módulos necesarios.
 - Deja el bot listo para ejecutar.
 - Al final, dame un resumen de los archivos cambiados y los módulos creados.
+
+
+aumenta a 30 de los simbolos mas liquidos

@@ -13,6 +13,7 @@ from modules.filters.funding import FundingFilter
 from modules.filters.health_check import HealthCheck
 from modules.filters.time_filter import TimeFilter
 from modules.filters.news_filter import NewsFilter
+from modules.reporting.csv_manager import CSVManager
 
 class BotLogic:
     def __init__(self, client, state_handler, order_executor):
@@ -308,6 +309,22 @@ class BotLogic:
                 # Record partial close timestamp
                 self.state.add_trade_timestamp(time.time())
                 
+                # Log Partial Closure to CSV
+                try:
+                    pnl_usd = profit_usd # Calculated above
+                    # For partials, we use the partial amount for size logging
+                    CSVManager.log_closure(
+                        symbol, direction, entry, current_price, amount, 
+                        f"Partial {display_name}", pnl_usd, pnl_pct, 
+                        time.time() - pos_data['entry_time']
+                    )
+                    CSVManager.log_finance(
+                        symbol, direction, amount, entry, current_price, 
+                        pnl_usd, time.time() - pos_data['entry_time']
+                    )
+                except Exception as e:
+                    logger.error(f"Failed to log partial CSV: {e}")
+                
                 # Update stop-loss (progressive profit protection)
                 if i == 0:  # P1: Move SL to break-even
                     if direction == "LONG":
@@ -443,6 +460,12 @@ class BotLogic:
                 logger.warning("🛑 Daily Stop Hit! Pausing strategy for today.")
                 return
         
+        # 6. Check Time Filter (Global)
+        allow_entries = True
+        if not TimeFilter.check_daily_close_window():
+            logger.info("⏸️ Daily Close Window (23:45-00:15 UTC). New entries paused.")
+            allow_entries = False
+        
         # 6. Process each symbol
         # We must process Config.SYMBOLS (for entries) AND any active positions (for management)
         # even if they are not in the config list (e.g. orphans from other pairs).
@@ -491,8 +514,8 @@ class BotLogic:
                     total_unrealized_pnl += pnl
                     
                     self._manage_position(symbol, position, df)
-                elif symbol in target_symbols:
-                    # Only look for NEW entries if the symbol is in our target list
+                elif symbol in target_symbols and allow_entries:
+                    # Only look for NEW entries if the symbol is in our target list AND entries are allowed
                     self._look_for_entry(symbol, df, rejection_stats)
                     
             except Exception as e:
@@ -515,10 +538,10 @@ class BotLogic:
             logger.info("====================================")
 
     def _look_for_entry(self, symbol, df, stats):
-        # Time Filters
-        if not TimeFilter.check_daily_close_window():
-            logger.info("Filter Fail: Daily Close Window (23:45-00:15 UTC)")
-            return
+        # Time Filters - Moved to Global Check in _run_strategy_cycle
+        # if not TimeFilter.check_daily_close_window():
+        #     logger.info("Filter Fail: Daily Close Window (23:45-00:15 UTC)")
+        #     return
 
         # Filters
         # Use iloc[-2] for SIGNALS (Closed Candle)
@@ -643,6 +666,20 @@ class BotLogic:
             
             # Set Initial SL
             self.executor.set_stop_loss(symbol, direction, sl_price)
+            
+            # Log to CSV
+            try:
+                # Extract indicator values for logging
+                indicators = {
+                    'RSI': last['RSI'],
+                    'ADX': last['ADX'],
+                    'MACD_line': last['MACD_line'],
+                    'MACD_signal': last['MACD_signal'],
+                    'volume': last['volume']
+                }
+                CSVManager.log_entry(symbol, direction, entry_price, position_size, sl_price, atr, indicators)
+            except Exception as e:
+                logger.error(f"Failed to log entry CSV: {e}")
 
     def _manage_position(self, symbol, position, df):
         # Use Closed Candle for Logic (Trend, Structure, Trailing Update)
@@ -675,6 +712,19 @@ class BotLogic:
         if closed_atr > 1.8 * atr_entry:
             logger.info(f"🚨 EXIT: ATR Extreme ({closed_atr:.2f} > 1.8x {atr_entry:.2f})")
             self.executor.close_position(symbol, direction, position['size'])
+            
+            # Log Closure
+            try:
+                exit_price = closed_close
+                pnl_usd = (exit_price - entry_price) * position['size'] if direction == "LONG" else (entry_price - exit_price) * position['size']
+                pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
+                duration = time.time() - entry_time
+                
+                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "ATR Extreme", pnl_usd, pnl_pct, duration)
+                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+            except Exception as e:
+                logger.error(f"Failed to log closure CSV: {e}")
+
             self.state.clear_position(symbol)
             return
 
@@ -697,11 +747,37 @@ class BotLogic:
         if direction == "LONG" and ema20 < ema50:
             logger.info(f"📉 EXIT: Hard Cross EMA20 < EMA50 ({ema20:.2f} < {ema50:.2f})")
             self.executor.close_position(symbol, direction, position['size'])
+            
+            # Log Closure
+            try:
+                exit_price = closed_close
+                pnl_usd = (exit_price - entry_price) * position['size']
+                pnl_pct = (exit_price - entry_price) / entry_price
+                duration = time.time() - entry_time
+                
+                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Hard Cross Exit", pnl_usd, pnl_pct, duration)
+                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+            except Exception as e:
+                logger.error(f"Failed to log closure CSV: {e}")
+
             self.state.clear_position(symbol)
             return
         elif direction == "SHORT" and ema20 > ema50:
             logger.info(f"📈 EXIT: Hard Cross EMA20 > EMA50 ({ema20:.2f} > {ema50:.2f})")
             self.executor.close_position(symbol, direction, position['size'])
+            
+            # Log Closure
+            try:
+                exit_price = closed_close
+                pnl_usd = (entry_price - exit_price) * position['size']
+                pnl_pct = (entry_price - exit_price) / entry_price
+                duration = time.time() - entry_time
+                
+                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Hard Cross Exit", pnl_usd, pnl_pct, duration)
+                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+            except Exception as e:
+                logger.error(f"Failed to log closure CSV: {e}")
+
             self.state.clear_position(symbol)
             return
 
@@ -714,6 +790,18 @@ class BotLogic:
             if abs(pnl_pct) < 0.002:
                 logger.info(f"⏳ EXIT: Time Limit (>40 candles) & Low PnL ({pnl_pct:.2%})")
                 self.executor.close_position(symbol, direction, position['size'])
+                
+                # Log Closure
+                try:
+                    exit_price = closed_close
+                    pnl_usd = (exit_price - entry_price) * position['size'] if direction == "LONG" else (entry_price - exit_price) * position['size']
+                    duration = time.time() - entry_time
+                    
+                    CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Time Limit", pnl_usd, pnl_pct, duration)
+                    CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                except Exception as e:
+                    logger.error(f"Failed to log closure CSV: {e}")
+
                 self.state.clear_position(symbol)
                 return
 
@@ -729,6 +817,19 @@ class BotLogic:
             if slope <= 0 and closed_close < ema20:
                  logger.info(f"📉 EXIT: Soft Trend (Slope <= 0 & Close < EMA20)")
                  self.executor.close_position(symbol, direction, position['size'])
+                 
+                 # Log Closure
+                 try:
+                    exit_price = closed_close
+                    pnl_usd = (exit_price - entry_price) * position['size']
+                    pnl_pct = (exit_price - entry_price) / entry_price
+                    duration = time.time() - entry_time
+                    
+                    CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
+                    CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                 except Exception as e:
+                    logger.error(f"Failed to log closure CSV: {e}")
+
                  self.state.clear_position(symbol)
                  return
         elif direction == "SHORT":
@@ -736,6 +837,19 @@ class BotLogic:
             if slope >= 0 and closed_close > ema20:
                  logger.info(f"📈 EXIT: Soft Trend (Slope >= 0 & Close > EMA20)")
                  self.executor.close_position(symbol, direction, position['size'])
+                 
+                 # Log Closure
+                 try:
+                    exit_price = closed_close
+                    pnl_usd = (entry_price - exit_price) * position['size']
+                    pnl_pct = (entry_price - exit_price) / entry_price
+                    duration = time.time() - entry_time
+                    
+                    CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
+                    CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                 except Exception as e:
+                    logger.error(f"Failed to log closure CSV: {e}")
+
                  self.state.clear_position(symbol)
                  return
 

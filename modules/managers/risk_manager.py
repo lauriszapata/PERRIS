@@ -60,7 +60,23 @@ class RiskManager:
             logger.info(f"Current total exposure: {total_current_exposure:.2f} USD")
             
             # 2. Check if adding new position would exceed MAX_TOTAL_EXPOSURE_USD
-            exposure = Config.MAX_EXPOSURE_USD
+            # Calculate Risk Amount
+            risk_amount = balance * Config.RISK_PER_TRADE_PCT
+            
+            # Calculate Position Size based on Risk
+            # Risk = Size * |Entry - SL|
+            # Size = Risk / |Entry - SL|
+            price_diff = abs(entry_price - sl_price)
+            if price_diff == 0:
+                logger.error("Entry Price equals SL Price! Cannot calculate size.")
+                return 0
+                
+            size = risk_amount / price_diff
+            
+            # Calculate Exposure for this size
+            exposure = size * entry_price
+            
+            logger.info(f"⚖️ Risk-Based Sizing: Risk {risk_amount:.2f} USD (1%) | SL Dist {price_diff:.4f} | Size {size:.4f} | Exposure {exposure:.2f} USD")
             
             if total_current_exposure + exposure > Config.MAX_TOTAL_EXPOSURE_USD:
                 logger.warning(
@@ -68,6 +84,8 @@ class RiskManager:
                     f"Current: {total_current_exposure:.2f} + New: {exposure:.2f} "
                     f"= {total_current_exposure + exposure:.2f} > Limit: {Config.MAX_TOTAL_EXPOSURE_USD}"
                 )
+                # Optional: Scale down to fit exposure limit?
+                # For now, just reject to be safe and maintain risk profile.
                 return 0
             
             # 3. Add commission buffer (0.1% for maker/taker fees + slippage)
@@ -76,13 +94,12 @@ class RiskManager:
             
             if balance < required_margin:
                 logger.warning(
-                    f"Insufficient balance for {exposure} USD exposure. "
+                    f"Insufficient balance for {exposure:.2f} USD exposure. "
                     f"Required Margin (with buffer): {required_margin:.2f}, Balance: {balance:.2f}"
                 )
                 return 0
             
-            # 4. Calculate base position size
-            size = exposure / entry_price
+            # 4. (Size already calculated)
             
             # 5. Validate against exchange minimum order size
             try:

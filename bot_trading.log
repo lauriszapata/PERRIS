@@ -10528,3 +10528,2325 @@
 2025-11-23 16:15:27,721 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.5 minutes...
 2025-11-23 16:16:32,456 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.5 minutes...
 2025-11-23 16:17:38,567 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.4 minutes...
+2025-11-23 16:18:44,096 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.3 minutes...
+2025-11-23 16:19:48,320 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.2 minutes...
+2025-11-23 16:20:54,133 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.1 minutes...
+2025-11-23 16:21:58,579 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.0 minutes...
+2025-11-23 16:23:01,409 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.0 minutes...
+2025-11-23 16:24:02,067 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.0 minutes...
+2025-11-23 16:25:02,429 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.0 minutes...
+2025-11-23 16:26:03,216 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.0 minutes...
+2025-11-23 16:27:06,431 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.9 minutes...
+2025-11-23 16:28:10,423 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.8 minutes...
+2025-11-23 16:29:12,073 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.8 minutes...
+2025-11-23 16:30:13,619 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 16:30:00...
+2025-11-23 16:30:13,865 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 16:30:14,101 - TradingBot - INFO - Starting loop for 30 symbols
+2025-11-23 16:30:14,880 - TradingBot - INFO - --- Analyzing TRX/USDT Closed: 0.28 (ATR: 0.00) | Current: 0.28 ---
+2025-11-23 16:30:14,880 - TradingBot - INFO - Volatility Filter Failed: ATR% 0.15 not in [0.2, 2.5]
+2025-11-23 16:30:14,880 - TradingBot - INFO - Filter Fail: ATR 0.00 (0.15%) out of range
+2025-11-23 16:30:15,163 - TradingBot - INFO - --- Analyzing DOGE/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 16:30:15,638 - TradingBot - INFO - Funding Rate: -0.0015%
+2025-11-23 16:30:15,644 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 31.87 (Req: >= 12)
+  ✅ RSI: 58.64 (Req: > 40)
+  ❌ MACD: -0.0000 (Req: > 0)
+  ✅ Volume: 40590117.00 (Req: >= 34913078.64)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:15,648 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 31.87 (Req: >= 12)
+  ✅ RSI: 58.64 (Req: < 60)
+  ✅ MACD: -0.0000 (Req: < 0)
+  ✅ Volume: 40590117.00 (Req: >= 34913078.64)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:15,915 - TradingBot - INFO - --- Analyzing FIL/USDT Closed: 1.64 (ATR: 0.01) | Current: 1.64 ---
+2025-11-23 16:30:16,150 - TradingBot - INFO - Spread Filter Failed: Spread 0.0611% > 0.03%
+2025-11-23 16:30:16,151 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:16,437 - TradingBot - INFO - --- Analyzing ATOM/USDT Closed: 2.50 (ATR: 0.01) | Current: 2.50 ---
+2025-11-23 16:30:16,671 - TradingBot - INFO - Spread Filter Failed: Spread 0.0400% > 0.03%
+2025-11-23 16:30:16,671 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:16,960 - TradingBot - INFO - --- Analyzing APT/USDT Closed: 2.36 (ATR: 0.01) | Current: 2.36 ---
+2025-11-23 16:30:17,467 - TradingBot - INFO - Funding Rate: -0.0678%
+2025-11-23 16:30:17,473 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 13.79 (Req: >= 12)
+  ✅ RSI: 58.02 (Req: > 40)
+  ✅ MACD: 0.0020 (Req: > 0)
+  ❌ Volume: 109285.60 (Req: >= 164944.50)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:17,476 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 13.79 (Req: >= 12)
+  ✅ RSI: 58.02 (Req: < 60)
+  ❌ MACD: 0.0020 (Req: < 0)
+  ❌ Volume: 109285.60 (Req: >= 164944.50)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:17,796 - TradingBot - INFO - --- Analyzing UNI/USDT Closed: 6.19 (ATR: 0.04) | Current: 6.19 ---
+2025-11-23 16:30:18,401 - TradingBot - INFO - Funding Rate: 0.0041%
+2025-11-23 16:30:18,406 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 14.86 (Req: >= 12)
+  ✅ RSI: 51.08 (Req: > 40)
+  ✅ MACD: 0.0046 (Req: > 0)
+  ❌ Volume: 90719.00 (Req: >= 159795.16)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:18,410 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 14.86 (Req: >= 12)
+  ✅ RSI: 51.08 (Req: < 60)
+  ❌ MACD: 0.0046 (Req: < 0)
+  ❌ Volume: 90719.00 (Req: >= 159795.16)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:18,735 - TradingBot - INFO - --- Analyzing NEAR/USDT Closed: 1.85 (ATR: 0.01) | Current: 1.86 ---
+2025-11-23 16:30:19,008 - TradingBot - INFO - Spread Filter Failed: Spread 0.0539% > 0.03%
+2025-11-23 16:30:19,008 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:19,336 - TradingBot - INFO - --- Analyzing DOT/USDT Closed: 2.31 (ATR: 0.01) | Current: 2.31 ---
+2025-11-23 16:30:19,620 - TradingBot - INFO - Spread Filter Failed: Spread 0.0433% > 0.03%
+2025-11-23 16:30:19,621 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:19,951 - TradingBot - INFO - --- Analyzing HBAR/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 16:30:20,430 - TradingBot - INFO - Funding Rate: -0.0087%
+2025-11-23 16:30:20,437 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 49.13 (Req: >= 12)
+  ✅ RSI: 60.35 (Req: > 40)
+  ❌ MACD: -0.0002 (Req: > 0)
+  ❌ Volume: 10283706.00 (Req: >= 15611915.96)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:20,440 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 49.13 (Req: >= 12)
+  ❌ RSI: 60.35 (Req: < 60)
+  ✅ MACD: -0.0002 (Req: < 0)
+  ❌ Volume: 10283706.00 (Req: >= 15611915.96)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:20,768 - TradingBot - INFO - --- Analyzing ADA/USDT Closed: 0.41 (ATR: 0.00) | Current: 0.41 ---
+2025-11-23 16:30:21,331 - TradingBot - INFO - Funding Rate: -0.0080%
+2025-11-23 16:30:21,336 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 15.14 (Req: >= 12)
+  ✅ RSI: 56.02 (Req: > 40)
+  ✅ MACD: 0.0002 (Req: > 0)
+  ❌ Volume: 2907531.00 (Req: >= 5197088.88)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:21,340 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 15.14 (Req: >= 12)
+  ✅ RSI: 56.02 (Req: < 60)
+  ❌ MACD: 0.0002 (Req: < 0)
+  ❌ Volume: 2907531.00 (Req: >= 5197088.88)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:21,604 - TradingBot - INFO - --- Analyzing RENDER/USDT Closed: 1.74 (ATR: 0.01) | Current: 1.74 ---
+2025-11-23 16:30:21,870 - TradingBot - INFO - Spread Filter Failed: Spread 0.0573% > 0.03%
+2025-11-23 16:30:21,870 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:22,200 - TradingBot - INFO - --- Analyzing ETH/USDT Closed: 2837.60 (ATR: 13.64) | Current: 2838.40 ---
+2025-11-23 16:30:22,792 - TradingBot - INFO - Funding Rate: 0.0003%
+2025-11-23 16:30:22,797 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 19.36 (Req: >= 12)
+  ✅ RSI: 59.68 (Req: > 40)
+  ✅ MACD: 2.3826 (Req: > 0)
+  ❌ Volume: 20226.12 (Req: >= 24330.77)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:22,801 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 19.36 (Req: >= 12)
+  ✅ RSI: 59.68 (Req: < 60)
+  ❌ MACD: 2.3826 (Req: < 0)
+  ❌ Volume: 20226.12 (Req: >= 24330.77)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:23,120 - TradingBot - INFO - --- Analyzing LTC/USDT Closed: 84.04 (ATR: 0.39) | Current: 84.07 ---
+2025-11-23 16:30:23,713 - TradingBot - INFO - Funding Rate: -0.0004%
+2025-11-23 16:30:23,719 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.62 (Req: >= 12)
+  ✅ RSI: 58.09 (Req: > 40)
+  ✅ MACD: 0.0131 (Req: > 0)
+  ✅ Volume: 10714.11 (Req: >= 9847.91)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:23,722 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.62 (Req: >= 12)
+  ✅ RSI: 58.09 (Req: < 60)
+  ❌ MACD: 0.0131 (Req: < 0)
+  ✅ Volume: 10714.11 (Req: >= 9847.91)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:23,988 - TradingBot - INFO - --- Analyzing SOL/USDT Closed: 132.59 (ATR: 0.77) | Current: 132.58 ---
+2025-11-23 16:30:24,460 - TradingBot - INFO - Funding Rate: 0.0039%
+2025-11-23 16:30:24,461 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 26.43 (Req: >= 12)
+  ✅ RSI: 56.16 (Req: > 40)
+  ❌ MACD: -0.0599 (Req: > 0)
+  ❌ Volume: 117108.83 (Req: >= 162952.03)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:24,462 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 26.43 (Req: >= 12)
+  ✅ RSI: 56.16 (Req: < 60)
+  ✅ MACD: -0.0599 (Req: < 0)
+  ❌ Volume: 117108.83 (Req: >= 162952.03)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:24,733 - TradingBot - INFO - --- Analyzing ARB/USDT Closed: 0.20 (ATR: 0.00) | Current: 0.20 ---
+2025-11-23 16:30:25,044 - TradingBot - INFO - Spread Filter Failed: Spread 0.0491% > 0.03%
+2025-11-23 16:30:25,045 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:25,375 - TradingBot - INFO - --- Analyzing OP/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 16:30:25,606 - TradingBot - INFO - Spread Filter Failed: Spread 0.0326% > 0.03%
+2025-11-23 16:30:25,606 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:25,991 - TradingBot - INFO - --- Analyzing BCH/USDT Closed: 551.42 (ATR: 3.68) | Current: 552.04 ---
+2025-11-23 16:30:26,510 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 16:30:26,515 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 12.15 (Req: >= 12)
+  ✅ RSI: 57.19 (Req: > 40)
+  ✅ MACD: 0.3569 (Req: > 0)
+  ❌ Volume: 1095.49 (Req: >= 2608.55)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 16:30:26,518 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 12.15 (Req: >= 12)
+  ✅ RSI: 57.19 (Req: < 60)
+  ❌ MACD: 0.3569 (Req: < 0)
+  ❌ Volume: 1095.49 (Req: >= 2608.55)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:26,787 - TradingBot - INFO - --- Analyzing STX/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 16:30:27,109 - TradingBot - INFO - Spread Filter Failed: Spread 0.0321% > 0.03%
+2025-11-23 16:30:27,109 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:30:27,432 - TradingBot - INFO - --- Analyzing INJ/USDT Closed: 5.44 (ATR: 0.04) | Current: 5.44 ---
+2025-11-23 16:30:28,015 - TradingBot - INFO - Funding Rate: -0.0019%
+2025-11-23 16:30:28,019 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.81 (Req: >= 12)
+  ✅ RSI: 51.68 (Req: > 40)
+  ❌ MACD: -0.0007 (Req: > 0)
+  ❌ Volume: 31131.70 (Req: >= 48357.57)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:28,023 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.81 (Req: >= 12)
+  ✅ RSI: 51.68 (Req: < 60)
+  ✅ MACD: -0.0007 (Req: < 0)
+  ❌ Volume: 31131.70 (Req: >= 48357.57)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:28,957 - TradingBot - INFO - --- Analyzing TIA/USDT Closed: 0.62 (ATR: 0.00) | Current: 0.62 ---
+2025-11-23 16:30:29,448 - TradingBot - INFO - Funding Rate: -0.0397%
+2025-11-23 16:30:29,452 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 9.54 (Req: >= 12)
+  ✅ RSI: 56.07 (Req: > 40)
+  ✅ MACD: 0.0005 (Req: > 0)
+  ❌ Volume: 547138.00 (Req: >= 694415.88)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:29,456 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 9.54 (Req: >= 12)
+  ✅ RSI: 56.07 (Req: < 60)
+  ❌ MACD: 0.0005 (Req: < 0)
+  ❌ Volume: 547138.00 (Req: >= 694415.88)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:29,704 - TradingBot - INFO - --- Analyzing BNB/USDT Closed: 852.66 (ATR: 2.77) | Current: 852.74 ---
+2025-11-23 16:30:30,268 - TradingBot - INFO - Funding Rate: 0.0000%
+2025-11-23 16:30:30,274 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.17 (Req: >= 12)
+  ✅ RSI: 58.79 (Req: > 40)
+  ✅ MACD: 0.1586 (Req: > 0)
+  ✅ Volume: 3496.89 (Req: >= 3063.86)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:30,278 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.17 (Req: >= 12)
+  ✅ RSI: 58.79 (Req: < 60)
+  ❌ MACD: 0.1586 (Req: < 0)
+  ✅ Volume: 3496.89 (Req: >= 3063.86)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:30,556 - TradingBot - INFO - --- Analyzing XMR/USDT Closed: 390.10 (ATR: 3.55) | Current: 390.23 ---
+2025-11-23 16:30:31,086 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 16:30:31,092 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 11.83 (Req: >= 12)
+  ✅ RSI: 46.52 (Req: > 40)
+  ✅ MACD: 0.1057 (Req: > 0)
+  ❌ Volume: 536.24 (Req: >= 955.52)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:31,095 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 11.83 (Req: >= 12)
+  ✅ RSI: 46.52 (Req: < 60)
+  ❌ MACD: 0.1057 (Req: < 0)
+  ❌ Volume: 536.24 (Req: >= 955.52)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:31,414 - TradingBot - INFO - --- Analyzing BTC/USDT Closed: 87549.80 (ATR: 321.61) | Current: 87533.80 ---
+2025-11-23 16:30:32,008 - TradingBot - INFO - Funding Rate: -0.0011%
+2025-11-23 16:30:32,014 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 31.91 (Req: >= 12)
+  ✅ RSI: 60.13 (Req: > 40)
+  ✅ MACD: 9.9099 (Req: > 0)
+  ❌ Volume: 567.11 (Req: >= 1012.30)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:32,017 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 31.91 (Req: >= 12)
+  ❌ RSI: 60.13 (Req: < 60)
+  ❌ MACD: 9.9099 (Req: < 0)
+  ❌ Volume: 567.11 (Req: >= 1012.30)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:32,340 - TradingBot - INFO - --- Analyzing XLM/USDT Closed: 0.25 (ATR: 0.00) | Current: 0.25 ---
+2025-11-23 16:30:32,930 - TradingBot - INFO - Funding Rate: -0.0156%
+2025-11-23 16:30:32,934 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 46.70 (Req: >= 12)
+  ✅ RSI: 64.51 (Req: > 40)
+  ❌ MACD: -0.0000 (Req: > 0)
+  ❌ Volume: 1758032.00 (Req: >= 2991942.24)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 16:30:32,937 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 46.70 (Req: >= 12)
+  ❌ RSI: 64.51 (Req: < 60)
+  ✅ MACD: -0.0000 (Req: < 0)
+  ❌ Volume: 1758032.00 (Req: >= 2991942.24)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:33,205 - TradingBot - INFO - --- Analyzing SUI/USDT Closed: 1.39 (ATR: 0.01) | Current: 1.39 ---
+2025-11-23 16:30:33,852 - TradingBot - INFO - Funding Rate: 0.0032%
+2025-11-23 16:30:33,858 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.77 (Req: >= 12)
+  ✅ RSI: 57.99 (Req: > 40)
+  ✅ MACD: 0.0006 (Req: > 0)
+  ✅ Volume: 1420288.70 (Req: >= 1238519.52)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:33,862 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.77 (Req: >= 12)
+  ✅ RSI: 57.99 (Req: < 60)
+  ❌ MACD: 0.0006 (Req: < 0)
+  ✅ Volume: 1420288.70 (Req: >= 1238519.52)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:34,183 - TradingBot - INFO - --- Analyzing AVAX/USDT Closed: 13.39 (ATR: 0.05) | Current: 13.39 ---
+2025-11-23 16:30:34,705 - TradingBot - INFO - Funding Rate: -0.0180%
+2025-11-23 16:30:34,707 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 17.72 (Req: >= 12)
+  ✅ RSI: 56.06 (Req: > 40)
+  ✅ MACD: 0.0016 (Req: > 0)
+  ❌ Volume: 60074.00 (Req: >= 90869.00)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:34,709 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 17.72 (Req: >= 12)
+  ✅ RSI: 56.06 (Req: < 60)
+  ❌ MACD: 0.0016 (Req: < 0)
+  ❌ Volume: 60074.00 (Req: >= 90869.00)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:35,003 - TradingBot - INFO - --- Analyzing POL/USDT Closed: 0.14 (ATR: 0.00) | Current: 0.14 ---
+2025-11-23 16:30:35,516 - TradingBot - INFO - Funding Rate: -0.0032%
+2025-11-23 16:30:35,521 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 9.70 (Req: >= 12)
+  ✅ RSI: 50.97 (Req: > 40)
+  ❌ MACD: -0.0000 (Req: > 0)
+  ✅ Volume: 1092152.00 (Req: >= 882442.16)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:35,524 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 9.70 (Req: >= 12)
+  ✅ RSI: 50.97 (Req: < 60)
+  ✅ MACD: -0.0000 (Req: < 0)
+  ✅ Volume: 1092152.00 (Req: >= 882442.16)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:35,806 - TradingBot - INFO - --- Analyzing XRP/USDT Closed: 2.07 (ATR: 0.01) | Current: 2.07 ---
+2025-11-23 16:30:36,281 - TradingBot - INFO - Funding Rate: -0.0116%
+2025-11-23 16:30:36,287 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 20.34 (Req: >= 12)
+  ✅ RSI: 57.05 (Req: > 40)
+  ❌ MACD: -0.0007 (Req: > 0)
+  ❌ Volume: 3392218.80 (Req: >= 4814469.68)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:36,291 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 20.34 (Req: >= 12)
+  ✅ RSI: 57.05 (Req: < 60)
+  ✅ MACD: -0.0007 (Req: < 0)
+  ❌ Volume: 3392218.80 (Req: >= 4814469.68)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:30:36,571 - TradingBot - INFO - --- Analyzing LINK/USDT Closed: 12.69 (ATR: 0.07) | Current: 12.69 ---
+2025-11-23 16:30:37,075 - TradingBot - INFO - Funding Rate: 0.0030%
+2025-11-23 16:30:37,081 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 23.95 (Req: >= 12)
+  ✅ RSI: 59.13 (Req: > 40)
+  ✅ MACD: 0.0062 (Req: > 0)
+  ❌ Volume: 84184.98 (Req: >= 107810.05)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:37,085 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 23.95 (Req: >= 12)
+  ✅ RSI: 59.13 (Req: < 60)
+  ❌ MACD: 0.0062 (Req: < 0)
+  ❌ Volume: 84184.98 (Req: >= 107810.05)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:37,355 - TradingBot - INFO - --- Analyzing ETC/USDT Closed: 13.70 (ATR: 0.06) | Current: 13.70 ---
+2025-11-23 16:30:37,948 - TradingBot - INFO - Funding Rate: -0.0090%
+2025-11-23 16:30:37,954 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 10.95 (Req: >= 12)
+  ✅ RSI: 55.10 (Req: > 40)
+  ✅ MACD: 0.0023 (Req: > 0)
+  ❌ Volume: 10213.03 (Req: >= 17278.01)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:30:37,958 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.95 (Req: >= 12)
+  ✅ RSI: 55.10 (Req: < 60)
+  ❌ MACD: 0.0023 (Req: < 0)
+  ❌ Volume: 10213.03 (Req: >= 17278.01)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:30:37,958 - TradingBot - INFO - === 📉 TOP 3 REJECTION REASONS ===
+2025-11-23 16:30:37,958 - TradingBot - INFO -   ❌ Signal: Volume: 32 times
+2025-11-23 16:30:37,958 - TradingBot - INFO -   ❌ Signal: Structure: 29 times
+2025-11-23 16:30:37,958 - TradingBot - INFO -   ❌ Signal: Trend: 24 times
+2025-11-23 16:30:37,958 - TradingBot - INFO - ====================================
+2025-11-23 16:30:37,958 - TradingBot - INFO - 💤 NO ACTIVE POSITIONS
+2025-11-23 16:30:37,959 - TradingBot - INFO - ====================================
+2025-11-23 16:30:37,959 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.8 minutes...
+2025-11-23 16:31:20,323 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.7 minutes...
+2025-11-23 16:32:20,143 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.7 minutes...
+2025-11-23 16:33:23,426 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.6 minutes...
+2025-11-23 16:34:26,609 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.6 minutes...
+2025-11-23 16:35:28,797 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.5 minutes...
+2025-11-23 16:36:29,285 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.5 minutes...
+2025-11-23 16:37:29,777 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.5 minutes...
+2025-11-23 16:38:30,191 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.5 minutes...
+2025-11-23 16:39:33,002 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.5 minutes...
+2025-11-23 16:40:33,994 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.4 minutes...
+2025-11-23 16:41:37,380 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.4 minutes...
+2025-11-23 16:42:37,294 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.4 minutes...
+2025-11-23 16:43:39,747 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.3 minutes...
+2025-11-23 16:44:46,104 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.2 minutes...
+2025-11-23 16:45:05,079 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 16:45:00...
+2025-11-23 16:45:05,314 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 16:45:05,567 - TradingBot - INFO - Starting loop for 30 symbols
+2025-11-23 16:45:05,833 - TradingBot - INFO - --- Analyzing TRX/USDT Closed: 0.28 (ATR: 0.00) | Current: 0.28 ---
+2025-11-23 16:45:05,833 - TradingBot - INFO - Volatility Filter Failed: ATR% 0.14 not in [0.2, 2.5]
+2025-11-23 16:45:05,833 - TradingBot - INFO - Filter Fail: ATR 0.00 (0.14%) out of range
+2025-11-23 16:45:06,120 - TradingBot - INFO - --- Analyzing DOGE/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 16:45:06,589 - TradingBot - INFO - Funding Rate: -0.0019%
+2025-11-23 16:45:06,595 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 31.06 (Req: >= 12)
+  ✅ RSI: 56.66 (Req: > 40)
+  ❌ MACD: -0.0000 (Req: > 0)
+  ❌ Volume: 26993158.00 (Req: >= 33252257.48)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:06,598 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 31.06 (Req: >= 12)
+  ✅ RSI: 56.66 (Req: < 60)
+  ✅ MACD: -0.0000 (Req: < 0)
+  ❌ Volume: 26993158.00 (Req: >= 33252257.48)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:06,875 - TradingBot - INFO - --- Analyzing FIL/USDT Closed: 1.64 (ATR: 0.01) | Current: 1.64 ---
+2025-11-23 16:45:07,106 - TradingBot - INFO - Spread Filter Failed: Spread 0.0611% > 0.03%
+2025-11-23 16:45:07,106 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:07,402 - TradingBot - INFO - --- Analyzing ATOM/USDT Closed: 2.49 (ATR: 0.01) | Current: 2.49 ---
+2025-11-23 16:45:07,642 - TradingBot - INFO - Spread Filter Failed: Spread 0.0402% > 0.03%
+2025-11-23 16:45:07,642 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:07,919 - TradingBot - INFO - --- Analyzing APT/USDT Closed: 2.36 (ATR: 0.01) | Current: 2.36 ---
+2025-11-23 16:45:08,393 - TradingBot - INFO - Funding Rate: -0.0676%
+2025-11-23 16:45:08,400 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 13.53 (Req: >= 12)
+  ✅ RSI: 57.14 (Req: > 40)
+  ✅ MACD: 0.0020 (Req: > 0)
+  ✅ Volume: 185072.10 (Req: >= 164932.17)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:08,403 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 13.53 (Req: >= 12)
+  ✅ RSI: 57.14 (Req: < 60)
+  ❌ MACD: 0.0020 (Req: < 0)
+  ✅ Volume: 185072.10 (Req: >= 164932.17)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:08,677 - TradingBot - INFO - --- Analyzing UNI/USDT Closed: 6.18 (ATR: 0.04) | Current: 6.18 ---
+2025-11-23 16:45:09,147 - TradingBot - INFO - Funding Rate: 0.0049%
+2025-11-23 16:45:09,152 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 13.82 (Req: >= 12)
+  ✅ RSI: 49.44 (Req: > 40)
+  ✅ MACD: 0.0029 (Req: > 0)
+  ❌ Volume: 133955.00 (Req: >= 155054.04)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:09,156 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 13.82 (Req: >= 12)
+  ✅ RSI: 49.44 (Req: < 60)
+  ❌ MACD: 0.0029 (Req: < 0)
+  ❌ Volume: 133955.00 (Req: >= 155054.04)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:09,438 - TradingBot - INFO - --- Analyzing NEAR/USDT Closed: 1.85 (ATR: 0.01) | Current: 1.85 ---
+2025-11-23 16:45:09,673 - TradingBot - INFO - Spread Filter Failed: Spread 0.0540% > 0.03%
+2025-11-23 16:45:09,673 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:09,960 - TradingBot - INFO - --- Analyzing DOT/USDT Closed: 2.31 (ATR: 0.01) | Current: 2.31 ---
+2025-11-23 16:45:10,197 - TradingBot - INFO - Spread Filter Failed: Spread 0.0434% > 0.03%
+2025-11-23 16:45:10,198 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:10,485 - TradingBot - INFO - --- Analyzing HBAR/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 16:45:10,967 - TradingBot - INFO - Funding Rate: -0.0082%
+2025-11-23 16:45:10,971 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 47.98 (Req: >= 12)
+  ✅ RSI: 60.20 (Req: > 40)
+  ❌ MACD: -0.0002 (Req: > 0)
+  ❌ Volume: 8227770.00 (Req: >= 15015908.84)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:10,974 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 47.98 (Req: >= 12)
+  ❌ RSI: 60.20 (Req: < 60)
+  ✅ MACD: -0.0002 (Req: < 0)
+  ❌ Volume: 8227770.00 (Req: >= 15015908.84)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:11,228 - TradingBot - INFO - --- Analyzing ADA/USDT Closed: 0.41 (ATR: 0.00) | Current: 0.41 ---
+2025-11-23 16:45:11,700 - TradingBot - INFO - Funding Rate: -0.0075%
+2025-11-23 16:45:11,705 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 14.39 (Req: >= 12)
+  ✅ RSI: 53.44 (Req: > 40)
+  ✅ MACD: 0.0002 (Req: > 0)
+  ❌ Volume: 2272156.00 (Req: >= 4934960.40)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:11,709 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 14.39 (Req: >= 12)
+  ✅ RSI: 53.44 (Req: < 60)
+  ❌ MACD: 0.0002 (Req: < 0)
+  ❌ Volume: 2272156.00 (Req: >= 4934960.40)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:11,982 - TradingBot - INFO - --- Analyzing RENDER/USDT Closed: 1.74 (ATR: 0.01) | Current: 1.74 ---
+2025-11-23 16:45:12,217 - TradingBot - INFO - Spread Filter Failed: Spread 0.0574% > 0.03%
+2025-11-23 16:45:12,217 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:12,501 - TradingBot - INFO - --- Analyzing ETH/USDT Closed: 2827.91 (ATR: 13.51) | Current: 2829.25 ---
+2025-11-23 16:45:12,974 - TradingBot - INFO - Funding Rate: 0.0004%
+2025-11-23 16:45:12,979 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 19.46 (Req: >= 12)
+  ✅ RSI: 53.93 (Req: > 40)
+  ✅ MACD: 1.9457 (Req: > 0)
+  ❌ Volume: 16467.24 (Req: >= 23951.32)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:12,980 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 19.46 (Req: >= 12)
+  ✅ RSI: 53.93 (Req: < 60)
+  ❌ MACD: 1.9457 (Req: < 0)
+  ❌ Volume: 16467.24 (Req: >= 23951.32)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:13,264 - TradingBot - INFO - --- Analyzing LTC/USDT Closed: 83.89 (ATR: 0.38) | Current: 83.90 ---
+2025-11-23 16:45:13,733 - TradingBot - INFO - Funding Rate: -0.0005%
+2025-11-23 16:45:13,739 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.19 (Req: >= 12)
+  ✅ RSI: 55.01 (Req: > 40)
+  ✅ MACD: 0.0137 (Req: > 0)
+  ✅ Volume: 13491.69 (Req: >= 9861.07)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:13,743 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.19 (Req: >= 12)
+  ✅ RSI: 55.01 (Req: < 60)
+  ❌ MACD: 0.0137 (Req: < 0)
+  ✅ Volume: 13491.69 (Req: >= 9861.07)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:14,076 - TradingBot - INFO - --- Analyzing SOL/USDT Closed: 132.47 (ATR: 0.74) | Current: 132.52 ---
+2025-11-23 16:45:14,544 - TradingBot - INFO - Funding Rate: 0.0035%
+2025-11-23 16:45:14,549 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 24.74 (Req: >= 12)
+  ✅ RSI: 54.87 (Req: > 40)
+  ❌ MACD: -0.0555 (Req: > 0)
+  ❌ Volume: 94333.62 (Req: >= 157157.16)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:14,553 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 24.74 (Req: >= 12)
+  ✅ RSI: 54.87 (Req: < 60)
+  ✅ MACD: -0.0555 (Req: < 0)
+  ❌ Volume: 94333.62 (Req: >= 157157.16)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:14,834 - TradingBot - INFO - --- Analyzing ARB/USDT Closed: 0.20 (ATR: 0.00) | Current: 0.20 ---
+2025-11-23 16:45:15,067 - TradingBot - INFO - Spread Filter Failed: Spread 0.0491% > 0.03%
+2025-11-23 16:45:15,068 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:15,353 - TradingBot - INFO - --- Analyzing OP/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 16:45:15,587 - TradingBot - INFO - Spread Filter Failed: Spread 0.0327% > 0.03%
+2025-11-23 16:45:15,587 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:15,891 - TradingBot - INFO - --- Analyzing BCH/USDT Closed: 551.24 (ATR: 3.57) | Current: 551.00 ---
+2025-11-23 16:45:16,363 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 16:45:16,369 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 13.18 (Req: >= 12)
+  ✅ RSI: 56.71 (Req: > 40)
+  ✅ MACD: 0.3900 (Req: > 0)
+  ❌ Volume: 2511.43 (Req: >= 2596.91)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 16:45:16,373 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 13.18 (Req: >= 12)
+  ✅ RSI: 56.71 (Req: < 60)
+  ❌ MACD: 0.3900 (Req: < 0)
+  ❌ Volume: 2511.43 (Req: >= 2596.91)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:16,642 - TradingBot - INFO - --- Analyzing STX/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 16:45:16,875 - TradingBot - INFO - Spread Filter Failed: Spread 0.0321% > 0.03%
+2025-11-23 16:45:16,876 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 16:45:17,168 - TradingBot - INFO - --- Analyzing INJ/USDT Closed: 5.42 (ATR: 0.04) | Current: 5.42 ---
+2025-11-23 16:45:17,673 - TradingBot - INFO - Funding Rate: -0.0020%
+2025-11-23 16:45:17,679 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.31 (Req: >= 12)
+  ✅ RSI: 49.38 (Req: > 40)
+  ❌ MACD: -0.0003 (Req: > 0)
+  ❌ Volume: 32101.10 (Req: >= 44951.96)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:17,683 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 10.31 (Req: >= 12)
+  ✅ RSI: 49.38 (Req: < 60)
+  ✅ MACD: -0.0003 (Req: < 0)
+  ❌ Volume: 32101.10 (Req: >= 44951.96)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:18,077 - TradingBot - INFO - --- Analyzing TIA/USDT Closed: 0.62 (ATR: 0.00) | Current: 0.62 ---
+2025-11-23 16:45:18,668 - TradingBot - INFO - Funding Rate: -0.0389%
+2025-11-23 16:45:18,673 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.05 (Req: >= 12)
+  ✅ RSI: 55.53 (Req: > 40)
+  ✅ MACD: 0.0005 (Req: > 0)
+  ❌ Volume: 480936.00 (Req: >= 657968.16)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:18,677 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.05 (Req: >= 12)
+  ✅ RSI: 55.53 (Req: < 60)
+  ❌ MACD: 0.0005 (Req: < 0)
+  ❌ Volume: 480936.00 (Req: >= 657968.16)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:18,998 - TradingBot - INFO - --- Analyzing BNB/USDT Closed: 852.48 (ATR: 2.71) | Current: 852.29 ---
+2025-11-23 16:45:19,591 - TradingBot - INFO - Funding Rate: 0.0000%
+2025-11-23 16:45:19,597 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.30 (Req: >= 12)
+  ✅ RSI: 58.24 (Req: > 40)
+  ✅ MACD: 0.1769 (Req: > 0)
+  ✅ Volume: 3774.16 (Req: >= 3003.37)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:19,601 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.30 (Req: >= 12)
+  ✅ RSI: 58.24 (Req: < 60)
+  ❌ MACD: 0.1769 (Req: < 0)
+  ✅ Volume: 3774.16 (Req: >= 3003.37)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:19,918 - TradingBot - INFO - --- Analyzing XMR/USDT Closed: 389.87 (ATR: 3.43) | Current: 389.78 ---
+2025-11-23 16:45:20,511 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 16:45:20,516 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 11.39 (Req: >= 12)
+  ✅ RSI: 46.06 (Req: > 40)
+  ✅ MACD: 0.0756 (Req: > 0)
+  ❌ Volume: 432.54 (Req: >= 934.99)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:20,520 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 11.39 (Req: >= 12)
+  ✅ RSI: 46.06 (Req: < 60)
+  ❌ MACD: 0.0756 (Req: < 0)
+  ❌ Volume: 432.54 (Req: >= 934.99)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:20,858 - TradingBot - INFO - --- Analyzing BTC/USDT Closed: 87610.00 (ATR: 318.05) | Current: 87593.40 ---
+2025-11-23 16:45:21,369 - TradingBot - INFO - Funding Rate: -0.0011%
+2025-11-23 16:45:21,376 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 32.08 (Req: >= 12)
+  ✅ RSI: 61.16 (Req: > 40)
+  ✅ MACD: 13.7014 (Req: > 0)
+  ❌ Volume: 961.70 (Req: >= 966.06)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:21,380 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 32.08 (Req: >= 12)
+  ❌ RSI: 61.16 (Req: < 60)
+  ❌ MACD: 13.7014 (Req: < 0)
+  ❌ Volume: 961.70 (Req: >= 966.06)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:21,661 - TradingBot - INFO - --- Analyzing XLM/USDT Closed: 0.25 (ATR: 0.00) | Current: 0.25 ---
+2025-11-23 16:45:22,196 - TradingBot - INFO - Funding Rate: -0.0151%
+2025-11-23 16:45:22,202 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 47.02 (Req: >= 12)
+  ✅ RSI: 67.17 (Req: > 40)
+  ✅ MACD: 0.0000 (Req: > 0)
+  ✅ Volume: 3236774.00 (Req: >= 2920373.60)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 16:45:22,202 - TradingBot - INFO - 🚀 ENTRY SIGNAL FOUND: LONG
+2025-11-23 16:45:22,459 - TradingBot - INFO - Current total exposure: 0.00 USD
+2025-11-23 16:45:22,459 - TradingBot - INFO - ✅ Position size calculated: 1992.111239 XLM (Exposure: 500.00 USD)
+2025-11-23 16:45:22,459 - TradingBot - INFO - Executing LONG | Size: 1992.1112 | Entry: 0.25099 | SL: 0.24923493482860118
+2025-11-23 16:45:22,459 - TradingBot - INFO - Opening LONG position for XLM/USDT, amount: 1992.1112394916133
+2025-11-23 16:45:22,764 - TradingBot - INFO - Order created: 20215160749
+2025-11-23 16:45:22,767 - TradingBot - INFO - ✅ Trade timestamp recorded. Total trades in last hour: 1
+2025-11-23 16:45:22,767 - TradingBot - INFO - Setting SL for XLM/USDT LONG at 0.24923493482860118
+2025-11-23 16:45:23,710 - TradingBot - INFO - --- Analyzing SUI/USDT Closed: 1.39 (ATR: 0.01) | Current: 1.39 ---
+2025-11-23 16:45:24,194 - TradingBot - INFO - Funding Rate: 0.0026%
+2025-11-23 16:45:24,196 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.62 (Req: >= 12)
+  ✅ RSI: 58.40 (Req: > 40)
+  ✅ MACD: 0.0007 (Req: > 0)
+  ✅ Volume: 1214762.10 (Req: >= 1188287.34)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:24,197 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.62 (Req: >= 12)
+  ✅ RSI: 58.40 (Req: < 60)
+  ❌ MACD: 0.0007 (Req: < 0)
+  ✅ Volume: 1214762.10 (Req: >= 1188287.34)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:24,512 - TradingBot - INFO - --- Analyzing AVAX/USDT Closed: 13.38 (ATR: 0.05) | Current: 13.38 ---
+2025-11-23 16:45:24,980 - TradingBot - INFO - Funding Rate: -0.0180%
+2025-11-23 16:45:24,982 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 17.40 (Req: >= 12)
+  ✅ RSI: 53.92 (Req: > 40)
+  ✅ MACD: 0.0011 (Req: > 0)
+  ✅ Volume: 109547.00 (Req: >= 88570.52)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:24,983 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 17.40 (Req: >= 12)
+  ✅ RSI: 53.92 (Req: < 60)
+  ❌ MACD: 0.0011 (Req: < 0)
+  ✅ Volume: 109547.00 (Req: >= 88570.52)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:25,356 - TradingBot - INFO - --- Analyzing POL/USDT Closed: 0.14 (ATR: 0.00) | Current: 0.14 ---
+2025-11-23 16:45:25,874 - TradingBot - INFO - Funding Rate: -0.0037%
+2025-11-23 16:45:25,879 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 9.34 (Req: >= 12)
+  ✅ RSI: 49.85 (Req: > 40)
+  ❌ MACD: -0.0000 (Req: > 0)
+  ❌ Volume: 792188.00 (Req: >= 872803.28)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:25,883 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 9.34 (Req: >= 12)
+  ✅ RSI: 49.85 (Req: < 60)
+  ✅ MACD: -0.0000 (Req: < 0)
+  ❌ Volume: 792188.00 (Req: >= 872803.28)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:26,153 - TradingBot - INFO - --- Analyzing XRP/USDT Closed: 2.07 (ATR: 0.01) | Current: 2.07 ---
+2025-11-23 16:45:26,758 - TradingBot - INFO - Funding Rate: -0.0117%
+2025-11-23 16:45:26,764 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 19.64 (Req: >= 12)
+  ✅ RSI: 56.50 (Req: > 40)
+  ❌ MACD: -0.0006 (Req: > 0)
+  ❌ Volume: 3474528.60 (Req: >= 4543918.24)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:26,768 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 19.64 (Req: >= 12)
+  ✅ RSI: 56.50 (Req: < 60)
+  ✅ MACD: -0.0006 (Req: < 0)
+  ❌ Volume: 3474528.60 (Req: >= 4543918.24)
+  ❌ Structure: No LH (Req: )
+
+2025-11-23 16:45:27,060 - TradingBot - INFO - --- Analyzing LINK/USDT Closed: 12.64 (ATR: 0.07) | Current: 12.64 ---
+2025-11-23 16:45:27,536 - TradingBot - INFO - Funding Rate: 0.0035%
+2025-11-23 16:45:27,541 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 23.77 (Req: >= 12)
+  ✅ RSI: 53.65 (Req: > 40)
+  ✅ MACD: 0.0038 (Req: > 0)
+  ❌ Volume: 93292.77 (Req: >= 99584.12)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:27,545 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 23.77 (Req: >= 12)
+  ✅ RSI: 53.65 (Req: < 60)
+  ❌ MACD: 0.0038 (Req: < 0)
+  ❌ Volume: 93292.77 (Req: >= 99584.12)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:27,820 - TradingBot - INFO - --- Analyzing ETC/USDT Closed: 13.70 (ATR: 0.06) | Current: 13.69 ---
+2025-11-23 16:45:28,298 - TradingBot - INFO - Funding Rate: -0.0083%
+2025-11-23 16:45:28,304 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 11.27 (Req: >= 12)
+  ✅ RSI: 54.25 (Req: > 40)
+  ✅ MACD: 0.0034 (Req: > 0)
+  ✅ Volume: 17627.38 (Req: >= 17020.01)
+  ❌ Structure: No HL (Req: )
+
+2025-11-23 16:45:28,308 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 11.27 (Req: >= 12)
+  ✅ RSI: 54.25 (Req: < 60)
+  ❌ MACD: 0.0034 (Req: < 0)
+  ✅ Volume: 17627.38 (Req: >= 17020.01)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 16:45:28,308 - TradingBot - INFO - === 📉 TOP 3 REJECTION REASONS ===
+2025-11-23 16:45:28,308 - TradingBot - INFO -   ❌ Signal: Volume: 28 times
+2025-11-23 16:45:28,308 - TradingBot - INFO -   ❌ Signal: Structure: 28 times
+2025-11-23 16:45:28,308 - TradingBot - INFO -   ❌ Signal: Trend: 22 times
+2025-11-23 16:45:28,308 - TradingBot - INFO - ====================================
+2025-11-23 16:45:28,308 - TradingBot - INFO - 💤 NO ACTIVE POSITIONS
+2025-11-23 16:45:28,308 - TradingBot - INFO - ====================================
+2025-11-23 16:45:28,882 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2512 | PnL: +0.08% | Dist to SL: 0.78%
+2025-11-23 16:45:45,905 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.2 minutes...
+2025-11-23 16:45:50,238 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2512 | PnL: +0.07% | Dist to SL: 0.77%
+2025-11-23 16:46:11,724 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2511 | PnL: +0.06% | Dist to SL: 0.76%
+2025-11-23 16:46:33,626 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2511 | PnL: +0.03% | Dist to SL: 0.73%
+2025-11-23 16:46:46,127 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.2 minutes...
+2025-11-23 16:46:55,433 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2512 | PnL: +0.10% | Dist to SL: 0.80%
+2025-11-23 16:47:17,381 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2510 | PnL: +0.01% | Dist to SL: 0.71%
+2025-11-23 16:47:39,460 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2513 | PnL: +0.12% | Dist to SL: 0.81%
+2025-11-23 16:47:46,439 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.2 minutes...
+2025-11-23 16:48:01,436 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2512 | PnL: +0.10% | Dist to SL: 0.80%
+2025-11-23 16:48:23,399 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2513 | PnL: +0.14% | Dist to SL: 0.84%
+2025-11-23 16:48:45,518 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2514 | PnL: +0.14% | Dist to SL: 0.84%
+2025-11-23 16:48:46,520 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.2 minutes...
+2025-11-23 16:49:07,431 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2516 | PnL: +0.24% | Dist to SL: 0.94%
+2025-11-23 16:49:29,347 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2515 | PnL: +0.22% | Dist to SL: 0.92%
+2025-11-23 16:49:46,855 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.2 minutes...
+2025-11-23 16:49:51,280 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2514 | PnL: +0.17% | Dist to SL: 0.87%
+2025-11-23 16:50:13,172 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2515 | PnL: +0.22% | Dist to SL: 0.92%
+2025-11-23 16:50:35,214 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2515 | PnL: +0.20% | Dist to SL: 0.90%
+2025-11-23 16:50:46,638 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.2 minutes...
+2025-11-23 16:50:57,218 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2516 | PnL: +0.26% | Dist to SL: 0.96%
+2025-11-23 16:51:06,662 - TradingBot - INFO - 💰 P1 HIT for XLM/USDT LONG! Price: 0.2519 (Target: 0.2517), PnL: 0.35% (1.50 USD)
+2025-11-23 16:51:06,662 - TradingBot - INFO - Closing LONG position for XLM/USDT, amount: 99.60556197458067
+2025-11-23 16:51:07,240 - TradingBot - INFO - Close order created: 20215209972
+2025-11-23 16:51:07,242 - TradingBot - INFO - 🛡️ Moving SL to Break-Even: 0.2512
+2025-11-23 16:51:07,242 - TradingBot - INFO - Setting SL for XLM/USDT LONG at 0.25124098999999994
+2025-11-23 16:51:07,854 - TradingBot - INFO - 📊 Remaining position: 95%
+2025-11-23 16:51:15,958 - TradingBot - INFO - 💰 P2 HIT for XLM/USDT LONG! Price: 0.2520 (Target: 0.2520), PnL: 0.41% (2.00 USD)
+2025-11-23 16:51:15,959 - TradingBot - INFO - Closing LONG position for XLM/USDT, amount: 99.60556197458067
+2025-11-23 16:51:16,564 - TradingBot - INFO - Close order created: 20215211439
+2025-11-23 16:51:16,566 - TradingBot - INFO - 🛡️ Moving SL to P1 Level: 0.2517 (0.3%)
+2025-11-23 16:51:16,566 - TradingBot - INFO - Setting SL for XLM/USDT LONG at 0.25174296999999995
+2025-11-23 16:51:17,040 - TradingBot - INFO - 📊 Remaining position: 90%
+2025-11-23 16:51:19,049 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2521 | PnL: +0.43% | Dist to SL: 0.13%
+2025-11-23 16:51:40,664 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2520 | PnL: +0.42% | Dist to SL: 0.12%
+2025-11-23 16:51:47,381 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.2 minutes...
+2025-11-23 16:52:02,845 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2521 | PnL: +0.44% | Dist to SL: 0.14%
+2025-11-23 16:52:25,269 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2522 | PnL: +0.50% | Dist to SL: 0.20%
+2025-11-23 16:52:44,316 - TradingBot - INFO - 💰 P3 HIT for XLM/USDT LONG! Price: 0.2523 (Target: 0.2522), PnL: 0.53% (2.50 USD)
+2025-11-23 16:52:44,317 - TradingBot - INFO - Closing LONG position for XLM/USDT, amount: 99.60556197458067
+2025-11-23 16:52:44,930 - TradingBot - INFO - Close order created: 20215222290
+2025-11-23 16:52:44,931 - TradingBot - INFO - 🛡️ Moving SL to P2 Level: 0.2520 (0.4%)
+2025-11-23 16:52:44,931 - TradingBot - INFO - Setting SL for XLM/USDT LONG at 0.25199396
+2025-11-23 16:52:45,649 - TradingBot - INFO - 📊 Remaining position: 85%
+2025-11-23 16:52:47,592 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2523 | PnL: +0.52% | Dist to SL: 0.12%
+2025-11-23 16:52:47,593 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.2 minutes...
+2025-11-23 16:53:09,438 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2524 | PnL: +0.55% | Dist to SL: 0.15%
+2025-11-23 16:53:22,204 - TradingBot - INFO - 💰 P4 HIT for XLM/USDT LONG! Price: 0.2525 (Target: 0.2525), PnL: 0.61% (3.00 USD)
+2025-11-23 16:53:22,204 - TradingBot - INFO - Closing LONG position for XLM/USDT, amount: 99.60556197458067
+2025-11-23 16:53:22,754 - TradingBot - INFO - Close order created: 20215227035
+2025-11-23 16:53:22,756 - TradingBot - INFO - 🛡️ Moving SL to P3 Level: 0.2522 (0.5%)
+2025-11-23 16:53:22,756 - TradingBot - INFO - Setting SL for XLM/USDT LONG at 0.25224494999999997
+2025-11-23 16:53:23,328 - TradingBot - INFO - 📊 Remaining position: 80%
+2025-11-23 16:53:31,420 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2525 | PnL: +0.61% | Dist to SL: 0.10%
+2025-11-23 16:53:47,297 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.2 minutes...
+2025-11-23 16:53:53,243 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2527 | PnL: +0.70% | Dist to SL: 0.20%
+2025-11-23 16:54:15,145 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.71% | Dist to SL: 0.20%
+2025-11-23 16:54:37,366 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.72% | Dist to SL: 0.22%
+2025-11-23 16:54:47,507 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.2 minutes...
+2025-11-23 16:54:59,177 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2527 | PnL: +0.69% | Dist to SL: 0.18%
+2025-11-23 16:55:21,029 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2526 | PnL: +0.65% | Dist to SL: 0.15%
+2025-11-23 16:55:43,006 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.73% | Dist to SL: 0.22%
+2025-11-23 16:55:47,760 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.2 minutes...
+2025-11-23 16:56:04,638 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2529 | PnL: +0.75% | Dist to SL: 0.25%
+2025-11-23 16:56:26,526 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2529 | PnL: +0.76% | Dist to SL: 0.26%
+2025-11-23 16:56:48,560 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2529 | PnL: +0.76% | Dist to SL: 0.26%
+2025-11-23 16:56:48,561 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.2 minutes...
+2025-11-23 16:57:10,352 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.74% | Dist to SL: 0.24%
+2025-11-23 16:57:32,205 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.71% | Dist to SL: 0.20%
+2025-11-23 16:57:48,528 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.2 minutes...
+2025-11-23 16:57:54,093 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.73% | Dist to SL: 0.23%
+2025-11-23 16:58:16,401 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2528 | PnL: +0.73% | Dist to SL: 0.23%
+2025-11-23 16:58:38,315 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2525 | PnL: +0.62% | Dist to SL: 0.12%
+2025-11-23 16:58:48,440 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.2 minutes...
+2025-11-23 16:59:00,333 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2525 | PnL: +0.58% | Dist to SL: 0.08%
+2025-11-23 16:59:22,714 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2523 | PnL: +0.51% | Dist to SL: 0.01%
+2025-11-23 16:59:45,050 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2523 | PnL: +0.53% | Dist to SL: 0.03%
+2025-11-23 16:59:48,462 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.2 minutes...
+2025-11-23 17:00:05,160 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 17:00:00...
+2025-11-23 17:00:05,416 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 17:00:05,416 - TradingBot - INFO - Max Trades Per Hour Reached: 5
+2025-11-23 17:00:05,417 - TradingBot - WARNING - 🛑 Trade frequency limit reached! Skipping new entries.
+2025-11-23 17:00:07,780 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2522 | PnL: +0.50% | Dist to SL: -0.00%
+2025-11-23 17:00:29,914 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2523 | PnL: +0.54% | Dist to SL: 0.04%
+2025-11-23 17:00:48,569 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.2 minutes...
+2025-11-23 17:00:52,585 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2525 | PnL: +0.59% | Dist to SL: 0.09%
+2025-11-23 17:01:14,800 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2523 | PnL: +0.53% | Dist to SL: 0.03%
+2025-11-23 17:01:37,111 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2521 | PnL: +0.44% | Dist to SL: -0.06%
+2025-11-23 17:01:48,692 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.2 minutes...
+2025-11-23 17:01:59,604 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2517 | PnL: +0.30% | Dist to SL: -0.20%
+2025-11-23 17:02:21,849 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2518 | PnL: +0.33% | Dist to SL: -0.16%
+2025-11-23 17:02:44,336 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2517 | PnL: +0.27% | Dist to SL: -0.23%
+2025-11-23 17:02:48,739 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.2 minutes...
+2025-11-23 17:03:06,888 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2518 | PnL: +0.32% | Dist to SL: -0.18%
+2025-11-23 17:03:29,233 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2518 | PnL: +0.33% | Dist to SL: -0.17%
+2025-11-23 17:03:48,928 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.2 minutes...
+2025-11-23 17:03:51,457 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2515 | PnL: +0.22% | Dist to SL: -0.28%
+2025-11-23 17:04:13,191 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2512 | PnL: +0.10% | Dist to SL: -0.40%
+2025-11-23 17:04:35,283 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2513 | PnL: +0.11% | Dist to SL: -0.39%
+2025-11-23 17:04:49,018 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.2 minutes...
+2025-11-23 17:04:57,400 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2510 | PnL: +0.02% | Dist to SL: -0.48%
+2025-11-23 17:05:19,130 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2507 | PnL: -0.10% | Dist to SL: -0.60%
+2025-11-23 17:05:40,857 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2509 | PnL: -0.02% | Dist to SL: -0.52%
+2025-11-23 17:05:49,030 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.2 minutes...
+2025-11-23 17:06:02,778 - TradingBot - INFO - 👀 MONITOR XLM/USDT LONG: Price 0.2513 | PnL: +0.11% | Dist to SL: -0.39%
+2025-11-23 17:06:48,897 - TradingBot - INFO - Initializing components...
+2025-11-23 17:06:48,904 - TradingBot - INFO - Bot started. Initializing Hybrid Frequency Loop...
+2025-11-23 17:06:48,904 - TradingBot - INFO - 🔄 Syncing positions with Binance...
+2025-11-23 17:06:51,987 - TradingBot - WARNING - 👻 Found GHOST position in state: XLM/USDT. Removing...
+2025-11-23 17:06:51,989 - TradingBot - INFO - ✅ Health Check: 1s
+2025-11-23 17:06:51,989 - TradingBot - INFO - ✅ Position Monitor: 3s
+2025-11-23 17:06:51,989 - TradingBot - INFO - ✅ Strategy/Entry: 15m (Candle Close)
+2025-11-23 17:06:58,188 - TradingBot - INFO - 🧹 Cancelled order 20215161075 (stop_market) for XLM/USDT
+2025-11-23 17:07:00,742 - TradingBot - INFO - 🧹 Cleaned up 1 orphaned orders (no active positions)
+2025-11-23 17:07:00,742 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.1 minutes...
+2025-11-23 17:07:52,145 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.1 minutes...
+2025-11-23 17:08:52,461 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.1 minutes...
+2025-11-23 17:09:52,761 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.1 minutes...
+2025-11-23 17:10:25,544 - TradingBot - WARNING - 🛑 High Latency detected: 1104.77ms > 800ms. Pausing...
+2025-11-23 17:10:26,852 - TradingBot - INFO - Health Recovery: 301.13ms < 500ms (1/3)
+2025-11-23 17:10:28,207 - TradingBot - INFO - Health Recovery: 352.94ms < 500ms (2/3)
+2025-11-23 17:10:29,539 - TradingBot - INFO - Health Recovery: 326.80ms < 500ms (3/3)
+2025-11-23 17:10:29,539 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:10:52,854 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.1 minutes...
+2025-11-23 17:11:52,931 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.1 minutes...
+2025-11-23 17:12:52,695 - TradingBot - WARNING - 🛑 High Latency detected: 980.68ms > 800ms. Pausing...
+2025-11-23 17:12:54,026 - TradingBot - INFO - Health Recovery: 319.32ms < 500ms (1/3)
+2025-11-23 17:12:55,271 - TradingBot - INFO - Health Recovery: 234.93ms < 500ms (2/3)
+2025-11-23 17:12:56,511 - TradingBot - INFO - Health Recovery: 237.97ms < 500ms (3/3)
+2025-11-23 17:12:56,511 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:12:56,512 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.1 minutes...
+2025-11-23 17:13:56,365 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.1 minutes...
+2025-11-23 17:14:56,387 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.1 minutes...
+2025-11-23 17:15:03,961 - TradingBot - WARNING - 🛑 High Latency detected: 1874.41ms > 800ms. Pausing...
+2025-11-23 17:15:05,228 - TradingBot - INFO - Health Recovery: 264.07ms < 500ms (1/3)
+2025-11-23 17:15:06,630 - TradingBot - INFO - Health Recovery: 395.23ms < 500ms (2/3)
+2025-11-23 17:15:07,904 - TradingBot - INFO - Health Recovery: 267.08ms < 500ms (3/3)
+2025-11-23 17:15:07,904 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:15:07,904 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 17:15:00...
+2025-11-23 17:15:08,299 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 17:15:08,300 - TradingBot - INFO - Max Trades Per Hour Reached: 5
+2025-11-23 17:15:08,300 - TradingBot - WARNING - 🛑 Trade frequency limit reached! Skipping new entries.
+2025-11-23 17:15:56,671 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.1 minutes...
+2025-11-23 17:16:56,937 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.1 minutes...
+2025-11-23 17:17:57,350 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.0 minutes...
+2025-11-23 17:18:58,082 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.0 minutes...
+2025-11-23 17:19:58,378 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.0 minutes...
+2025-11-23 17:20:11,435 - TradingBot - WARNING - 🛑 High Latency detected: 1034.98ms > 800ms. Pausing...
+2025-11-23 17:20:12,920 - TradingBot - INFO - Health Recovery: 481.59ms < 500ms (1/3)
+2025-11-23 17:20:14,183 - TradingBot - INFO - Health Recovery: 251.20ms < 500ms (2/3)
+2025-11-23 17:20:15,583 - TradingBot - INFO - Health Recovery: 388.86ms < 500ms (3/3)
+2025-11-23 17:20:15,584 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:21:01,664 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.0 minutes...
+2025-11-23 17:22:07,814 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.9 minutes...
+2025-11-23 17:23:10,695 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.8 minutes...
+2025-11-23 17:23:13,559 - TradingBot - WARNING - 🛑 High Latency detected: 1177.87ms > 800ms. Pausing...
+2025-11-23 17:23:14,891 - TradingBot - INFO - Health Recovery: 320.23ms < 500ms (1/3)
+2025-11-23 17:23:16,223 - TradingBot - INFO - Health Recovery: 322.98ms < 500ms (2/3)
+2025-11-23 17:23:17,554 - TradingBot - INFO - Health Recovery: 319.15ms < 500ms (3/3)
+2025-11-23 17:23:17,554 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:24:14,992 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.8 minutes...
+2025-11-23 17:25:22,081 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.6 minutes...
+2025-11-23 17:26:03,736 - TradingBot - WARNING - 🛑 High Latency detected: 1280.64ms > 800ms. Pausing...
+2025-11-23 17:26:05,227 - TradingBot - INFO - Health Recovery: 480.32ms < 500ms (1/3)
+2025-11-23 17:26:06,772 - TradingBot - WARNING - Still High Latency: 533.15ms. Waiting...
+2025-11-23 17:26:08,045 - TradingBot - INFO - Health Recovery: 268.08ms < 500ms (1/3)
+2025-11-23 17:26:09,310 - TradingBot - INFO - Health Recovery: 253.27ms < 500ms (2/3)
+2025-11-23 17:26:10,754 - TradingBot - INFO - Health Recovery: 441.30ms < 500ms (3/3)
+2025-11-23 17:26:10,754 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:26:22,171 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.6 minutes...
+2025-11-23 17:27:23,628 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.6 minutes...
+2025-11-23 17:28:24,467 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.6 minutes...
+2025-11-23 17:29:25,492 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.6 minutes...
+2025-11-23 17:30:05,004 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 17:30:00...
+2025-11-23 17:30:05,242 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 17:30:05,243 - TradingBot - INFO - Max Trades Per Hour Reached: 5
+2025-11-23 17:30:05,243 - TradingBot - WARNING - 🛑 Trade frequency limit reached! Skipping new entries.
+2025-11-23 17:30:26,413 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.6 minutes...
+2025-11-23 17:31:32,423 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.5 minutes...
+2025-11-23 17:32:33,186 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.5 minutes...
+2025-11-23 17:33:33,398 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.4 minutes...
+2025-11-23 17:34:33,917 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.4 minutes...
+2025-11-23 17:35:36,171 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.4 minutes...
+2025-11-23 17:36:38,645 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.4 minutes...
+2025-11-23 17:37:39,512 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.3 minutes...
+2025-11-23 17:38:07,420 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:07,420 - TradingBot - WARNING - 🛑 High Latency detected: 10007.15ms > 800ms. Pausing...
+2025-11-23 17:38:08,933 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:08,933 - TradingBot - WARNING - Still High Latency: 501.57ms. Waiting...
+2025-11-23 17:38:09,946 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:09,947 - TradingBot - INFO - Health Recovery: 3.08ms < 500ms (1/3)
+2025-11-23 17:38:10,952 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:10,952 - TradingBot - INFO - Health Recovery: 3.12ms < 500ms (2/3)
+2025-11-23 17:38:11,959 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:11,960 - TradingBot - INFO - Health Recovery: 4.43ms < 500ms (3/3)
+2025-11-23 17:38:11,960 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:38:12,016 - TradingBot - ERROR - Error fetching open orders for BTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492027&symbol=BTCUSDT&recvWindow=10000&signature=5e240eaba14844aee2aa257365e6ea2de2e15b3a5befda15486a3b91cc65bddf
+2025-11-23 17:38:12,076 - TradingBot - ERROR - Error fetching open orders for ETH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492087&symbol=ETHUSDT&recvWindow=10000&signature=bd5dd70e1261bdb85ede5623f900b4f0d61ffe0c5f3a20fb1bd5fdd3fe4afe48
+2025-11-23 17:38:12,136 - TradingBot - ERROR - Error fetching open orders for SOL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492147&symbol=SOLUSDT&recvWindow=10000&signature=775cdfd6dc21a1e8745cb65f5e3f942bbe47915c1de514996556470489b677c0
+2025-11-23 17:38:12,196 - TradingBot - ERROR - Error fetching open orders for BNB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492207&symbol=BNBUSDT&recvWindow=10000&signature=68e3be8548b63c8da3fe7c17711be89d937e8b70a8f2af64e46fe15e04987a86
+2025-11-23 17:38:12,256 - TradingBot - ERROR - Error fetching open orders for XRP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492267&symbol=XRPUSDT&recvWindow=10000&signature=e3006aada0dc0de3048c108db225541e818c9292a89a0ba85c563559e0d70a4e
+2025-11-23 17:38:12,316 - TradingBot - ERROR - Error fetching open orders for DOGE/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492327&symbol=DOGEUSDT&recvWindow=10000&signature=95dba865e4fd37ade6391b7aca376921c0eefa0c3c12c509cca4a5257b6783cb
+2025-11-23 17:38:12,376 - TradingBot - ERROR - Error fetching open orders for ADA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492388&symbol=ADAUSDT&recvWindow=10000&signature=2cb54959940f11da9f28254629eba13a54fa7b562e66b83ca637335107a806c2
+2025-11-23 17:38:12,433 - TradingBot - ERROR - Error fetching open orders for AVAX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492445&symbol=AVAXUSDT&recvWindow=10000&signature=bce9580ea10107f6da0ca9a24c9eeec39117a188021e36ba63512df33056f60c
+2025-11-23 17:38:12,487 - TradingBot - ERROR - Error fetching open orders for TRX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492499&symbol=TRXUSDT&recvWindow=10000&signature=0756b315f0295124cdfe637028b50f4569a2760491574172e92bb9f2ec82f621
+2025-11-23 17:38:12,541 - TradingBot - ERROR - Error fetching open orders for DOT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492552&symbol=DOTUSDT&recvWindow=10000&signature=cc38018bb59746be9bf148525376fafdd429956ccb79c5cbc6f60450ad20488d
+2025-11-23 17:38:12,600 - TradingBot - ERROR - Error fetching open orders for POL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492612&symbol=POLUSDT&recvWindow=10000&signature=68da2b4d3abe7a1536b93136062aa36859314e698bfd12dbb48c448c1a2afadc
+2025-11-23 17:38:12,652 - TradingBot - ERROR - Error fetching open orders for LINK/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492663&symbol=LINKUSDT&recvWindow=10000&signature=ab1964318c8cd88e2111b4997dfe800a86672806e4c0e5fa820084cecda3aeab
+2025-11-23 17:38:12,708 - TradingBot - ERROR - Error fetching open orders for LTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492719&symbol=LTCUSDT&recvWindow=10000&signature=6cac1b68362d9b953d73be9840558317918a76399fb4940dd025c211a4abb578
+2025-11-23 17:38:12,768 - TradingBot - ERROR - Error fetching open orders for BCH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492779&symbol=BCHUSDT&recvWindow=10000&signature=aee5c8877b4331bd81fdd9906bd6af8941def1c046a89b2d3608e77ecc90aeaf
+2025-11-23 17:38:12,832 - TradingBot - ERROR - Error fetching open orders for ATOM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492840&symbol=ATOMUSDT&recvWindow=10000&signature=63454680be55078bf826a88995b750db51cbe80e2509ca52e77900ffec7e00f0
+2025-11-23 17:38:12,888 - TradingBot - ERROR - Error fetching open orders for UNI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492899&symbol=UNIUSDT&recvWindow=10000&signature=8d117e4121075d6edcc4339804dd36992d77011cd6dc6c425e3feb3d7aeec3f9
+2025-11-23 17:38:12,948 - TradingBot - ERROR - Error fetching open orders for ETC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937492959&symbol=ETCUSDT&recvWindow=10000&signature=084bf622708b0a0a71d12e9e3d4df7e9bf3d0c98d50fd4fa6eed137cd825ec8b
+2025-11-23 17:38:13,008 - TradingBot - ERROR - Error fetching open orders for FIL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493019&symbol=FILUSDT&recvWindow=10000&signature=d24d9d473a45b37cbc971313460baf680da2ae0e7caa369270b3a3e1b0090bd0
+2025-11-23 17:38:13,068 - TradingBot - ERROR - Error fetching open orders for NEAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493079&symbol=NEARUSDT&recvWindow=10000&signature=b2a6dcf6dfca56b24a0bd425decbc9641f00ff0de78e7a75cc3a59acab87f5bc
+2025-11-23 17:38:13,128 - TradingBot - ERROR - Error fetching open orders for XMR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493139&symbol=XMRUSDT&recvWindow=10000&signature=e324b8bb5db1844aa099f33518c79984fc65a3495a5d82a8f85ccb34437af972
+2025-11-23 17:38:13,184 - TradingBot - ERROR - Error fetching open orders for XLM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493195&symbol=XLMUSDT&recvWindow=10000&signature=a3ff366d94f1cad2fd23cd2d149356ca9f2b687d07e4f172ed4f40ddc0273d18
+2025-11-23 17:38:13,241 - TradingBot - ERROR - Error fetching open orders for HBAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493252&symbol=HBARUSDT&recvWindow=10000&signature=b4f4c1f08f910b93c915a6a0ba29ac958ad92cb0da18cf7293aa6d6a161a57ac
+2025-11-23 17:38:13,300 - TradingBot - ERROR - Error fetching open orders for APT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493312&symbol=APTUSDT&recvWindow=10000&signature=8eaf974fde83ace32603670c058c6a6a7bed0480a6c382a819f0e53dbf4d4dc0
+2025-11-23 17:38:13,356 - TradingBot - ERROR - Error fetching open orders for ARB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493367&symbol=ARBUSDT&recvWindow=10000&signature=11f1421c1e220c4822ea7adc1a2180fb4402746bf53e3705f79982f62830d3c5
+2025-11-23 17:38:13,416 - TradingBot - ERROR - Error fetching open orders for OP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493427&symbol=OPUSDT&recvWindow=10000&signature=cb47665fe275c5aa6f01f1be3f316112a6483bf393e7e4bbd4ffeac3087650ac
+2025-11-23 17:38:13,468 - TradingBot - ERROR - Error fetching open orders for RENDER/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493480&symbol=RENDERUSDT&recvWindow=10000&signature=2841f99d2bf494369fde3615e8f612fcbbd6b390b57b8da8540189748ef3f6cc
+2025-11-23 17:38:13,527 - TradingBot - ERROR - Error fetching open orders for INJ/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493540&symbol=INJUSDT&recvWindow=10000&signature=ab39b2f944e63327a54e03109b5f54f10b9e784a5b666d5f0c4745477aaae9fc
+2025-11-23 17:38:13,582 - TradingBot - ERROR - Error fetching open orders for STX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493595&symbol=STXUSDT&recvWindow=10000&signature=c3f2c0589fb6e62ca2c827ec4378f187f04470f8821ae31db961753428d16bf3
+2025-11-23 17:38:13,642 - TradingBot - ERROR - Error fetching open orders for SUI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493655&symbol=SUIUSDT&recvWindow=10000&signature=dd93a1e32590200be63ada618a609ba4d86b7ab03fbc64797e45ba466405db6e
+2025-11-23 17:38:13,703 - TradingBot - ERROR - Error fetching open orders for TIA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937493715&symbol=TIAUSDT&recvWindow=10000&signature=ae340326aa5a5353cc7675696fd1aa0212313a2c1c105d5309dc3cf2bae3b710
+2025-11-23 17:38:13,816 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:14,901 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:15,992 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:17,090 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:18,170 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:19,246 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:20,325 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:21,394 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:22,494 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:23,583 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:24,669 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:25,771 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:26,869 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:27,955 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:29,027 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:30,115 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:31,209 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:32,283 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:33,375 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:34,457 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:35,559 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:36,654 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:37,739 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:38,834 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:39,379 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.3 minutes...
+2025-11-23 17:38:39,926 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:41,026 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:42,114 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:42,448 - TradingBot - ERROR - Error fetching open orders for BTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522458&symbol=BTCUSDT&recvWindow=10000&signature=4edc5f32465fb48e197372188318e3f68fb57a42b12b93a604a66bb119120c6b
+2025-11-23 17:38:42,507 - TradingBot - ERROR - Error fetching open orders for ETH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522518&symbol=ETHUSDT&recvWindow=10000&signature=dfe04c375b241554ea2af1091b0a7d1d6552a43341c336a1bac9781bbb444d16
+2025-11-23 17:38:42,567 - TradingBot - ERROR - Error fetching open orders for SOL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522578&symbol=SOLUSDT&recvWindow=10000&signature=65c3d997e855c1f5b5e1f124241c8881d67c5e5f952857d3edda3af3fb420b6f
+2025-11-23 17:38:42,627 - TradingBot - ERROR - Error fetching open orders for BNB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522638&symbol=BNBUSDT&recvWindow=10000&signature=cc6e82feecc29ab400184f4fdd407c1eb1ca7a1a85e2239c960f11a2396106ca
+2025-11-23 17:38:42,679 - TradingBot - ERROR - Error fetching open orders for XRP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522689&symbol=XRPUSDT&recvWindow=10000&signature=0dca8a19ce5d930012290e6af3a710ac8553acf6ce8badadea60a37341bf6b43
+2025-11-23 17:38:42,738 - TradingBot - ERROR - Error fetching open orders for DOGE/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522749&symbol=DOGEUSDT&recvWindow=10000&signature=efde7b9bd61dca91c7df722ee3bf76b8e27b20195e013fded644eaba25dc9974
+2025-11-23 17:38:42,798 - TradingBot - ERROR - Error fetching open orders for ADA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522809&symbol=ADAUSDT&recvWindow=10000&signature=e1a1601be11ef2b565e84e0b91ad35adf6d66a27925d0af635457297a9b718d8
+2025-11-23 17:38:42,857 - TradingBot - ERROR - Error fetching open orders for AVAX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522868&symbol=AVAXUSDT&recvWindow=10000&signature=2efabfb46b78a822cbee4fec65d37e36d888a1e605ca204bcc95715e4ba27d26
+2025-11-23 17:38:42,916 - TradingBot - ERROR - Error fetching open orders for TRX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522928&symbol=TRXUSDT&recvWindow=10000&signature=892a6203cdd37649d8958f017663f29462e21543a8d1436818d50bf050c3131c
+2025-11-23 17:38:42,978 - TradingBot - ERROR - Error fetching open orders for DOT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937522989&symbol=DOTUSDT&recvWindow=10000&signature=7625cb6246a04b00ef3d8b560a4be109dd743e6005c040e09c68de37ce866361
+2025-11-23 17:38:43,034 - TradingBot - ERROR - Error fetching open orders for POL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523046&symbol=POLUSDT&recvWindow=10000&signature=fa8ac91930325eed2ed99d9a83d7895c4da18dc509b3c882e67d797bff3c461d
+2025-11-23 17:38:43,090 - TradingBot - ERROR - Error fetching open orders for LINK/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523101&symbol=LINKUSDT&recvWindow=10000&signature=971a9d02f49ed876885a44a23b9aa5aee8df09cdf9630c0a12588a27d64a2d25
+2025-11-23 17:38:43,150 - TradingBot - ERROR - Error fetching open orders for LTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523161&symbol=LTCUSDT&recvWindow=10000&signature=50905fe8ee2ad4f25b68e9f3341f87e2cdf8cd810d30d42d02c0531e3e156291
+2025-11-23 17:38:43,207 - TradingBot - ERROR - Error fetching open orders for BCH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523218&symbol=BCHUSDT&recvWindow=10000&signature=e4e9cfbe885f18f2ed3b57bcfc8521ffb87e5b36d04332c22bafb8c13e76ab07
+2025-11-23 17:38:43,267 - TradingBot - ERROR - Error fetching open orders for ATOM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523278&symbol=ATOMUSDT&recvWindow=10000&signature=3f85b9cbf5a302542848d7856c0901551162ffc5d9de54e917e54256355b30ec
+2025-11-23 17:38:43,319 - TradingBot - ERROR - Error fetching open orders for UNI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523330&symbol=UNIUSDT&recvWindow=10000&signature=53dae0c4b11ff09c1f18b541ebabc59d3d99bb841636d3e2aeb7f0943574178c
+2025-11-23 17:38:43,379 - TradingBot - ERROR - Error fetching open orders for ETC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523390&symbol=ETCUSDT&recvWindow=10000&signature=e9d69e80f8194c66d4b448e4125f0699585c0155d37dcf4bfddaf15eb4384c23
+2025-11-23 17:38:43,437 - TradingBot - ERROR - Error fetching open orders for FIL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523448&symbol=FILUSDT&recvWindow=10000&signature=d0250d66060482119b76d172a4e494c7d2fcaee6e20a00f23b9070476b50343c
+2025-11-23 17:38:43,496 - TradingBot - ERROR - Error fetching open orders for NEAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523508&symbol=NEARUSDT&recvWindow=10000&signature=72f48728ef3809b5eb08361888e6c8be1727d9fa70d977b4251cb9ab6b6cf019
+2025-11-23 17:38:43,554 - TradingBot - ERROR - Error fetching open orders for XMR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523566&symbol=XMRUSDT&recvWindow=10000&signature=83e4d7c3f4d43d4f7f263a8140f36725d275c24b6dd4f33b86544b6b1723147a
+2025-11-23 17:38:43,605 - TradingBot - ERROR - Error fetching open orders for XLM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523618&symbol=XLMUSDT&recvWindow=10000&signature=ea879948c7c005f7a4090498780a55f4c866c112db81a310cc09b76bc427e773
+2025-11-23 17:38:43,666 - TradingBot - ERROR - Error fetching open orders for HBAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523678&symbol=HBARUSDT&recvWindow=10000&signature=b82585c5d9f7930f6d2d7c83e5bf7e3830440c389945b4c6856c26e6e8a74c48
+2025-11-23 17:38:43,725 - TradingBot - ERROR - Error fetching open orders for APT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523738&symbol=APTUSDT&recvWindow=10000&signature=8f99bb8ce167ab3a778012756fabde8ee483c66c3a9467ef4e0e9d6718f0f5b6
+2025-11-23 17:38:43,786 - TradingBot - ERROR - Error fetching open orders for ARB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523798&symbol=ARBUSDT&recvWindow=10000&signature=c0026d855ee99fb5edac3caa167493ef22448faab74c2274daf069ff34eba891
+2025-11-23 17:38:43,847 - TradingBot - ERROR - Error fetching open orders for OP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523857&symbol=OPUSDT&recvWindow=10000&signature=238d217e537340cbc13dcc725217666475f0b508d44b0b253aa4e20af24ac58f
+2025-11-23 17:38:43,906 - TradingBot - ERROR - Error fetching open orders for RENDER/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523917&symbol=RENDERUSDT&recvWindow=10000&signature=e24571f43163cbb46c00802cc4298b9e83bb92e8d9fa6535f071522e9749c30b
+2025-11-23 17:38:43,966 - TradingBot - ERROR - Error fetching open orders for INJ/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937523977&symbol=INJUSDT&recvWindow=10000&signature=d1a27b3fbeb4013ceadde099dee28c6d3f16ea5b25e78531bbbd4cd8b10ea4ef
+2025-11-23 17:38:44,021 - TradingBot - ERROR - Error fetching open orders for STX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937524032&symbol=STXUSDT&recvWindow=10000&signature=abbcd4fb4bf2be27b92fe3905ef955ddb26aed59ba437755354ce2d310bfd563
+2025-11-23 17:38:44,081 - TradingBot - ERROR - Error fetching open orders for SUI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937524092&symbol=SUIUSDT&recvWindow=10000&signature=f917c31b2fb33a105cddd7259bf8329bfc072202a25fe09ffefc17b7078f9509
+2025-11-23 17:38:44,134 - TradingBot - ERROR - Error fetching open orders for TIA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937524146&symbol=TIAUSDT&recvWindow=10000&signature=5bb6c0ed4715191e0e342bd403f746e6011a172b859afdd4de292d87aaa2d4e4
+2025-11-23 17:38:44,248 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:45,347 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:46,419 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:47,508 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:48,598 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:49,701 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:50,792 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:51,874 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:52,963 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:54,026 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:55,125 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:56,212 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:57,312 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:58,380 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:38:59,459 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:00,535 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:01,619 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:02,702 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:03,797 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:04,858 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:05,952 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:07,035 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:08,110 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:09,192 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:10,263 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:11,365 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:12,470 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:12,806 - TradingBot - ERROR - Error fetching open orders for BTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937552815&symbol=BTCUSDT&recvWindow=10000&signature=37e1c78b8167b727204050cd4ee137643b13fcbcc78105c3740c9db5b7737057
+2025-11-23 17:39:12,859 - TradingBot - ERROR - Error fetching open orders for ETH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937552868&symbol=ETHUSDT&recvWindow=10000&signature=188c46912584727076c9321418245ea44d8b350b1884dee410cf79fcf93f292f
+2025-11-23 17:39:12,910 - TradingBot - ERROR - Error fetching open orders for SOL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937552922&symbol=SOLUSDT&recvWindow=10000&signature=c3b2ec7a457940c17a4c84460092e82f106afc548fa48d3a13ba38352228002d
+2025-11-23 17:39:12,969 - TradingBot - ERROR - Error fetching open orders for BNB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937552982&symbol=BNBUSDT&recvWindow=10000&signature=9eed3ecc7e3f6e84bcb4eefaa67c4f17e8c26a140349e743324dffc63620156a
+2025-11-23 17:39:13,031 - TradingBot - ERROR - Error fetching open orders for XRP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553042&symbol=XRPUSDT&recvWindow=10000&signature=d253ba328194020ef0e04fc037c8ec61e570f3d324e565503d4109f1b790b5a9
+2025-11-23 17:39:13,085 - TradingBot - ERROR - Error fetching open orders for DOGE/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553096&symbol=DOGEUSDT&recvWindow=10000&signature=612792f354240b1786dabfa46f56a8979b70a728573cc0fd780e0474e0f23f66
+2025-11-23 17:39:13,138 - TradingBot - ERROR - Error fetching open orders for ADA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553150&symbol=ADAUSDT&recvWindow=10000&signature=81fcfc3aac34c65ea6587f872256e00c0b4deefef537da4d8cb8c66362e1dc4c
+2025-11-23 17:39:13,192 - TradingBot - ERROR - Error fetching open orders for AVAX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553204&symbol=AVAXUSDT&recvWindow=10000&signature=addacd6f18e51b90099626b4aa14f1a712bbdc8d7893442f0c01eddedc399fef
+2025-11-23 17:39:13,252 - TradingBot - ERROR - Error fetching open orders for TRX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553264&symbol=TRXUSDT&recvWindow=10000&signature=0837a61d2c57efcd937f29e0d2c5b9fcdeda8e9598c524004fc44579678df0f5
+2025-11-23 17:39:13,312 - TradingBot - ERROR - Error fetching open orders for DOT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553324&symbol=DOTUSDT&recvWindow=10000&signature=d722c79a179aa9b2df42d96b62fd7a1a0f8c3494281ea0331c187255bb565798
+2025-11-23 17:39:13,373 - TradingBot - ERROR - Error fetching open orders for POL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553384&symbol=POLUSDT&recvWindow=10000&signature=8dcafd08e2dc576f070f76b77e37727f686366e839b8db4cf06794acbc30615d
+2025-11-23 17:39:13,433 - TradingBot - ERROR - Error fetching open orders for LINK/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553445&symbol=LINKUSDT&recvWindow=10000&signature=d134cf38299766543e08ed577b648ef7e28adc371a73cb5f3c6a6badc367d6a3
+2025-11-23 17:39:13,482 - TradingBot - ERROR - Error fetching open orders for LTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553494&symbol=LTCUSDT&recvWindow=10000&signature=81abdc992c4d2fd0e2b0aed06ec67292f46a3cd950ed7d00e806b1df75f9189e
+2025-11-23 17:39:13,536 - TradingBot - ERROR - Error fetching open orders for BCH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553548&symbol=BCHUSDT&recvWindow=10000&signature=e6a4e51dd421a4c2db5a3dd8e03970eb8f4a3491830b8ffb13643db5aaf1e361
+2025-11-23 17:39:13,595 - TradingBot - ERROR - Error fetching open orders for ATOM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553608&symbol=ATOMUSDT&recvWindow=10000&signature=accd473689e906f5afd11ad1dffe7a61b547c6a4bcc8f59560bbf81755257856
+2025-11-23 17:39:13,655 - TradingBot - ERROR - Error fetching open orders for UNI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553668&symbol=UNIUSDT&recvWindow=10000&signature=148f0c3be50a7ad7c735a4e08183e9498e8baf24dc6658c6a712ad41ce09453d
+2025-11-23 17:39:13,706 - TradingBot - ERROR - Error fetching open orders for ETC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553718&symbol=ETCUSDT&recvWindow=10000&signature=d6c2d46d9e437cdd2214b2a2ae539e81b456eded021bfd2d4473c592f42aa0d6
+2025-11-23 17:39:13,767 - TradingBot - ERROR - Error fetching open orders for FIL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553778&symbol=FILUSDT&recvWindow=10000&signature=7476861e9ed01aa7ab1b2e1c360175c35996de8a973d54e609ceaccd82f809e1
+2025-11-23 17:39:13,827 - TradingBot - ERROR - Error fetching open orders for NEAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553839&symbol=NEARUSDT&recvWindow=10000&signature=fafd26b0b98d0b7854a5d96b0c3603abf634551159e281a19a64df75670f6fdd
+2025-11-23 17:39:13,888 - TradingBot - ERROR - Error fetching open orders for XMR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553899&symbol=XMRUSDT&recvWindow=10000&signature=aa1fe183d00a4698ef39d3f8e3d4ef21661693ce32465b9076540f08b726f1c2
+2025-11-23 17:39:13,948 - TradingBot - ERROR - Error fetching open orders for XLM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937553959&symbol=XLMUSDT&recvWindow=10000&signature=730f7a634c1f538bed86bc15920a8269be61b2014e28ced99b4a3ba489eee12b
+2025-11-23 17:39:13,997 - TradingBot - ERROR - Error fetching open orders for HBAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554009&symbol=HBARUSDT&recvWindow=10000&signature=17c8facc2f6e854506d5230599bebcb9447bf8318461bc31566a1a9ea4f903a5
+2025-11-23 17:39:14,057 - TradingBot - ERROR - Error fetching open orders for APT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554069&symbol=APTUSDT&recvWindow=10000&signature=89ececab0d4467c394207ad6a9636efcfed05a850d384a971cd4118d25256234
+2025-11-23 17:39:14,116 - TradingBot - ERROR - Error fetching open orders for ARB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554129&symbol=ARBUSDT&recvWindow=10000&signature=942fd128e1b048adf5402d1fa24e73313d5a4463ca3169c0845ecdfb1ee19f7c
+2025-11-23 17:39:14,178 - TradingBot - ERROR - Error fetching open orders for OP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554189&symbol=OPUSDT&recvWindow=10000&signature=693557cc8f4f72b4b3c6ce9244bdcfa87528013d6e19c1c41274340147db168a
+2025-11-23 17:39:14,232 - TradingBot - ERROR - Error fetching open orders for RENDER/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554243&symbol=RENDERUSDT&recvWindow=10000&signature=873d07814207650d76a90f1dff628d908337f32384b23580aeb158a155260af7
+2025-11-23 17:39:14,289 - TradingBot - ERROR - Error fetching open orders for INJ/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554300&symbol=INJUSDT&recvWindow=10000&signature=df5857818d7b8d97741452b6ead32afc476ad28b5e428875ef2fe9c2edd416c8
+2025-11-23 17:39:14,349 - TradingBot - ERROR - Error fetching open orders for STX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554360&symbol=STXUSDT&recvWindow=10000&signature=e4b065ff8f698349cf974e2fc2c716c31f4ed62586b08606560d4ca58d0e50fa
+2025-11-23 17:39:14,407 - TradingBot - ERROR - Error fetching open orders for SUI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554418&symbol=SUIUSDT&recvWindow=10000&signature=0b41f490d8decb6331722b64ac58a3cbd1c5a62de4341fec5a21e127951a8a15
+2025-11-23 17:39:14,466 - TradingBot - ERROR - Error fetching open orders for TIA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937554478&symbol=TIAUSDT&recvWindow=10000&signature=816404312fb8e33788e208848e6cf8ee5c5912c0b5b4e52489239204ea08f8d5
+2025-11-23 17:39:14,583 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:15,681 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:16,781 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:17,870 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:18,957 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:20,048 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:21,136 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:22,224 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:23,309 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:24,410 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:25,488 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:26,587 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:27,681 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:28,757 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:29,858 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:30,952 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:32,029 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:33,111 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:34,217 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:35,311 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:36,394 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:37,488 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:38,579 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:39,457 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.3 minutes...
+2025-11-23 17:39:39,684 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:40,777 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:41,859 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:42,939 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:43,381 - TradingBot - ERROR - Error fetching open orders for BTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583391&symbol=BTCUSDT&recvWindow=10000&signature=583d1451895141cb9ae3b6415ef3d9840c20f2e72bfa8093a0d0dec23c4c68fa
+2025-11-23 17:39:43,440 - TradingBot - ERROR - Error fetching open orders for ETH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583451&symbol=ETHUSDT&recvWindow=10000&signature=245d44569fc291f0afbfad4980a6fbf3f885bff3ee43422282ba0b32e995b34c
+2025-11-23 17:39:43,500 - TradingBot - ERROR - Error fetching open orders for SOL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583511&symbol=SOLUSDT&recvWindow=10000&signature=38934960ef0d1c436b6ccc6f81814cce25c0e87d8ef65763867d3b50540f97a4
+2025-11-23 17:39:43,557 - TradingBot - ERROR - Error fetching open orders for BNB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583569&symbol=BNBUSDT&recvWindow=10000&signature=4371eafa2fa1ac78843a8f542563aee48b7d3957918504f14d66118f07160a87
+2025-11-23 17:39:43,616 - TradingBot - ERROR - Error fetching open orders for XRP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583628&symbol=XRPUSDT&recvWindow=10000&signature=6a53fe96fa08b6d4d19a263d50392191607e50b6b09b68dfa216cf8453f1f044
+2025-11-23 17:39:43,669 - TradingBot - ERROR - Error fetching open orders for DOGE/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583682&symbol=DOGEUSDT&recvWindow=10000&signature=39273fa5957b77696d60abbd02dcbe44b988e98de2e0766d8156f553db1515ea
+2025-11-23 17:39:43,730 - TradingBot - ERROR - Error fetching open orders for ADA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583742&symbol=ADAUSDT&recvWindow=10000&signature=c1fc64f21542a1c1ac9695ffd846fe5b19ad85c91e9e47cab8b208cdd809e685
+2025-11-23 17:39:43,791 - TradingBot - ERROR - Error fetching open orders for AVAX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583802&symbol=AVAXUSDT&recvWindow=10000&signature=7840d1c3dca516b72f53a471e999bb2ad024fb8c3ac623e85068dc61b16880f1
+2025-11-23 17:39:43,850 - TradingBot - ERROR - Error fetching open orders for TRX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583862&symbol=TRXUSDT&recvWindow=10000&signature=3618f1f0e745f1a04fe1f69eb7ca3cc3db08e00c4c2e01434aec8ae795adebe4
+2025-11-23 17:39:43,911 - TradingBot - ERROR - Error fetching open orders for DOT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583922&symbol=DOTUSDT&recvWindow=10000&signature=bd54b7e8d36547d932a9c5009ae143d725e1ee4be9d65bdf6dce5e0311e0a1aa
+2025-11-23 17:39:43,974 - TradingBot - ERROR - Error fetching open orders for POL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937583982&symbol=POLUSDT&recvWindow=10000&signature=171a31ef48985b95b5cf17821557f73d2315968355af3398a7de1b8fb1ffc5a3
+2025-11-23 17:39:44,031 - TradingBot - ERROR - Error fetching open orders for LINK/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584042&symbol=LINKUSDT&recvWindow=10000&signature=a30db11b40d19c0ee1ec79a6a06a42f4bce3d9d61a096e46baf89f9ab6cc511f
+2025-11-23 17:39:44,091 - TradingBot - ERROR - Error fetching open orders for LTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584102&symbol=LTCUSDT&recvWindow=10000&signature=38b42218bfd7f3f25a71bf058eb202f5a97260dacc0f3178dcb4f1bbdfd2c0c7
+2025-11-23 17:39:44,151 - TradingBot - ERROR - Error fetching open orders for BCH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584163&symbol=BCHUSDT&recvWindow=10000&signature=cc0cb835d5f8d8154d6e6c0c73633c5788412e2cde7b9abfae1722dd8ceb2f74
+2025-11-23 17:39:44,211 - TradingBot - ERROR - Error fetching open orders for ATOM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584222&symbol=ATOMUSDT&recvWindow=10000&signature=e24581195b89022b937f7371dbc0e865e4fa9e791e32c14eb665a81f10913c5b
+2025-11-23 17:39:44,271 - TradingBot - ERROR - Error fetching open orders for UNI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584282&symbol=UNIUSDT&recvWindow=10000&signature=789d8f9161317a093a2dfe1eea95fed1026fde10521c9d0422af4d939c378857
+2025-11-23 17:39:44,328 - TradingBot - ERROR - Error fetching open orders for ETC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584338&symbol=ETCUSDT&recvWindow=10000&signature=b50113170802c7fb32e07242ab5313e83c2423c112dbee01b7d7ad3c61694aa6
+2025-11-23 17:39:44,384 - TradingBot - ERROR - Error fetching open orders for FIL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584394&symbol=FILUSDT&recvWindow=10000&signature=66f0745cf5c624103922c23daaac87f517ad7b169c1cdbab50d02d812a8949e7
+2025-11-23 17:39:44,436 - TradingBot - ERROR - Error fetching open orders for NEAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584446&symbol=NEARUSDT&recvWindow=10000&signature=bbe9cd6bac9cd0bb2aa229a883eb47275f533c98a50ac149c21d45c421db3253
+2025-11-23 17:39:44,488 - TradingBot - ERROR - Error fetching open orders for XMR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584498&symbol=XMRUSDT&recvWindow=10000&signature=9bee7ee62c04371eb0129f7e8a07ee70d2c0b46c965b59b525a99667865772d4
+2025-11-23 17:39:44,538 - TradingBot - ERROR - Error fetching open orders for XLM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584549&symbol=XLMUSDT&recvWindow=10000&signature=b334d7f18e502a1d9b46c3b7132f4df4bd448f331200c21576897499723d0176
+2025-11-23 17:39:44,591 - TradingBot - ERROR - Error fetching open orders for HBAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584603&symbol=HBARUSDT&recvWindow=10000&signature=c9ffbe8c3e801f850bbbc3e96c62de8f3ff4be4379928c08874cb6535982067d
+2025-11-23 17:39:44,651 - TradingBot - ERROR - Error fetching open orders for APT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584663&symbol=APTUSDT&recvWindow=10000&signature=4441f48c3c1f8f1db3826d19523c1b9ab7ceb6acd27590d909a195c7dd2c44bd
+2025-11-23 17:39:44,707 - TradingBot - ERROR - Error fetching open orders for ARB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584718&symbol=ARBUSDT&recvWindow=10000&signature=8d19ae17514e76be7c5f004944504646a195d78cb139eadca607bd918106031b
+2025-11-23 17:39:44,768 - TradingBot - ERROR - Error fetching open orders for OP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584778&symbol=OPUSDT&recvWindow=10000&signature=c45a45cd1b0a976062720b6e4211cf87406c54cb5f236284d466b110785835b2
+2025-11-23 17:39:44,822 - TradingBot - ERROR - Error fetching open orders for RENDER/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584834&symbol=RENDERUSDT&recvWindow=10000&signature=2645155128dd65104c8a48c65654c927a29ae555ffc31999d753576ced73a344
+2025-11-23 17:39:44,883 - TradingBot - ERROR - Error fetching open orders for INJ/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584894&symbol=INJUSDT&recvWindow=10000&signature=dd2a167b1e8fdb3779460be6f79045bf0280e748340dc6501a05c06d04a63c76
+2025-11-23 17:39:44,935 - TradingBot - ERROR - Error fetching open orders for STX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937584946&symbol=STXUSDT&recvWindow=10000&signature=39ce852c123b71007e05e83bed5f70ef3636924657edb064e0df71f218572f21
+2025-11-23 17:39:44,996 - TradingBot - ERROR - Error fetching open orders for SUI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937585007&symbol=SUIUSDT&recvWindow=10000&signature=a7114dc79bfacd029b65bc74f25764e4bf69e6f8cecc89162aadd18a5ad62134
+2025-11-23 17:39:45,056 - TradingBot - ERROR - Error fetching open orders for TIA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937585067&symbol=TIAUSDT&recvWindow=10000&signature=1c0da1983929531bf2f09513258984dd7c6d82963be72409323ee3c2d6c360d1
+2025-11-23 17:39:45,169 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:46,264 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:47,372 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:48,458 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:49,548 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:50,644 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:51,737 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:52,821 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:53,923 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:55,011 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:56,091 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:57,182 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:58,251 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:39:59,357 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:00,447 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:01,522 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:02,598 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:03,697 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:04,786 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:05,859 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:06,952 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:08,025 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:09,090 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:10,183 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:11,270 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:12,369 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:13,448 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:13,873 - TradingBot - ERROR - Error fetching open orders for BTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937613883&symbol=BTCUSDT&recvWindow=10000&signature=ba220ac1d5718720d23011bddcfae9f9a381af1d723f41cc210b3edf90631d92
+2025-11-23 17:40:13,932 - TradingBot - ERROR - Error fetching open orders for ETH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937613943&symbol=ETHUSDT&recvWindow=10000&signature=898c8d19861c194c900921e49abf83a4a37b25d3f96f43901b131092cfb59906
+2025-11-23 17:40:13,992 - TradingBot - ERROR - Error fetching open orders for SOL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614003&symbol=SOLUSDT&recvWindow=10000&signature=2ec9299fb04c5769119d16e69906a8f5c101de2e45ee7d4f92f7efbf8165adda
+2025-11-23 17:40:14,045 - TradingBot - ERROR - Error fetching open orders for BNB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614056&symbol=BNBUSDT&recvWindow=10000&signature=6a30430e24a3b3e6d11c31aecae47abd2f3dc834b41494962c1e6305591347f6
+2025-11-23 17:40:14,105 - TradingBot - ERROR - Error fetching open orders for XRP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614116&symbol=XRPUSDT&recvWindow=10000&signature=67b38cbd72cbaa83b625f6c7e4a1e36b4ff0f257bfffd8ceccdbdcbeabdfa9b8
+2025-11-23 17:40:14,157 - TradingBot - ERROR - Error fetching open orders for DOGE/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614169&symbol=DOGEUSDT&recvWindow=10000&signature=8866002c4ac66b9a54fc7635794a77ed307df39e9a3600a64b1a47278163c269
+2025-11-23 17:40:14,208 - TradingBot - ERROR - Error fetching open orders for ADA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614219&symbol=ADAUSDT&recvWindow=10000&signature=f0be1273c62a0993c3b6d4dff9967c6661a570399cb59643dd307a3c0d11fcab
+2025-11-23 17:40:14,269 - TradingBot - ERROR - Error fetching open orders for AVAX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614280&symbol=AVAXUSDT&recvWindow=10000&signature=8bed3f1e797f10e6481ce857fa4090d82450269dc629aa9c01983dfed220ea4b
+2025-11-23 17:40:14,328 - TradingBot - ERROR - Error fetching open orders for TRX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614340&symbol=TRXUSDT&recvWindow=10000&signature=61fbde5a582cccb29de45b10a049890a9dc6ec46a4c0045b1f4a55560e376675
+2025-11-23 17:40:14,384 - TradingBot - ERROR - Error fetching open orders for DOT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614396&symbol=DOTUSDT&recvWindow=10000&signature=81c5c72b7f5fb1bc3f63bdf28656c07104a3e2ebad8725fec7c1447fd0f03131
+2025-11-23 17:40:14,445 - TradingBot - ERROR - Error fetching open orders for POL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614457&symbol=POLUSDT&recvWindow=10000&signature=b4baced8b0166f96dcd617ca5c2b9a6329fabb4417fcba00f87bec798912ed45
+2025-11-23 17:40:14,502 - TradingBot - ERROR - Error fetching open orders for LINK/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614513&symbol=LINKUSDT&recvWindow=10000&signature=93c971f2c8c5e174d70c381a55956e72ffec90c4ee8f028a7f90dc381a2bfd51
+2025-11-23 17:40:14,558 - TradingBot - ERROR - Error fetching open orders for LTC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614569&symbol=LTCUSDT&recvWindow=10000&signature=3ba9c8624759db5a5420cdc946587e2f6aa2c1f9a8529255446c41098190e645
+2025-11-23 17:40:14,618 - TradingBot - ERROR - Error fetching open orders for BCH/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614630&symbol=BCHUSDT&recvWindow=10000&signature=e4c5b4ca060766a78d14a1672b51010e73529004c5510ba2cbb0a2e8525dc373
+2025-11-23 17:40:14,679 - TradingBot - ERROR - Error fetching open orders for ATOM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614690&symbol=ATOMUSDT&recvWindow=10000&signature=c03344611273d643f2327788de89986b68eb2b3b5aa3a301d20b64281f7c78c6
+2025-11-23 17:40:14,739 - TradingBot - ERROR - Error fetching open orders for UNI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614750&symbol=UNIUSDT&recvWindow=10000&signature=bea381e6b95d5d25ba38bc88d6aa71db117f729337fb6aa392507674b6780837
+2025-11-23 17:40:14,799 - TradingBot - ERROR - Error fetching open orders for ETC/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614810&symbol=ETCUSDT&recvWindow=10000&signature=91c8a7d44d647c1cd7814c08c62fb23df506892d1f0436c5fbd49edec6f62136
+2025-11-23 17:40:14,856 - TradingBot - ERROR - Error fetching open orders for FIL/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614867&symbol=FILUSDT&recvWindow=10000&signature=b2be70b5ea08d95692dc8dfe95a3affb3c0c35f7d69b28561c018926315d6d9f
+2025-11-23 17:40:14,906 - TradingBot - ERROR - Error fetching open orders for NEAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614917&symbol=NEARUSDT&recvWindow=10000&signature=32ed919bcfa00e6e3fe6b768f65650edfc06349c08fe8670cd9ff882a8fa0550
+2025-11-23 17:40:14,969 - TradingBot - ERROR - Error fetching open orders for XMR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937614978&symbol=XMRUSDT&recvWindow=10000&signature=4778636409caa0ba82dc970d0f165282576dbf5aae7d1c18a9362e20595f95ed
+2025-11-23 17:40:15,021 - TradingBot - ERROR - Error fetching open orders for XLM/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615032&symbol=XLMUSDT&recvWindow=10000&signature=2603f279bbb2559f9fa432dd78795613b2629113604d385a926d6c4f2785a1f9
+2025-11-23 17:40:15,072 - TradingBot - ERROR - Error fetching open orders for HBAR/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615085&symbol=HBARUSDT&recvWindow=10000&signature=0c9fb1ea65b5ebc458288b4d020dedc3aa98369db0a1abfc8ee89f36476a217b
+2025-11-23 17:40:15,133 - TradingBot - ERROR - Error fetching open orders for APT/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615145&symbol=APTUSDT&recvWindow=10000&signature=f00a17fb85a5afd08be955d6102ba22130f2c84e8100f36ed19fca1a8e7f1a59
+2025-11-23 17:40:15,184 - TradingBot - ERROR - Error fetching open orders for ARB/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615196&symbol=ARBUSDT&recvWindow=10000&signature=566b3c0a6dbe168d79273f1d8cc5cf8baa783ed5d79ecef084d11415efbe3553
+2025-11-23 17:40:15,245 - TradingBot - ERROR - Error fetching open orders for OP/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615256&symbol=OPUSDT&recvWindow=10000&signature=50d43f14ec827ee5419e555a8f3320f829aacfe7f89c1b606f2ab5fe3d608262
+2025-11-23 17:40:15,306 - TradingBot - ERROR - Error fetching open orders for RENDER/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615317&symbol=RENDERUSDT&recvWindow=10000&signature=881aeb20c23f324333cb39ac639fef353eafaa5fad7c86f15ca41ceb4b79246c
+2025-11-23 17:40:15,356 - TradingBot - ERROR - Error fetching open orders for INJ/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615368&symbol=INJUSDT&recvWindow=10000&signature=8a1d19c5ebb5245ea5f7ca0f84c24b1ba5809ada3b784d58b813bf8af4d4280d
+2025-11-23 17:40:15,416 - TradingBot - ERROR - Error fetching open orders for STX/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615427&symbol=STXUSDT&recvWindow=10000&signature=52b38366ab0fb09435dfa62db1f89392649fc4ad506a0ece7379f9b486b4c1ca
+2025-11-23 17:40:15,470 - TradingBot - ERROR - Error fetching open orders for SUI/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615481&symbol=SUIUSDT&recvWindow=10000&signature=df48e618f4f5977f729e2c0c5a030113ae4be0cb27e4ec6c60276d9c6c0939c8
+2025-11-23 17:40:15,530 - TradingBot - ERROR - Error fetching open orders for TIA/USDT: binanceusdm GET https://fapi.binance.com/fapi/v1/openOrders?timestamp=1763937615541&symbol=TIAUSDT&recvWindow=10000&signature=69bcb5b31fef34491662891437a400bcd1f4d05328195f4c229100571888dc02
+2025-11-23 17:40:15,645 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:16,646 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:17,728 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:18,815 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:19,906 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:20,991 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:22,084 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:23,163 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:24,258 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:25,348 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:26,448 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:27,531 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:28,624 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:29,710 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:30,799 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:31,893 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:32,992 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:34,084 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:40:35,171 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:41:06,243 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:41:06,243 - TradingBot - WARNING - 🛑 High Latency detected: 30004.87ms > 800ms. Pausing...
+2025-11-23 17:41:37,259 - TradingBot - ERROR - Error fetching server time: binanceusdm GET https://fapi.binance.com/fapi/v1/time
+2025-11-23 17:41:37,259 - TradingBot - WARNING - Still High Latency: 30005.15ms. Waiting...
+2025-11-23 17:41:57,311 - TradingBot - WARNING - Still High Latency: 19040.70ms. Waiting...
+2025-11-23 17:41:58,552 - TradingBot - INFO - Health Recovery: 229.02ms < 500ms (1/3)
+2025-11-23 17:41:59,790 - TradingBot - INFO - Health Recovery: 227.25ms < 500ms (2/3)
+2025-11-23 17:42:01,034 - TradingBot - INFO - Health Recovery: 232.06ms < 500ms (3/3)
+2025-11-23 17:42:01,035 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:42:08,136 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.0 minutes...
+2025-11-23 17:43:00,826 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.0 minutes...
+2025-11-23 17:43:55,694 - TradingBot - WARNING - 🛑 High Latency detected: 967.07ms > 800ms. Pausing...
+2025-11-23 17:43:57,046 - TradingBot - INFO - Health Recovery: 345.16ms < 500ms (1/3)
+2025-11-23 17:43:58,368 - TradingBot - INFO - Health Recovery: 316.05ms < 500ms (2/3)
+2025-11-23 17:43:59,609 - TradingBot - INFO - Health Recovery: 234.14ms < 500ms (3/3)
+2025-11-23 17:43:59,609 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 17:44:00,887 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.0 minutes...
+2025-11-23 17:45:00,990 - TradingBot - INFO - ⏳ Waiting for next candle close in 15.0 minutes...
+2025-11-23 17:45:05,268 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 17:45:00...
+2025-11-23 17:45:05,498 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 17:45:05,498 - TradingBot - INFO - Max Trades Per Hour Reached: 5
+2025-11-23 17:45:05,498 - TradingBot - WARNING - 🛑 Trade frequency limit reached! Skipping new entries.
+2025-11-23 17:45:45,335 - TradingBot - INFO - Volatility Filter Failed: ATR% 0.10 not in [0.2, 2.5]
+2025-11-23 17:46:01,050 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.0 minutes...
+2025-11-23 17:47:01,073 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.0 minutes...
+2025-11-23 17:48:02,291 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.0 minutes...
+2025-11-23 17:49:04,756 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.9 minutes...
+2025-11-23 17:49:58,028 - TradingBot - INFO - Initializing components...
+2025-11-23 17:49:58,034 - TradingBot - INFO - Bot started. Initializing Hybrid Frequency Loop...
+2025-11-23 17:49:58,034 - TradingBot - INFO - 🔄 Syncing positions with Binance...
+2025-11-23 17:50:00,973 - TradingBot - INFO - ✅ Health Check: 1s
+2025-11-23 17:50:00,974 - TradingBot - INFO - ✅ Position Monitor: 3s
+2025-11-23 17:50:00,974 - TradingBot - INFO - ✅ Strategy/Entry: 15m (Candle Close)
+2025-11-23 17:50:10,460 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.0 minutes...
+2025-11-23 17:51:01,087 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.0 minutes...
+2025-11-23 17:52:01,340 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.0 minutes...
+2025-11-23 17:53:01,194 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.0 minutes...
+2025-11-23 17:54:01,289 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.0 minutes...
+2025-11-23 17:55:01,300 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.0 minutes...
+2025-11-23 17:56:01,327 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.0 minutes...
+2025-11-23 17:57:01,426 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.0 minutes...
+2025-11-23 17:58:07,597 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.9 minutes...
+2025-11-23 17:59:07,873 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.9 minutes...
+2025-11-23 18:00:10,547 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 18:00:00...
+2025-11-23 18:00:10,784 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 18:00:11,023 - TradingBot - INFO - Starting loop for 30 symbols
+2025-11-23 18:00:12,576 - TradingBot - INFO - --- Analyzing DOGE/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 18:00:13,053 - TradingBot - INFO - Funding Rate: -0.0030%
+2025-11-23 18:00:13,061 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 27.48 (Req: >= 15)
+  ✅ RSI: 59.88 (Req: > 40)
+  ✅ MACD: 0.0000 (Req: > 0)
+  ❌ Volume: 18038282.00 (Req: >= 26247897.60)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:13,064 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 27.48 (Req: >= 15)
+  ✅ RSI: 59.88 (Req: < 60)
+  ❌ MACD: 0.0000 (Req: < 0)
+  ❌ Volume: 18038282.00 (Req: >= 26247897.60)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:13,317 - TradingBot - INFO - --- Analyzing APT/USDT Closed: 2.36 (ATR: 0.01) | Current: 2.36 ---
+2025-11-23 18:00:13,807 - TradingBot - INFO - Funding Rate: -0.0668%
+2025-11-23 18:00:13,812 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 13.49 (Req: >= 15)
+  ✅ RSI: 52.97 (Req: > 40)
+  ✅ MACD: 0.0002 (Req: > 0)
+  ❌ Volume: 66085.70 (Req: >= 143728.46)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:13,816 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.49 (Req: >= 15)
+  ✅ RSI: 52.97 (Req: < 60)
+  ❌ MACD: 0.0002 (Req: < 0)
+  ❌ Volume: 66085.70 (Req: >= 143728.46)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 18:00:14,156 - TradingBot - INFO - --- Analyzing AVAX/USDT Closed: 13.41 (ATR: 0.05) | Current: 13.41 ---
+2025-11-23 18:00:14,619 - TradingBot - INFO - Funding Rate: -0.0147%
+2025-11-23 18:00:14,624 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 22.01 (Req: >= 15)
+  ✅ RSI: 54.44 (Req: > 40)
+  ✅ MACD: 0.0011 (Req: > 0)
+  ❌ Volume: 35686.00 (Req: >= 74974.28)
+  ✅ Structure: No HL (optional) (Req: )
+
+2025-11-23 18:00:14,628 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 22.01 (Req: >= 15)
+  ✅ RSI: 54.44 (Req: < 60)
+  ❌ MACD: 0.0011 (Req: < 0)
+  ❌ Volume: 35686.00 (Req: >= 74974.28)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:14,902 - TradingBot - INFO - --- Analyzing SOL/USDT Closed: 132.58 (ATR: 0.73) | Current: 132.65 ---
+2025-11-23 18:00:15,362 - TradingBot - INFO - Funding Rate: 0.0015%
+2025-11-23 18:00:15,367 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 22.12 (Req: >= 15)
+  ✅ RSI: 53.87 (Req: > 40)
+  ❌ MACD: -0.0463 (Req: > 0)
+  ❌ Volume: 58609.21 (Req: >= 123997.10)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:15,371 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 22.12 (Req: >= 15)
+  ✅ RSI: 53.87 (Req: < 60)
+  ✅ MACD: -0.0463 (Req: < 0)
+  ❌ Volume: 58609.21 (Req: >= 123997.10)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:15,660 - TradingBot - INFO - --- Analyzing HBAR/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 18:00:16,128 - TradingBot - INFO - Funding Rate: -0.0045%
+2025-11-23 18:00:16,134 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 39.65 (Req: >= 15)
+  ✅ RSI: 51.43 (Req: > 40)
+  ❌ MACD: -0.0005 (Req: > 0)
+  ❌ Volume: 5379875.00 (Req: >= 14025770.72)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:16,139 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 39.65 (Req: >= 15)
+  ✅ RSI: 51.43 (Req: < 60)
+  ✅ MACD: -0.0005 (Req: < 0)
+  ❌ Volume: 5379875.00 (Req: >= 14025770.72)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:16,406 - TradingBot - INFO - --- Analyzing STX/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 18:00:16,633 - TradingBot - INFO - Spread Filter Failed: Spread 0.0322% > 0.03%
+2025-11-23 18:00:16,633 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:16,922 - TradingBot - INFO - --- Analyzing BTC/USDT Closed: 87964.70 (ATR: 332.11) | Current: 87965.30 ---
+2025-11-23 18:00:17,392 - TradingBot - INFO - Funding Rate: -0.0013%
+2025-11-23 18:00:17,398 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 34.43 (Req: >= 15)
+  ✅ RSI: 62.84 (Req: > 40)
+  ✅ MACD: 25.8856 (Req: > 0)
+  ❌ Volume: 532.42 (Req: >= 937.92)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:17,402 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 34.43 (Req: >= 15)
+  ❌ RSI: 62.84 (Req: < 60)
+  ❌ MACD: 25.8856 (Req: < 0)
+  ❌ Volume: 532.42 (Req: >= 937.92)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:17,676 - TradingBot - INFO - --- Analyzing POL/USDT Closed: 0.14 (ATR: 0.00) | Current: 0.14 ---
+2025-11-23 18:00:18,160 - TradingBot - INFO - Funding Rate: -0.0032%
+2025-11-23 18:00:18,168 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 7.30 (Req: >= 15)
+  ✅ RSI: 50.16 (Req: > 40)
+  ❌ MACD: -0.0000 (Req: > 0)
+  ❌ Volume: 504805.00 (Req: >= 769627.96)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:18,170 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 7.30 (Req: >= 15)
+  ✅ RSI: 50.16 (Req: < 60)
+  ✅ MACD: -0.0000 (Req: < 0)
+  ❌ Volume: 504805.00 (Req: >= 769627.96)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:18,426 - TradingBot - INFO - --- Analyzing LINK/USDT Closed: 12.70 (ATR: 0.07) | Current: 12.71 ---
+2025-11-23 18:00:18,889 - TradingBot - INFO - Funding Rate: 0.0025%
+2025-11-23 18:00:18,895 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 25.50 (Req: >= 15)
+  ✅ RSI: 56.34 (Req: > 40)
+  ✅ MACD: 0.0033 (Req: > 0)
+  ❌ Volume: 48024.06 (Req: >= 79350.23)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:18,899 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 25.50 (Req: >= 15)
+  ✅ RSI: 56.34 (Req: < 60)
+  ❌ MACD: 0.0033 (Req: < 0)
+  ❌ Volume: 48024.06 (Req: >= 79350.23)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:19,169 - TradingBot - INFO - --- Analyzing TIA/USDT Closed: 0.62 (ATR: 0.00) | Current: 0.62 ---
+2025-11-23 18:00:19,761 - TradingBot - INFO - Funding Rate: -0.0389%
+2025-11-23 18:00:19,767 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 14.41 (Req: >= 15)
+  ✅ RSI: 54.14 (Req: > 40)
+  ✅ MACD: 0.0004 (Req: > 0)
+  ❌ Volume: 433725.00 (Req: >= 573954.12)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:19,771 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 14.41 (Req: >= 15)
+  ✅ RSI: 54.14 (Req: < 60)
+  ❌ MACD: 0.0004 (Req: < 0)
+  ❌ Volume: 433725.00 (Req: >= 573954.12)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:20,087 - TradingBot - INFO - --- Analyzing LTC/USDT Closed: 84.06 (ATR: 0.38) | Current: 84.16 ---
+2025-11-23 18:00:20,612 - TradingBot - INFO - Funding Rate: -0.0022%
+2025-11-23 18:00:20,620 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.60 (Req: >= 15)
+  ✅ RSI: 55.27 (Req: > 40)
+  ✅ MACD: 0.0195 (Req: > 0)
+  ❌ Volume: 6045.93 (Req: >= 9154.07)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:20,622 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.60 (Req: >= 15)
+  ✅ RSI: 55.27 (Req: < 60)
+  ❌ MACD: 0.0195 (Req: < 0)
+  ❌ Volume: 6045.93 (Req: >= 9154.07)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:20,909 - TradingBot - INFO - --- Analyzing RENDER/USDT Closed: 1.74 (ATR: 0.01) | Current: 1.74 ---
+2025-11-23 18:00:21,194 - TradingBot - INFO - Spread Filter Failed: Spread 0.0574% > 0.03%
+2025-11-23 18:00:21,194 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:21,454 - TradingBot - INFO - --- Analyzing BNB/USDT Closed: 854.13 (ATR: 2.89) | Current: 855.04 ---
+2025-11-23 18:00:22,013 - TradingBot - INFO - Funding Rate: 0.0000%
+2025-11-23 18:00:22,019 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 17.64 (Req: >= 15)
+  ✅ RSI: 58.29 (Req: > 40)
+  ✅ MACD: 0.1842 (Req: > 0)
+  ❌ Volume: 1534.76 (Req: >= 2641.10)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:22,023 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 17.64 (Req: >= 15)
+  ✅ RSI: 58.29 (Req: < 60)
+  ❌ MACD: 0.1842 (Req: < 0)
+  ❌ Volume: 1534.76 (Req: >= 2641.10)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:22,341 - TradingBot - INFO - --- Analyzing NEAR/USDT Closed: 1.85 (ATR: 0.01) | Current: 1.85 ---
+2025-11-23 18:00:22,628 - TradingBot - INFO - Spread Filter Failed: Spread 0.0539% > 0.03%
+2025-11-23 18:00:22,628 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:22,956 - TradingBot - INFO - --- Analyzing TRX/USDT Closed: 0.28 (ATR: 0.00) | Current: 0.28 ---
+2025-11-23 18:00:22,956 - TradingBot - INFO - Volatility Filter Failed: ATR% 0.13 not in [0.2, 2.5]
+2025-11-23 18:00:22,956 - TradingBot - INFO - Filter Fail: ATR 0.00 (0.13%) out of range
+2025-11-23 18:00:23,373 - TradingBot - INFO - --- Analyzing ETC/USDT Closed: 13.72 (ATR: 0.05) | Current: 13.74 ---
+2025-11-23 18:00:23,838 - TradingBot - INFO - Funding Rate: -0.0056%
+2025-11-23 18:00:23,843 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 14.60 (Req: >= 15)
+  ✅ RSI: 56.25 (Req: > 40)
+  ✅ MACD: 0.0056 (Req: > 0)
+  ❌ Volume: 7856.26 (Req: >= 13529.01)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:23,847 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 14.60 (Req: >= 15)
+  ✅ RSI: 56.25 (Req: < 60)
+  ❌ MACD: 0.0056 (Req: < 0)
+  ❌ Volume: 7856.26 (Req: >= 13529.01)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:24,186 - TradingBot - INFO - --- Analyzing OP/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 18:00:24,471 - TradingBot - INFO - Spread Filter Failed: Spread 0.0326% > 0.03%
+2025-11-23 18:00:24,471 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:24,800 - TradingBot - INFO - --- Analyzing SUI/USDT Closed: 1.39 (ATR: 0.01) | Current: 1.39 ---
+2025-11-23 18:00:25,392 - TradingBot - INFO - Funding Rate: 0.0025%
+2025-11-23 18:00:25,398 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 17.64 (Req: >= 15)
+  ✅ RSI: 54.46 (Req: > 40)
+  ✅ MACD: 0.0003 (Req: > 0)
+  ✅ Volume: 1283660.40 (Req: >= 1137841.26)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:25,398 - TradingBot - INFO - 🚀 ENTRY SIGNAL FOUND: LONG
+2025-11-23 18:00:25,701 - TradingBot - INFO - Current total exposure: 0.00 USD
+2025-11-23 18:00:25,701 - TradingBot - INFO - ✅ Position size calculated: 360.256503 SUI (Exposure: 500.00 USD)
+2025-11-23 18:00:25,701 - TradingBot - INFO - Executing LONG | Size: 360.2565 | Entry: 1.3879 | SL: 1.362588962508943
+2025-11-23 18:00:25,701 - TradingBot - INFO - Opening LONG position for SUI/USDT, amount: 360.2565026298725
+2025-11-23 18:00:26,009 - TradingBot - WARNING - API call failed (attempt 1/3): binanceusdm {"code":-2019,"msg":"Margin is insufficient."}. Retrying in 1s...
+2025-11-23 18:00:27,252 - TradingBot - WARNING - API call failed (attempt 2/3): binanceusdm {"code":-2019,"msg":"Margin is insufficient."}. Retrying in 2s...
+2025-11-23 18:00:29,499 - TradingBot - ERROR - API call failed after 3 retries: binanceusdm {"code":-2019,"msg":"Margin is insufficient."}
+2025-11-23 18:00:29,499 - TradingBot - ERROR - Failed to create order for SUI/USDT after retries: binanceusdm {"code":-2019,"msg":"Margin is insufficient."}
+2025-11-23 18:00:29,499 - TradingBot - ERROR - Failed to create open order
+2025-11-23 18:00:29,817 - TradingBot - INFO - --- Analyzing XMR/USDT Closed: 389.54 (ATR: 3.13) | Current: 390.00 ---
+2025-11-23 18:00:30,308 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 18:00:30,314 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 9.21 (Req: >= 15)
+  ✅ RSI: 45.48 (Req: > 40)
+  ✅ MACD: 0.0967 (Req: > 0)
+  ❌ Volume: 263.37 (Req: >= 669.92)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:30,317 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 9.21 (Req: >= 15)
+  ✅ RSI: 45.48 (Req: < 60)
+  ❌ MACD: 0.0967 (Req: < 0)
+  ❌ Volume: 263.37 (Req: >= 669.92)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:30,637 - TradingBot - INFO - --- Analyzing ETH/USDT Closed: 2836.85 (ATR: 13.89) | Current: 2840.71 ---
+2025-11-23 18:00:31,155 - TradingBot - INFO - Funding Rate: 0.0008%
+2025-11-23 18:00:31,162 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 19.54 (Req: >= 15)
+  ✅ RSI: 56.18 (Req: > 40)
+  ✅ MACD: 1.1952 (Req: > 0)
+  ❌ Volume: 14088.94 (Req: >= 16844.11)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:31,165 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 19.54 (Req: >= 15)
+  ✅ RSI: 56.18 (Req: < 60)
+  ❌ MACD: 1.1952 (Req: < 0)
+  ❌ Volume: 14088.94 (Req: >= 16844.11)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:31,461 - TradingBot - INFO - --- Analyzing XRP/USDT Closed: 2.07 (ATR: 0.01) | Current: 2.08 ---
+2025-11-23 18:00:32,150 - TradingBot - INFO - Funding Rate: -0.0120%
+2025-11-23 18:00:32,158 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 15.94 (Req: >= 15)
+  ✅ RSI: 56.62 (Req: > 40)
+  ❌ MACD: -0.0004 (Req: > 0)
+  ❌ Volume: 1806430.90 (Req: >= 3793951.34)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:32,161 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 15.94 (Req: >= 15)
+  ✅ RSI: 56.62 (Req: < 60)
+  ✅ MACD: -0.0004 (Req: < 0)
+  ❌ Volume: 1806430.90 (Req: >= 3793951.34)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 18:00:32,479 - TradingBot - INFO - --- Analyzing BCH/USDT Closed: 544.10 (ATR: 3.72) | Current: 544.69 ---
+2025-11-23 18:00:33,004 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 18:00:33,009 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 14.27 (Req: >= 15)
+  ✅ RSI: 41.88 (Req: > 40)
+  ❌ MACD: -0.6125 (Req: > 0)
+  ❌ Volume: 2184.53 (Req: >= 2437.94)
+  ✅ Structure: No HL (optional) (Req: )
+
+2025-11-23 18:00:33,012 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 14.27 (Req: >= 15)
+  ✅ RSI: 41.88 (Req: < 60)
+  ✅ MACD: -0.6125 (Req: < 0)
+  ❌ Volume: 2184.53 (Req: >= 2437.94)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:33,290 - TradingBot - INFO - --- Analyzing INJ/USDT Closed: 5.44 (ATR: 0.04) | Current: 5.46 ---
+2025-11-23 18:00:33,763 - TradingBot - INFO - Funding Rate: -0.0045%
+2025-11-23 18:00:33,768 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 10.80 (Req: >= 15)
+  ✅ RSI: 50.97 (Req: > 40)
+  ✅ MACD: 0.0023 (Req: > 0)
+  ❌ Volume: 20362.10 (Req: >= 41329.63)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:33,772 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 10.80 (Req: >= 15)
+  ✅ RSI: 50.97 (Req: < 60)
+  ❌ MACD: 0.0023 (Req: < 0)
+  ❌ Volume: 20362.10 (Req: >= 41329.63)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:34,039 - TradingBot - INFO - --- Analyzing UNI/USDT Closed: 6.24 (ATR: 0.05) | Current: 6.26 ---
+2025-11-23 18:00:34,608 - TradingBot - INFO - Funding Rate: 0.0057%
+2025-11-23 18:00:34,614 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 20.04 (Req: >= 15)
+  ✅ RSI: 55.42 (Req: > 40)
+  ✅ MACD: 0.0065 (Req: > 0)
+  ❌ Volume: 73926.00 (Req: >= 165792.60)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:34,618 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 20.04 (Req: >= 15)
+  ✅ RSI: 55.42 (Req: < 60)
+  ❌ MACD: 0.0065 (Req: < 0)
+  ❌ Volume: 73926.00 (Req: >= 165792.60)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:34,938 - TradingBot - INFO - --- Analyzing XLM/USDT Closed: 0.25 (ATR: 0.00) | Current: 0.25 ---
+2025-11-23 18:00:35,530 - TradingBot - INFO - Funding Rate: -0.0147%
+2025-11-23 18:00:35,536 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 44.35 (Req: >= 15)
+  ✅ RSI: 58.90 (Req: > 40)
+  ❌ MACD: -0.0002 (Req: > 0)
+  ❌ Volume: 487249.00 (Req: >= 2445952.56)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:35,540 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 44.35 (Req: >= 15)
+  ✅ RSI: 58.90 (Req: < 60)
+  ✅ MACD: -0.0002 (Req: < 0)
+  ❌ Volume: 487249.00 (Req: >= 2445952.56)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:35,859 - TradingBot - INFO - --- Analyzing ADA/USDT Closed: 0.41 (ATR: 0.00) | Current: 0.42 ---
+2025-11-23 18:00:36,452 - TradingBot - INFO - Funding Rate: -0.0052%
+2025-11-23 18:00:36,458 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 13.75 (Req: >= 15)
+  ✅ RSI: 54.94 (Req: > 40)
+  ✅ MACD: 0.0002 (Req: > 0)
+  ❌ Volume: 1943986.00 (Req: >= 3210378.60)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:00:36,462 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.75 (Req: >= 15)
+  ✅ RSI: 54.94 (Req: < 60)
+  ❌ MACD: 0.0002 (Req: < 0)
+  ❌ Volume: 1943986.00 (Req: >= 3210378.60)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:00:36,713 - TradingBot - INFO - --- Analyzing DOT/USDT Closed: 2.31 (ATR: 0.01) | Current: 2.31 ---
+2025-11-23 18:00:36,963 - TradingBot - INFO - Spread Filter Failed: Spread 0.0432% > 0.03%
+2025-11-23 18:00:36,964 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:37,291 - TradingBot - INFO - --- Analyzing ATOM/USDT Closed: 2.51 (ATR: 0.01) | Current: 2.52 ---
+2025-11-23 18:00:37,579 - TradingBot - INFO - Spread Filter Failed: Spread 0.0398% > 0.03%
+2025-11-23 18:00:37,579 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:37,916 - TradingBot - INFO - --- Analyzing FIL/USDT Closed: 1.63 (ATR: 0.01) | Current: 1.64 ---
+2025-11-23 18:00:38,192 - TradingBot - INFO - Spread Filter Failed: Spread 0.0611% > 0.03%
+2025-11-23 18:00:38,193 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:38,524 - TradingBot - INFO - --- Analyzing ARB/USDT Closed: 0.20 (ATR: 0.00) | Current: 0.20 ---
+2025-11-23 18:00:38,807 - TradingBot - INFO - Spread Filter Failed: Spread 0.0490% > 0.03%
+2025-11-23 18:00:38,807 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:00:38,807 - TradingBot - INFO - === 📉 TOP 3 REJECTION REASONS ===
+2025-11-23 18:00:38,808 - TradingBot - INFO -   ❌ Signal: Volume: 40 times
+2025-11-23 18:00:38,808 - TradingBot - INFO -   ❌ Signal: Trend: 22 times
+2025-11-23 18:00:38,808 - TradingBot - INFO -   ❌ Signal: MACD: 20 times
+2025-11-23 18:00:38,808 - TradingBot - INFO - ====================================
+2025-11-23 18:00:38,808 - TradingBot - INFO - 💤 NO ACTIVE POSITIONS
+2025-11-23 18:00:38,808 - TradingBot - INFO - ====================================
+2025-11-23 18:00:38,808 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.8 minutes...
+2025-11-23 18:01:17,961 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.7 minutes...
+2025-11-23 18:02:24,188 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.6 minutes...
+2025-11-23 18:03:24,250 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.6 minutes...
+2025-11-23 18:04:24,527 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.6 minutes...
+2025-11-23 18:05:27,989 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.5 minutes...
+2025-11-23 18:06:27,999 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.5 minutes...
+2025-11-23 18:07:28,309 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.5 minutes...
+2025-11-23 18:08:31,499 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.5 minutes...
+2025-11-23 18:09:32,112 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.5 minutes...
+2025-11-23 18:10:33,686 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.4 minutes...
+2025-11-23 18:11:37,041 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.4 minutes...
+2025-11-23 18:12:40,121 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.3 minutes...
+2025-11-23 18:13:42,958 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.3 minutes...
+2025-11-23 18:14:46,382 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.2 minutes...
+2025-11-23 18:15:05,326 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 18:15:00...
+2025-11-23 18:15:05,634 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 18:15:05,943 - TradingBot - INFO - Starting loop for 30 symbols
+2025-11-23 18:15:06,204 - TradingBot - INFO - --- Analyzing DOGE/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 18:15:06,669 - TradingBot - INFO - Funding Rate: -0.0040%
+2025-11-23 18:15:06,675 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 25.57 (Req: >= 15)
+  ✅ RSI: 47.67 (Req: > 40)
+  ❌ MACD: -0.0001 (Req: > 0)
+  ✅ Volume: 57107359.00 (Req: >= 26637471.28)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:06,678 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 25.57 (Req: >= 15)
+  ✅ RSI: 47.67 (Req: < 60)
+  ✅ MACD: -0.0001 (Req: < 0)
+  ✅ Volume: 57107359.00 (Req: >= 26637471.28)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:06,956 - TradingBot - INFO - --- Analyzing APT/USDT Closed: 2.34 (ATR: 0.01) | Current: 2.34 ---
+2025-11-23 18:15:07,424 - TradingBot - INFO - Funding Rate: -0.0668%
+2025-11-23 18:15:07,429 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.26 (Req: >= 15)
+  ✅ RSI: 45.21 (Req: > 40)
+  ❌ MACD: -0.0012 (Req: > 0)
+  ✅ Volume: 255373.10 (Req: >= 148151.11)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:07,433 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.26 (Req: >= 15)
+  ✅ RSI: 45.21 (Req: < 60)
+  ✅ MACD: -0.0012 (Req: < 0)
+  ✅ Volume: 255373.10 (Req: >= 148151.11)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 18:15:07,702 - TradingBot - INFO - --- Analyzing AVAX/USDT Closed: 13.31 (ATR: 0.05) | Current: 13.31 ---
+2025-11-23 18:15:08,163 - TradingBot - INFO - Funding Rate: -0.0138%
+2025-11-23 18:15:08,168 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 20.70 (Req: >= 15)
+  ✅ RSI: 43.81 (Req: > 40)
+  ❌ MACD: -0.0052 (Req: > 0)
+  ✅ Volume: 285712.00 (Req: >= 83701.00)
+  ✅ Structure: No HL (optional) (Req: )
+
+2025-11-23 18:15:08,171 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 20.70 (Req: >= 15)
+  ✅ RSI: 43.81 (Req: < 60)
+  ✅ MACD: -0.0052 (Req: < 0)
+  ✅ Volume: 285712.00 (Req: >= 83701.00)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:08,451 - TradingBot - INFO - --- Analyzing SOL/USDT Closed: 131.37 (ATR: 0.79) | Current: 131.40 ---
+2025-11-23 18:15:08,913 - TradingBot - INFO - Funding Rate: 0.0012%
+2025-11-23 18:15:08,921 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 21.47 (Req: >= 15)
+  ✅ RSI: 43.13 (Req: > 40)
+  ❌ MACD: -0.1260 (Req: > 0)
+  ✅ Volume: 277991.96 (Req: >= 128574.73)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:08,923 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 21.47 (Req: >= 15)
+  ✅ RSI: 43.13 (Req: < 60)
+  ✅ MACD: -0.1260 (Req: < 0)
+  ✅ Volume: 277991.96 (Req: >= 128574.73)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:09,218 - TradingBot - INFO - --- Analyzing HBAR/USDT Closed: 0.15 (ATR: 0.00) | Current: 0.15 ---
+2025-11-23 18:15:09,692 - TradingBot - INFO - Funding Rate: -0.0038%
+2025-11-23 18:15:09,697 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 37.07 (Req: >= 15)
+  ✅ RSI: 48.04 (Req: > 40)
+  ❌ MACD: -0.0006 (Req: > 0)
+  ✅ Volume: 14951374.00 (Req: >= 14384142.44)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:09,700 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 37.07 (Req: >= 15)
+  ✅ RSI: 48.04 (Req: < 60)
+  ✅ MACD: -0.0006 (Req: < 0)
+  ✅ Volume: 14951374.00 (Req: >= 14384142.44)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:09,963 - TradingBot - INFO - --- Analyzing STX/USDT Closed: 0.31 (ATR: 0.00) | Current: 0.31 ---
+2025-11-23 18:15:10,205 - TradingBot - INFO - Spread Filter Failed: Spread 0.0324% > 0.03%
+2025-11-23 18:15:10,205 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:10,471 - TradingBot - INFO - --- Analyzing BTC/USDT Closed: 87290.00 (ATR: 363.32) | Current: 87346.60 ---
+2025-11-23 18:15:10,943 - TradingBot - INFO - Funding Rate: -0.0018%
+2025-11-23 18:15:10,948 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 32.77 (Req: >= 15)
+  ✅ RSI: 49.06 (Req: > 40)
+  ❌ MACD: -17.2935 (Req: > 0)
+  ✅ Volume: 2402.55 (Req: >= 1009.38)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:10,951 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 32.77 (Req: >= 15)
+  ✅ RSI: 49.06 (Req: < 60)
+  ✅ MACD: -17.2935 (Req: < 0)
+  ✅ Volume: 2402.55 (Req: >= 1009.38)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:11,223 - TradingBot - INFO - --- Analyzing POL/USDT Closed: 0.13 (ATR: 0.00) | Current: 0.13 ---
+2025-11-23 18:15:11,777 - TradingBot - INFO - Funding Rate: -0.0038%
+2025-11-23 18:15:11,783 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 8.02 (Req: >= 15)
+  ✅ RSI: 43.36 (Req: > 40)
+  ❌ MACD: -0.0001 (Req: > 0)
+  ✅ Volume: 1543879.00 (Req: >= 788479.00)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:11,787 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 8.02 (Req: >= 15)
+  ✅ RSI: 43.36 (Req: < 60)
+  ✅ MACD: -0.0001 (Req: < 0)
+  ✅ Volume: 1543879.00 (Req: >= 788479.00)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:12,110 - TradingBot - INFO - --- Analyzing LINK/USDT Closed: 12.59 (ATR: 0.07) | Current: 12.60 ---
+2025-11-23 18:15:12,599 - TradingBot - INFO - Funding Rate: 0.0019%
+2025-11-23 18:15:12,605 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 23.81 (Req: >= 15)
+  ✅ RSI: 45.92 (Req: > 40)
+  ❌ MACD: -0.0048 (Req: > 0)
+  ✅ Volume: 157852.13 (Req: >= 82180.47)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:12,609 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 23.81 (Req: >= 15)
+  ✅ RSI: 45.92 (Req: < 60)
+  ✅ MACD: -0.0048 (Req: < 0)
+  ✅ Volume: 157852.13 (Req: >= 82180.47)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:12,869 - TradingBot - INFO - --- Analyzing TIA/USDT Closed: 0.61 (ATR: 0.01) | Current: 0.61 ---
+2025-11-23 18:15:13,342 - TradingBot - INFO - Funding Rate: -0.0435%
+2025-11-23 18:15:13,347 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.56 (Req: >= 15)
+  ✅ RSI: 45.16 (Req: > 40)
+  ❌ MACD: -0.0001 (Req: > 0)
+  ✅ Volume: 1219969.00 (Req: >= 591645.28)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:13,351 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.56 (Req: >= 15)
+  ✅ RSI: 45.16 (Req: < 60)
+  ✅ MACD: -0.0001 (Req: < 0)
+  ✅ Volume: 1219969.00 (Req: >= 591645.28)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:13,624 - TradingBot - INFO - --- Analyzing LTC/USDT Closed: 83.42 (ATR: 0.41) | Current: 83.47 ---
+2025-11-23 18:15:14,084 - TradingBot - INFO - Funding Rate: -0.0029%
+2025-11-23 18:15:14,091 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.23 (Req: >= 15)
+  ✅ RSI: 44.55 (Req: > 40)
+  ❌ MACD: -0.0285 (Req: > 0)
+  ✅ Volume: 20788.08 (Req: >= 9157.35)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:14,094 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.23 (Req: >= 15)
+  ✅ RSI: 44.55 (Req: < 60)
+  ✅ MACD: -0.0285 (Req: < 0)
+  ✅ Volume: 20788.08 (Req: >= 9157.35)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:14,369 - TradingBot - INFO - --- Analyzing RENDER/USDT Closed: 1.72 (ATR: 0.01) | Current: 1.72 ---
+2025-11-23 18:15:14,605 - TradingBot - INFO - Spread Filter Failed: Spread 0.0580% > 0.03%
+2025-11-23 18:15:14,606 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:14,881 - TradingBot - INFO - --- Analyzing BNB/USDT Closed: 850.19 (ATR: 3.07) | Current: 850.84 ---
+2025-11-23 18:15:15,344 - TradingBot - INFO - Funding Rate: 0.0000%
+2025-11-23 18:15:15,350 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 16.60 (Req: >= 15)
+  ✅ RSI: 48.49 (Req: > 40)
+  ❌ MACD: -0.1056 (Req: > 0)
+  ✅ Volume: 7981.37 (Req: >= 2848.33)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:15,353 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.60 (Req: >= 15)
+  ✅ RSI: 48.49 (Req: < 60)
+  ✅ MACD: -0.1056 (Req: < 0)
+  ✅ Volume: 7981.37 (Req: >= 2848.33)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:15,630 - TradingBot - INFO - --- Analyzing NEAR/USDT Closed: 1.83 (ATR: 0.01) | Current: 1.83 ---
+2025-11-23 18:15:15,862 - TradingBot - INFO - Spread Filter Failed: Spread 0.0545% > 0.03%
+2025-11-23 18:15:15,862 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:16,145 - TradingBot - INFO - --- Analyzing TRX/USDT Closed: 0.27 (ATR: 0.00) | Current: 0.27 ---
+2025-11-23 18:15:16,145 - TradingBot - INFO - Volatility Filter Failed: ATR% 0.14 not in [0.2, 2.5]
+2025-11-23 18:15:16,145 - TradingBot - INFO - Filter Fail: ATR 0.00 (0.14%) out of range
+2025-11-23 18:15:16,397 - TradingBot - INFO - --- Analyzing ETC/USDT Closed: 13.65 (ATR: 0.06) | Current: 13.66 ---
+2025-11-23 18:15:16,865 - TradingBot - INFO - Funding Rate: -0.0062%
+2025-11-23 18:15:16,872 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.72 (Req: >= 15)
+  ✅ RSI: 45.48 (Req: > 40)
+  ✅ MACD: 0.0006 (Req: > 0)
+  ✅ Volume: 30823.24 (Req: >= 13993.65)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:16,875 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.72 (Req: >= 15)
+  ✅ RSI: 45.48 (Req: < 60)
+  ❌ MACD: 0.0006 (Req: < 0)
+  ✅ Volume: 30823.24 (Req: >= 13993.65)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:17,136 - TradingBot - INFO - --- Analyzing OP/USDT Closed: 0.30 (ATR: 0.00) | Current: 0.30 ---
+2025-11-23 18:15:17,370 - TradingBot - INFO - Spread Filter Failed: Spread 0.0329% > 0.03%
+2025-11-23 18:15:17,370 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:17,664 - TradingBot - INFO - --- Analyzing SUI/USDT Closed: 1.37 (ATR: 0.01) | Current: 1.37 ---
+2025-11-23 18:15:18,154 - TradingBot - INFO - Funding Rate: 0.0024%
+2025-11-23 18:15:18,158 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 17.39 (Req: >= 15)
+  ✅ RSI: 43.81 (Req: > 40)
+  ❌ MACD: -0.0009 (Req: > 0)
+  ✅ Volume: 3015289.80 (Req: >= 1209972.27)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:18,162 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 17.39 (Req: >= 15)
+  ✅ RSI: 43.81 (Req: < 60)
+  ✅ MACD: -0.0009 (Req: < 0)
+  ✅ Volume: 3015289.80 (Req: >= 1209972.27)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:18,439 - TradingBot - INFO - --- Analyzing XMR/USDT Closed: 387.72 (ATR: 3.11) | Current: 388.24 ---
+2025-11-23 18:15:18,946 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 18:15:18,954 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 9.17 (Req: >= 15)
+  ✅ RSI: 41.45 (Req: > 40)
+  ❌ MACD: -0.0606 (Req: > 0)
+  ❌ Volume: 564.26 (Req: >= 600.80)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:18,957 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 9.17 (Req: >= 15)
+  ✅ RSI: 41.45 (Req: < 60)
+  ✅ MACD: -0.0606 (Req: < 0)
+  ❌ Volume: 564.26 (Req: >= 600.80)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:19,274 - TradingBot - INFO - --- Analyzing ETH/USDT Closed: 2813.67 (ATR: 15.06) | Current: 2816.65 ---
+2025-11-23 18:15:19,867 - TradingBot - INFO - Funding Rate: 0.0003%
+2025-11-23 18:15:19,873 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 18.90 (Req: >= 15)
+  ✅ RSI: 45.06 (Req: > 40)
+  ❌ MACD: -0.4424 (Req: > 0)
+  ✅ Volume: 54405.07 (Req: >= 18270.43)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:19,876 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 18.90 (Req: >= 15)
+  ✅ RSI: 45.06 (Req: < 60)
+  ✅ MACD: -0.4424 (Req: < 0)
+  ✅ Volume: 54405.07 (Req: >= 18270.43)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:20,194 - TradingBot - INFO - --- Analyzing XRP/USDT Closed: 2.05 (ATR: 0.01) | Current: 2.05 ---
+2025-11-23 18:15:20,686 - TradingBot - INFO - Funding Rate: -0.0116%
+2025-11-23 18:15:20,692 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.14 (Req: >= 15)
+  ✅ RSI: 42.54 (Req: > 40)
+  ❌ MACD: -0.0018 (Req: > 0)
+  ✅ Volume: 8693288.90 (Req: >= 3961660.78)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:20,694 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 16.14 (Req: >= 15)
+  ✅ RSI: 42.54 (Req: < 60)
+  ✅ MACD: -0.0018 (Req: < 0)
+  ✅ Volume: 8693288.90 (Req: >= 3961660.78)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 18:15:21,015 - TradingBot - INFO - --- Analyzing BCH/USDT Closed: 542.71 (ATR: 3.88) | Current: 542.96 ---
+2025-11-23 18:15:21,504 - TradingBot - INFO - Funding Rate: 0.0100%
+2025-11-23 18:15:21,507 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 14.57 (Req: >= 15)
+  ❌ RSI: 39.70 (Req: > 40)
+  ❌ MACD: -0.8153 (Req: > 0)
+  ✅ Volume: 6486.84 (Req: >= 2603.76)
+  ✅ Structure: No HL (optional) (Req: )
+
+2025-11-23 18:15:21,509 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 14.57 (Req: >= 15)
+  ✅ RSI: 39.70 (Req: < 60)
+  ✅ MACD: -0.8153 (Req: < 0)
+  ✅ Volume: 6486.84 (Req: >= 2603.76)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:21,840 - TradingBot - INFO - --- Analyzing INJ/USDT Closed: 5.39 (ATR: 0.04) | Current: 5.39 ---
+2025-11-23 18:15:22,353 - TradingBot - INFO - Funding Rate: -0.0068%
+2025-11-23 18:15:22,358 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 11.04 (Req: >= 15)
+  ✅ RSI: 43.38 (Req: > 40)
+  ❌ MACD: -0.0014 (Req: > 0)
+  ✅ Volume: 55337.80 (Req: >= 42050.99)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:22,361 - TradingBot - INFO - Signal Check SHORT:
+  ✅ Trend: Pass (Req: )
+  ❌ ADX: 11.04 (Req: >= 15)
+  ✅ RSI: 43.38 (Req: < 60)
+  ✅ MACD: -0.0014 (Req: < 0)
+  ✅ Volume: 55337.80 (Req: >= 42050.99)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:22,656 - TradingBot - INFO - --- Analyzing UNI/USDT Closed: 6.19 (ATR: 0.05) | Current: 6.20 ---
+2025-11-23 18:15:23,246 - TradingBot - INFO - Funding Rate: 0.0059%
+2025-11-23 18:15:23,254 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 19.71 (Req: >= 15)
+  ✅ RSI: 48.11 (Req: > 40)
+  ✅ MACD: 0.0023 (Req: > 0)
+  ✅ Volume: 280480.00 (Req: >= 173194.56)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:23,256 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 19.71 (Req: >= 15)
+  ✅ RSI: 48.11 (Req: < 60)
+  ❌ MACD: 0.0023 (Req: < 0)
+  ✅ Volume: 280480.00 (Req: >= 173194.56)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 18:15:23,574 - TradingBot - INFO - --- Analyzing XLM/USDT Closed: 0.25 (ATR: 0.00) | Current: 0.25 ---
+2025-11-23 18:15:24,108 - TradingBot - INFO - Funding Rate: -0.0146%
+2025-11-23 18:15:24,113 - TradingBot - INFO - Signal Check LONG:
+  ✅ Trend: Pass (Req: )
+  ✅ ADX: 42.20 (Req: >= 15)
+  ✅ RSI: 51.17 (Req: > 40)
+  ❌ MACD: -0.0004 (Req: > 0)
+  ✅ Volume: 4635169.00 (Req: >= 2475596.64)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:24,116 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ✅ ADX: 42.20 (Req: >= 15)
+  ✅ RSI: 51.17 (Req: < 60)
+  ✅ MACD: -0.0004 (Req: < 0)
+  ✅ Volume: 4635169.00 (Req: >= 2475596.64)
+  ✅ Structure: LH (Req: )
+
+2025-11-23 18:15:24,372 - TradingBot - INFO - --- Analyzing ADA/USDT Closed: 0.41 (ATR: 0.00) | Current: 0.41 ---
+2025-11-23 18:15:24,887 - TradingBot - INFO - Funding Rate: -0.0053%
+2025-11-23 18:15:24,891 - TradingBot - INFO - Signal Check LONG:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.83 (Req: >= 15)
+  ✅ RSI: 44.00 (Req: > 40)
+  ❌ MACD: -0.0001 (Req: > 0)
+  ✅ Volume: 6655553.00 (Req: >= 3299735.92)
+  ✅ Structure: HL (Req: )
+
+2025-11-23 18:15:24,895 - TradingBot - INFO - Signal Check SHORT:
+  ❌ Trend: Fail (Req: )
+  ❌ ADX: 13.83 (Req: >= 15)
+  ✅ RSI: 44.00 (Req: < 60)
+  ✅ MACD: -0.0001 (Req: < 0)
+  ✅ Volume: 6655553.00 (Req: >= 3299735.92)
+  ✅ Structure: No LH (optional) (Req: )
+
+2025-11-23 18:15:25,157 - TradingBot - INFO - --- Analyzing DOT/USDT Closed: 2.29 (ATR: 0.01) | Current: 2.29 ---
+2025-11-23 18:15:25,386 - TradingBot - INFO - Spread Filter Failed: Spread 0.0437% > 0.03%
+2025-11-23 18:15:25,387 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:25,739 - TradingBot - INFO - --- Analyzing ATOM/USDT Closed: 2.50 (ATR: 0.01) | Current: 2.50 ---
+2025-11-23 18:15:26,012 - TradingBot - INFO - Spread Filter Failed: Spread 0.0400% > 0.03%
+2025-11-23 18:15:26,012 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:26,273 - TradingBot - INFO - --- Analyzing FIL/USDT Closed: 1.61 (ATR: 0.01) | Current: 1.62 ---
+2025-11-23 18:15:26,523 - TradingBot - INFO - Spread Filter Failed: Spread 0.0619% > 0.03%
+2025-11-23 18:15:26,523 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:26,854 - TradingBot - INFO - --- Analyzing ARB/USDT Closed: 0.20 (ATR: 0.00) | Current: 0.20 ---
+2025-11-23 18:15:27,138 - TradingBot - INFO - Spread Filter Failed: Spread 0.0495% > 0.03%
+2025-11-23 18:15:27,138 - TradingBot - INFO - Filter Fail: Spread too high
+2025-11-23 18:15:27,138 - TradingBot - INFO - === 📉 TOP 3 REJECTION REASONS ===
+2025-11-23 18:15:27,138 - TradingBot - INFO -   ❌ Signal: Trend: 33 times
+2025-11-23 18:15:27,138 - TradingBot - INFO -   ❌ Signal: MACD: 21 times
+2025-11-23 18:15:27,139 - TradingBot - INFO -   ❌ Signal: ADX: 16 times
+2025-11-23 18:15:27,139 - TradingBot - INFO - ====================================
+2025-11-23 18:15:27,139 - TradingBot - INFO - 💤 NO ACTIVE POSITIONS
+2025-11-23 18:15:27,139 - TradingBot - INFO - ====================================
+2025-11-23 18:15:46,186 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.2 minutes...
+2025-11-23 18:16:46,464 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.2 minutes...
+2025-11-23 18:17:46,841 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.2 minutes...
+2025-11-23 18:23:59,694 - TradingBot - INFO - Current total exposure: 0.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ⚖️ Risk-Based Sizing: Risk 10.00 USD (1%) | SL Dist 0.5000 | Size 20.0000 | Exposure 2000.00 USD
+2025-11-23 18:23:59,694 - TradingBot - WARNING - ⚠️  Total exposure limit reached! Current: 0.00 + New: 2000.00 = 2000.00 > Limit: 1000
+2025-11-23 18:23:59,694 - TradingBot - INFO - Current total exposure: 0.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ⚖️ Risk-Based Sizing: Risk 10.00 USD (1%) | SL Dist 5.0000 | Size 2.0000 | Exposure 200.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ✅ Position size calculated: 2.000000 ETH (Exposure: 200.00 USD)
+2025-11-23 18:23:59,694 - TradingBot - INFO - Current total exposure: 0.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ⚖️ Risk-Based Sizing: Risk 10.00 USD (1%) | SL Dist 1.0000 | Size 10.0000 | Exposure 1000.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ✅ Position size calculated: 10.000000 ETH (Exposure: 1000.00 USD)
+2025-11-23 18:23:59,694 - TradingBot - INFO - Current total exposure: 0.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ⚖️ Risk-Based Sizing: Risk 10.00 USD (1%) | SL Dist 10.0000 | Size 1.0000 | Exposure 100.00 USD
+2025-11-23 18:23:59,694 - TradingBot - INFO - ✅ Position size calculated: 1.000000 ETH (Exposure: 100.00 USD)
+2025-11-23 18:55:34,393 - TradingBot - INFO - Initializing components...
+2025-11-23 18:55:34,399 - TradingBot - INFO - Bot started. Initializing Hybrid Frequency Loop...
+2025-11-23 18:55:34,399 - TradingBot - INFO - 🔄 Syncing positions with Binance...
+2025-11-23 18:55:37,357 - TradingBot - INFO - ✅ Health Check: 1s
+2025-11-23 18:55:37,357 - TradingBot - INFO - ✅ Position Monitor: 3s
+2025-11-23 18:55:37,357 - TradingBot - INFO - ✅ Strategy/Entry: 15m (Candle Close)
+2025-11-23 18:55:46,279 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.4 minutes...
+2025-11-23 18:56:37,434 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.4 minutes...
+2025-11-23 18:57:37,796 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.4 minutes...
+2025-11-23 18:58:37,905 - TradingBot - INFO - ⏳ Waiting for next candle close in 1.4 minutes...
+2025-11-23 18:59:37,981 - TradingBot - INFO - ⏳ Waiting for next candle close in 0.4 minutes...
+2025-11-23 19:00:05,252 - TradingBot - INFO - ⏰ 15m Candle Closed! Running Strategy for 19:00:00...
+2025-11-23 19:00:05,486 - TradingBot - INFO - NewsFilter: no news blocking (placeholder)
+2025-11-23 19:00:05,487 - TradingBot - INFO - 🔄 New Day! Resetting Daily PnL.
+2025-11-23 19:00:05,728 - TradingBot - INFO - Starting loop for 30 symbols
+2025-11-23 19:00:06,675 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:07,238 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:07,727 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:08,240 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:08,773 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:09,365 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:10,643 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:11,129 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:11,823 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:12,435 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:13,050 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:13,663 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:14,279 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:14,792 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:15,405 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:15,932 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:16,537 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:17,147 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:17,627 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:18,113 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:18,792 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:19,301 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:19,915 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:20,526 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:21,011 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:21,649 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:22,267 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:22,778 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:23,392 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:23,652 - TradingBot - INFO - Filter Fail: Daily Close Window (23:45-00:15 UTC)
+2025-11-23 19:00:23,653 - TradingBot - INFO - === 📉 TOP 3 REJECTION REASONS ===
+2025-11-23 19:00:23,653 - TradingBot - INFO - ====================================
+2025-11-23 19:00:23,653 - TradingBot - INFO - 💤 NO ACTIVE POSITIONS
+2025-11-23 19:00:23,653 - TradingBot - INFO - ====================================
+2025-11-23 19:00:38,297 - TradingBot - INFO - ⏳ Waiting for next candle close in 14.4 minutes...
+2025-11-23 19:01:16,431 - TradingBot - WARNING - 🛑 High Latency detected: 1340.33ms > 800ms. Pausing...
+2025-11-23 19:01:17,748 - TradingBot - INFO - Health Recovery: 313.18ms < 500ms (1/3)
+2025-11-23 19:01:19,079 - TradingBot - INFO - Health Recovery: 324.42ms < 500ms (2/3)
+2025-11-23 19:01:20,411 - TradingBot - INFO - Health Recovery: 325.86ms < 500ms (3/3)
+2025-11-23 19:01:20,412 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 19:01:38,539 - TradingBot - INFO - ⏳ Waiting for next candle close in 13.4 minutes...
+2025-11-23 19:02:40,042 - TradingBot - INFO - Initializing components...
+2025-11-23 19:02:40,048 - TradingBot - INFO - Bot started. Initializing Hybrid Frequency Loop...
+2025-11-23 19:02:40,048 - TradingBot - INFO - 🔄 Syncing positions with Binance...
+2025-11-23 19:02:42,855 - TradingBot - INFO - ✅ Health Check: 1s
+2025-11-23 19:02:42,855 - TradingBot - INFO - ✅ Position Monitor: 3s
+2025-11-23 19:02:42,855 - TradingBot - INFO - ✅ Strategy/Entry: 15m (Candle Close)
+2025-11-23 19:02:51,648 - TradingBot - INFO - ⏳ Waiting for next candle close in 12.3 minutes...
+2025-11-23 19:03:43,160 - TradingBot - INFO - ⏳ Waiting for next candle close in 11.3 minutes...
+2025-11-23 19:04:43,917 - TradingBot - INFO - ⏳ Waiting for next candle close in 10.3 minutes...
+2025-11-23 19:05:20,642 - TradingBot - WARNING - 🛑 High Latency detected: 966.57ms > 800ms. Pausing...
+2025-11-23 19:05:21,974 - TradingBot - INFO - Health Recovery: 329.48ms < 500ms (1/3)
+2025-11-23 19:05:24,020 - TradingBot - WARNING - Still High Latency: 1038.83ms. Waiting...
+2025-11-23 19:05:25,351 - TradingBot - INFO - Health Recovery: 328.16ms < 500ms (1/3)
+2025-11-23 19:05:26,593 - TradingBot - INFO - Health Recovery: 234.53ms < 500ms (2/3)
+2025-11-23 19:05:28,013 - TradingBot - INFO - Health Recovery: 413.71ms < 500ms (3/3)
+2025-11-23 19:05:28,014 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 19:05:43,179 - TradingBot - INFO - ⏳ Waiting for next candle close in 9.3 minutes...
+2025-11-23 19:06:43,484 - TradingBot - INFO - ⏳ Waiting for next candle close in 8.3 minutes...
+2025-11-23 19:07:43,498 - TradingBot - INFO - ⏳ Waiting for next candle close in 7.3 minutes...
+2025-11-23 19:08:43,904 - TradingBot - INFO - ⏳ Waiting for next candle close in 6.3 minutes...
+2025-11-23 19:09:45,042 - TradingBot - INFO - ⏳ Waiting for next candle close in 5.3 minutes...
+2025-11-23 19:10:02,145 - TradingBot - WARNING - 🛑 High Latency detected: 885.68ms > 800ms. Pausing...
+2025-11-23 19:10:03,386 - TradingBot - INFO - Health Recovery: 235.34ms < 500ms (1/3)
+2025-11-23 19:10:04,651 - TradingBot - INFO - Health Recovery: 260.51ms < 500ms (2/3)
+2025-11-23 19:10:05,934 - TradingBot - INFO - Health Recovery: 275.56ms < 500ms (3/3)
+2025-11-23 19:10:05,934 - TradingBot - INFO - ✅ Latency stabilized. Resuming bot.
+2025-11-23 19:10:45,383 - TradingBot - INFO - ⏳ Waiting for next candle close in 4.2 minutes...
+2025-11-23 19:11:51,404 - TradingBot - INFO - ⏳ Waiting for next candle close in 3.1 minutes...
+2025-11-23 19:12:57,658 - TradingBot - INFO - ⏳ Waiting for next candle close in 2.0 minutes...

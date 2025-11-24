@@ -25,7 +25,8 @@ class Config:
     MAX_OPEN_SYMBOLS = 3
     DAILY_DRAWDOWN_LIMIT = -0.03  # -3%
     MAX_TRADES_PER_HOUR = 3
-    MAX_EXPOSURE_USD = 500 # Max exposure per trade in USD
+    RISK_PER_TRADE_PCT = 0.01 # 1% Risk per trade
+    # MAX_EXPOSURE_USD = 500 # DEPRECATED: Now using Risk-Based Sizing
     MAX_TOTAL_EXPOSURE_USD = 1000  # Max total portfolio exposure (all positions combined)
     
     # Profit Taking - INFINITE SCALPING STRATEGY (Optimized for better R:R)
