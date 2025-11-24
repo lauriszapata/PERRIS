@@ -8,11 +8,15 @@ class AdaptiveTuner:
         self.trade_history = []
         self.window_size = 20 # Number of trades to evaluate
         
-    def update_trade(self, pnl, entry_time):
+    def update_trade(self, pnl, max_pnl, entry_time):
         """
         Add a closed trade to history and trigger tuning.
+        Args:
+            pnl: Net PnL percentage (after fees)
+            max_pnl: Maximum favorable excursion percentage during the trade
+            entry_time: Timestamp of entry
         """
-        self.trade_history.append({'pnl': pnl, 'time': entry_time})
+        self.trade_history.append({'pnl': pnl, 'max_pnl': max_pnl, 'time': entry_time})
         if len(self.trade_history) > 100:
             self.trade_history.pop(0) # Keep last 100
             
@@ -35,8 +39,22 @@ class AdaptiveTuner:
         
         logger.info(f"ML Tuning: Rolling Sharpe (last {self.window_size}) = {sharpe:.2f}")
         
-        # Logic for Risk Adjustment
-        # Institutional Rule: Scale up only if Sharpe > 2.0, Scale down if Sharpe < 1.0
+        # --- EFFICIENCY METRIC (Wasted Opportunities) ---
+        # A trade is "wasted" if it reached > 0.5% profit but closed negative
+        wasted_count = 0
+        losing_trades = 0
+        for t in recent_trades:
+            if t['pnl'] < 0:
+                losing_trades += 1
+                if t['max_pnl'] > 0.005: # Reached 0.5% profit
+                    wasted_count += 1
+        
+        wasted_ratio = wasted_count / losing_trades if losing_trades > 0 else 0
+        
+        if wasted_ratio > 0.5:
+            logger.warning(f"⚠️  ML: High Wasted Opportunity Ratio ({wasted_ratio:.1%}). {wasted_count}/{losing_trades} losses were profitable > 0.5%.")
+        
+        # --- RISK ADJUSTMENT LOGIC ---
         
         current_risk = Config.RISK_PER_TRADE_PCT
         
@@ -48,12 +66,19 @@ class AdaptiveTuner:
                 Config.RISK_PER_TRADE_PCT = new_risk
                 
         elif sharpe < 1.0:
-            # Unstable -> Decrease Risk
-            new_risk = max(current_risk * 0.9, 0.005) # Min 0.5%
-            if new_risk != current_risk:
-                logger.info(f"ML: Performance Unstable (Sharpe {sharpe:.2f}). Decreasing Risk: {current_risk:.1%} -> {new_risk:.1%}")
-                Config.RISK_PER_TRADE_PCT = new_risk
-                
+            # Unstable -> Decrease Risk... BUT CHECK EFFICIENCY FIRST
+            
+            if wasted_ratio > 0.5:
+                # If we are losing because we don't take profits, reducing risk is NOT the fix.
+                # The entries are good (they go green). The exit is the problem.
+                logger.info(f"ML: Sharpe Low ({sharpe:.2f}) but Wasted Ratio High ({wasted_ratio:.1%}). MAINTAINING RISK (Entries are good). Suggestion: Tighten Trailing Stop.")
+            else:
+                # Genuine bad performance (bad entries) -> Decrease Risk
+                new_risk = max(current_risk * 0.9, 0.005) # Min 0.5%
+                if new_risk != current_risk:
+                    logger.info(f"ML: Performance Unstable (Sharpe {sharpe:.2f}). Decreasing Risk: {current_risk:.1%} -> {new_risk:.1%}")
+                    Config.RISK_PER_TRADE_PCT = new_risk
+                 
         # Logic for Volatility Filter Adjustment (ATR_MIN_PCT)
         # If we are getting stopped out a lot (low Win Rate), maybe increase ATR filter
         wins = len([p for p in pnls if p > 0])
@@ -73,3 +98,31 @@ class AdaptiveTuner:
             if new_atr_min != current_atr_min:
                 logger.info(f"ML: High Win Rate ({win_rate:.1%}). Relaxing ATR Filter: {current_atr_min:.2%} -> {new_atr_min:.2%}")
                 Config.ATR_MIN_PCT = new_atr_min
+    def get_state(self):
+        """
+        Return the current state of the tuner for persistence.
+        """
+        return {
+            "trade_history": self.trade_history,
+            "current_risk": Config.RISK_PER_TRADE_PCT,
+            "current_atr_min": Config.ATR_MIN_PCT
+        }
+
+    def set_state(self, state):
+        """
+        Restore the tuner state from persistence.
+        """
+        if not state: return
+        
+        self.trade_history = state.get("trade_history", [])
+        
+        # Restore Tuned Parameters
+        saved_risk = state.get("current_risk")
+        if saved_risk:
+            Config.RISK_PER_TRADE_PCT = saved_risk
+            logger.info(f"ML: Restored Risk Parameter: {Config.RISK_PER_TRADE_PCT:.1%}")
+            
+        saved_atr_min = state.get("current_atr_min")
+        if saved_atr_min:
+            Config.ATR_MIN_PCT = saved_atr_min
+            logger.info(f"ML: Restored ATR Filter: {Config.ATR_MIN_PCT:.2%}")

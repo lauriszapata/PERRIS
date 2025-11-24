@@ -23,6 +23,11 @@ class BotLogic:
         self.state = state_handler
         self.executor = order_executor
         self.tuner = AdaptiveTuner()
+        
+        # Restore Tuner State
+        if 'tuner' in self.state.state:
+            logger.info("🧠 Restoring Adaptive Tuner state...")
+            self.tuner.set_state(self.state.state['tuner'])
 
     def run(self):
         logger.info("Bot started. Initializing Hybrid Frequency Loop...")
@@ -279,8 +284,29 @@ class BotLogic:
                         CSVManager.log_closure(symbol, direction, entry_price, exit_price, size, "Early Invalidation (Real-Time)", pnl_usd, pnl_pct, duration)
                         CSVManager.log_finance(symbol, direction, size, entry_price, exit_price, pnl_usd, duration)
                         
-                        # ML Update
-                        self.tuner.update_trade(pnl_pct, time.time())
+                        # ML Update (Total PnL - Commissions)
+                        total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
+                        
+                        # Commission Calculation (Entry + Exit Volume * 0.05%)
+                        total_volume = (size * entry_price) + (current_price * size)
+                        commission = total_volume * 0.0005
+                        net_pnl_usd = total_pnl_usd - commission
+                        
+                        initial_margin = (size * entry_price) / Config.LEVERAGE
+                        net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                        
+                        # Max PnL Calculation
+                        if direction == "LONG":
+                            max_pnl_pct = (pos_data['p_max'] - entry_price) / entry_price
+                        else:
+                            max_pnl_pct = (entry_price - pos_data['p_min']) / entry_price
+                        
+                        logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                        
+                        # Save Tuner State
+                        self.state.state['tuner'] = self.tuner.get_state()
+                        self.state.save_state()
                     except Exception as e:
                         logger.error(f"Failed to log closure CSV: {e}")
 
@@ -323,6 +349,10 @@ class BotLogic:
         if not partials:
             partials = {f"p{i+1}": False for i in range(len(Config.TAKE_PROFIT_LEVELS))}
             pos_data['partials'] = partials
+            
+        # Initialize accumulated PnL if not present
+        if 'accumulated_pnl' not in pos_data:
+            pos_data['accumulated_pnl'] = 0.0
         
         # Track the highest dynamic level taken
         if 'last_dynamic_level' not in pos_data:
@@ -373,6 +403,10 @@ class BotLogic:
                 
                 # Record partial close timestamp
                 self.state.add_trade_timestamp(time.time())
+                
+                # Accumulate Realized PnL
+                pos_data['accumulated_pnl'] += profit_usd
+                logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
                 
                 # Log Partial Closure to CSV
                 try:
@@ -462,6 +496,10 @@ class BotLogic:
                 
                 # Record partial close timestamp
                 self.state.add_trade_timestamp(time.time())
+                
+                # Accumulate Realized PnL
+                pos_data['accumulated_pnl'] += profit_usd
+                logger.info(f"💰 Accumulated PnL for {symbol}: {pos_data['accumulated_pnl']:.2f} USD")
                 
                 # Move SL to previous dynamic level
                 prev_dynamic_pct = Config.DYNAMIC_SCALPING_START + ((next_dynamic_level - 1) * Config.DYNAMIC_SCALPING_INCREMENT)
@@ -795,8 +833,29 @@ class BotLogic:
                 CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "ATR Extreme", pnl_usd, pnl_pct, duration)
                 CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
                 
-                # ML Update
-                self.tuner.update_trade(pnl_pct, time.time())
+                # ML Update (Total PnL - Commissions)
+                total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                
+                # Commission Calculation
+                total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                commission = total_volume * 0.0005
+                net_pnl_usd = total_pnl_usd - commission
+                
+                initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                
+                # Max PnL Calculation
+                if direction == "LONG":
+                    max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                else:
+                    max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                
+                logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                
+                # Save Tuner State
+                self.state.state['tuner'] = self.tuner.get_state()
+                self.state.save_state()
             except Exception as e:
                 logger.error(f"Failed to log closure CSV: {e}")
 
@@ -822,8 +881,29 @@ class BotLogic:
                         CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Structure Break (Swing Low)", pnl_usd, pnl_pct, duration)
                         CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
                         
-                        # ML Update
-                        self.tuner.update_trade(pnl_pct, time.time())
+                        # ML Update (Total PnL - Commissions)
+                        total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                        
+                        # Commission Calculation
+                        total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                        commission = total_volume * 0.0005
+                        net_pnl_usd = total_pnl_usd - commission
+                        
+                        initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                        net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                        
+                        # Max PnL Calculation
+                        if direction == "LONG":
+                            max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                        else:
+                            max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                        
+                        logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                        
+                        # Save Tuner State
+                        self.state.state['tuner'] = self.tuner.get_state()
+                        self.state.save_state()
                     except Exception as e:
                         logger.error(f"Failed to log closure CSV: {e}")
 
@@ -844,6 +924,30 @@ class BotLogic:
                         
                         CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Structure Break (Swing High)", pnl_usd, pnl_pct, duration)
                         CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        
+                        # ML Update (Total PnL - Commissions)
+                        total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                        
+                        # Commission Calculation (Entry + Exit Volume * 0.05%)
+                        total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                        commission = total_volume * 0.0005
+                        net_pnl_usd = total_pnl_usd - commission
+                        
+                        initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                        net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                        
+                        # Max PnL Calculation
+                        if direction == "LONG":
+                            max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                        else:
+                            max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                        
+                        logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                        
+                        # Save Tuner State
+                        self.state.state['tuner'] = self.tuner.get_state()
+                        self.state.save_state()
                     except Exception as e:
                         logger.error(f"Failed to log closure CSV: {e}")
 
@@ -867,6 +971,30 @@ class BotLogic:
                 
                 CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Hard Cross Exit", pnl_usd, pnl_pct, duration)
                 CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                
+                # ML Update (Total PnL - Commissions)
+                total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                
+                # Commission Calculation
+                total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                commission = total_volume * 0.0005
+                net_pnl_usd = total_pnl_usd - commission
+                
+                initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                
+                # Max PnL Calculation
+                if direction == "LONG":
+                    max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                else:
+                    max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                
+                logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                
+                # Save Tuner State
+                self.state.state['tuner'] = self.tuner.get_state()
+                self.state.save_state()
             except Exception as e:
                 logger.error(f"Failed to log closure CSV: {e}")
 
@@ -885,6 +1013,30 @@ class BotLogic:
                 
                 CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Hard Cross Exit", pnl_usd, pnl_pct, duration)
                 CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                
+                # ML Update (Total PnL - Commissions)
+                total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                
+                # Commission Calculation
+                total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                commission = total_volume * 0.0005
+                net_pnl_usd = total_pnl_usd - commission
+                
+                initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                
+                # Max PnL Calculation
+                if direction == "LONG":
+                    max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                else:
+                    max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                
+                logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                
+                # Save Tuner State
+                self.state.state['tuner'] = self.tuner.get_state()
+                self.state.save_state()
             except Exception as e:
                 logger.error(f"Failed to log closure CSV: {e}")
 
@@ -908,6 +1060,30 @@ class BotLogic:
                 
                 CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Stagnation Exit", pnl_usd, current_pnl_pct, duration)
                 CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                
+                # ML Update (Total PnL - Commissions)
+                total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                
+                # Commission Calculation
+                total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                commission = total_volume * 0.0005
+                net_pnl_usd = total_pnl_usd - commission
+                
+                initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                
+                # Max PnL Calculation
+                if direction == "LONG":
+                    max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                else:
+                    max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                
+                logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                
+                # Save Tuner State
+                self.state.state['tuner'] = self.tuner.get_state()
+                self.state.save_state()
             except Exception as e:
                 logger.error(f"Failed to log closure CSV: {e}")
 
@@ -932,6 +1108,30 @@ class BotLogic:
                     
                     CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Time Limit", pnl_usd, pnl_pct, duration)
                     CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                
+                    # ML Update (Total PnL - Commissions)
+                    total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                    
+                    # Commission Calculation
+                    total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                    commission = total_volume * 0.0005
+                    net_pnl_usd = total_pnl_usd - commission
+                    
+                    initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                    net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                    
+                    # Max PnL Calculation
+                    if direction == "LONG":
+                        max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                    else:
+                        max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                    
+                    logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                    
+                    # Save Tuner State
+                    self.state.state['tuner'] = self.tuner.get_state()
+                    self.state.save_state()
                 except Exception as e:
                     logger.error(f"Failed to log closure CSV: {e}")
 
@@ -960,6 +1160,30 @@ class BotLogic:
                     
                     CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
                     CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                    
+                    # ML Update (Total PnL - Commissions)
+                    total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                    
+                    # Commission Calculation
+                    total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                    commission = total_volume * 0.0005
+                    net_pnl_usd = total_pnl_usd - commission
+                    
+                    initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                    net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                    
+                    # Max PnL Calculation
+                    if direction == "LONG":
+                        max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                    else:
+                        max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                    
+                    logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                    
+                    # Save Tuner State
+                    self.state.state['tuner'] = self.tuner.get_state()
+                    self.state.save_state()
                  except Exception as e:
                     logger.error(f"Failed to log closure CSV: {e}")
 
@@ -980,6 +1204,30 @@ class BotLogic:
                     
                     CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
                     CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                    
+                    # ML Update (Total PnL - Commissions)
+                    total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                    
+                    # Commission Calculation
+                    total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                    commission = total_volume * 0.0005
+                    net_pnl_usd = total_pnl_usd - commission
+                    
+                    initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                    net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                    
+                    # Max PnL Calculation
+                    if direction == "LONG":
+                        max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                    else:
+                        max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                    
+                    logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                    
+                    # Save Tuner State
+                    self.state.state['tuner'] = self.tuner.get_state()
+                    self.state.save_state()
                  except Exception as e:
                     logger.error(f"Failed to log closure CSV: {e}")
 
