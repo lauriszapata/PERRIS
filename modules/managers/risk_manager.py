@@ -25,10 +25,15 @@ class RiskManager:
         return True
 
     @staticmethod
-    def check_trade_frequency(trades_last_hour):
-        if len(trades_last_hour) >= Config.MAX_TRADES_PER_HOUR:
-            logger.info(f"Max Trades Per Hour Reached: {len(trades_last_hour)}")
-            return False
+    def check_trade_frequency(trades_last_hour, daily_pnl=0):
+        # HOURLY TRADE LIMIT DISABLED - Always allow trades
+        # if len(trades_last_hour) >= Config.MAX_TRADES_PER_HOUR:
+        #     if daily_pnl > 0:
+        #         logger.info(f"⚡ Frequency limit reached ({len(trades_last_hour)}) but Daily PnL is positive ({daily_pnl:.2f}). ALLOWING trade.")
+        #         return True
+        #     # Only log when we are actually rejecting the trade
+        #     logger.info(f"Max Trades Per Hour Reached: {len(trades_last_hour)}")
+        #     return False
         return True
 
     @staticmethod

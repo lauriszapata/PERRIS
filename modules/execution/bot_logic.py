@@ -536,10 +536,10 @@ class BotLogic:
             logger.warning("📰 High-impact news detected! Skipping strategy cycle.")
             return
         
-        # 3. Trade Frequency Check
-        if not RiskManager.check_trade_frequency(self.state.state['trades_last_hour']):
-            logger.warning("🛑 Trade frequency limit reached! Skipping new entries.")
-            return
+        # 3. Trade Frequency Check (DISABLED)
+        # if not RiskManager.check_trade_frequency(self.state.state['trades_last_hour'], self.state.state['daily_pnl']):
+        #     logger.warning("🛑 Trade frequency limit reached! Skipping new entries.")
+        #     return
 
         # 4. Update Daily PnL (reset if new day)
         # Check if we need to reset daily PnL (at 00:00 UTC)
