@@ -5,12 +5,12 @@ class ATRManager:
     def calculate_initial_stop(entry_price, atr_entry, direction):
         """
         Calculate initial Stop Loss (OPTIMIZED for 15min).
-        SL_inicial = entry_price - 3.0 × ATR_entry (for LONG)
-        SL_inicial = entry_price + 3.0 × ATR_entry (for SHORT)
-        3.0x gives enough room for 15min noise while keeping risk controlled
+        SL_inicial = entry_price - 2.5 × ATR_entry (for LONG)
+        SL_inicial = entry_price + 2.5 × ATR_entry (for SHORT)
+        2.5x gives tighter risk control while still allowing for 15min noise
         """
         if direction == "LONG":
-            sl = entry_price - (3.0 * atr_entry)  # 3.0x optimal for 15min
+            sl = entry_price - (2.5 * atr_entry)  # 2.5x for tighter risk control
             # Limit check: distance between 0.5% and 10.0% (appropriate for 15min)
             dist_pct = (entry_price - sl) / entry_price
             if dist_pct < 0.005:
@@ -19,7 +19,7 @@ class ATRManager:
                 sl = entry_price * (1 - 0.10)
             return sl
         else:
-            sl = entry_price + (3.0 * atr_entry)  # 3.0x optimal for 15min
+            sl = entry_price + (2.5 * atr_entry)  # 2.5x for tighter risk control
             # Limit check
             dist_pct = (sl - entry_price) / entry_price
             if dist_pct < 0.005:

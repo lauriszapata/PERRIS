@@ -87,7 +87,7 @@ class CSVManager:
         CSVManager._write_row(CSVManager.CLOSURES_FILE, headers, row)
 
     @staticmethod
-    def log_finance(symbol, direction, size, entry_price, exit_price, pnl_usd, duration_sec, commission_rate=0.0005):
+    def log_finance(symbol, direction, size, entry_price, exit_price, pnl_usd, duration_sec, commission_rate=None):
         """
         Log financial metrics (MBA style).
         """
@@ -101,6 +101,10 @@ class CSVManager:
         # Revenue: Positive PnL (if winning)
         # COGS: Negative PnL (if losing) + Commissions
         
+        if commission_rate is None:
+            from config import Config
+            commission_rate = Config.COMMISSION_RATE
+
         transaction_value = size * exit_price
         commission_cost = transaction_value * commission_rate # Approx taker fee
         
@@ -115,7 +119,7 @@ class CSVManager:
         ebitda = gross_profit # Assuming no other opex for the bot per trade
         net_income = ebitda # Assuming no taxes/interest
         
-        capital_deployed = size * entry_price / 3 # Assuming 3x leverage
+        capital_deployed = size * entry_price / 1 # Assuming 1x leverage
         roi_pct = (net_income / capital_deployed) * 100 if capital_deployed > 0 else 0
         
         # EVA: Net Income - (Capital * Cost of Capital * Time)

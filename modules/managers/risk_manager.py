@@ -73,33 +73,34 @@ class RiskManager:
             logger.info(f"Current total exposure: {total_current_exposure:.2f} USD")
             
             # 2. Check if adding new position would exceed MAX_TOTAL_EXPOSURE_USD
-            # Calculate Risk Amount
-            risk_amount = balance * Config.RISK_PER_TRADE_PCT
+            # FIXED EXPOSURE SIZING (Standardized Metrics)
+            target_exposure = Config.FIXED_TRADE_EXPOSURE_USD
             
-            # Calculate Position Size based on Risk
-            # Risk = Size * |Entry - SL|
-            # Size = Risk / |Entry - SL|
-            price_diff = abs(entry_price - sl_price)
-            if price_diff == 0:
-                logger.error("Entry Price equals SL Price! Cannot calculate size.")
-                return 0
-                
-            size = risk_amount / price_diff
+            # Calculate Position Size based on Fixed Exposure
+            # Exposure = Size * Entry
+            # Size = Exposure / Entry
+            size = target_exposure / entry_price
             
-            # Calculate Exposure for this size
+            # Calculate Exposure for this size (should be equal to target_exposure)
             exposure = size * entry_price
             
-            logger.info(f"⚖️ Risk-Based Sizing: Risk {risk_amount:.2f} USD (1%) | SL Dist {price_diff:.4f} | Size {size:.4f} | Exposure {exposure:.2f} USD")
+            logger.info(f"⚖️ Fixed Exposure Sizing: Target {target_exposure:.2f} USD | Entry {entry_price:.4f} | Size {size:.4f} | Exposure {exposure:.2f} USD")
             
             if total_current_exposure + exposure > Config.MAX_TOTAL_EXPOSURE_USD:
+                available_exposure = Config.MAX_TOTAL_EXPOSURE_USD - total_current_exposure
+                if available_exposure <= 0:
+                    logger.warning(
+                        f"⚠️  Total exposure limit reached! "
+                        f"Current: {total_current_exposure:.2f} >= Limit: {Config.MAX_TOTAL_EXPOSURE_USD}"
+                    )
+                    return 0
+                
                 logger.warning(
-                    f"⚠️  Total exposure limit reached! "
-                    f"Current: {total_current_exposure:.2f} + New: {exposure:.2f} "
-                    f"= {total_current_exposure + exposure:.2f} > Limit: {Config.MAX_TOTAL_EXPOSURE_USD}"
+                    f"⚠️  Adjusting size to fit total exposure limit. "
+                    f"Calculated: {exposure:.2f}, Available: {available_exposure:.2f}"
                 )
-                # Optional: Scale down to fit exposure limit?
-                # For now, just reject to be safe and maintain risk profile.
-                return 0
+                exposure = available_exposure
+                size = exposure / entry_price
             
             # 3. Add commission buffer (0.1% for maker/taker fees + slippage)
             commission_buffer = 1.001

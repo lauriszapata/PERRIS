@@ -29,6 +29,7 @@ class OrderExecutor:
         """
         side = 'sell' if direction == 'LONG' else 'buy'
         logger.info(f"Closing {direction} position for {symbol}, amount: {amount if amount else 'ALL'}")
+        
         # Dust handling: if amount is provided and its notional value is very small, close full position
         if amount is not None:
             try:
@@ -39,6 +40,38 @@ class OrderExecutor:
                     amount = None
             except Exception as e:
                 logger.warning(f"Could not fetch price for dust check: {e}")
+        
+        # If amount is None (close all), fetch current position size
+        if amount is None:
+            try:
+                positions = self.client.get_position(symbol)
+                target_side = 'long' if direction == 'LONG' else 'short'
+                active_pos = None
+                
+                for p in positions:
+                    # Check for positive size and matching side (if available/relevant)
+                    if float(p['contracts']) > 0:
+                        # In Hedge Mode, side is crucial. In One-Way, usually only one pos.
+                        pos_side = p.get('side')
+                        # If side is present, it must match. If not present, we assume it's the one.
+                        if pos_side:
+                            if pos_side.lower() == target_side:
+                                active_pos = p
+                                break
+                        else:
+                            active_pos = p
+                            break
+                
+                if active_pos:
+                    amount = float(active_pos['contracts'])
+                    logger.info(f"Fetched full position size for {symbol}: {amount}")
+                else:
+                    logger.warning(f"No active {direction} position found for {symbol}, cannot close.")
+                    return None
+            except Exception as e:
+                logger.error(f"Failed to fetch position size for closing: {e}")
+                return None
+
         params = {'reduceOnly': True}
         order = self.client.create_order(symbol, 'market', side, amount, params=params)
         
@@ -54,31 +87,51 @@ class OrderExecutor:
         Set or update Stop Loss.
         """
         side = 'sell' if direction == 'LONG' else 'buy'
-        
+
         logger.info(f"Setting SL for {symbol} {direction} at {stop_price}")
-        
+
         # For Binance Futures, to close the entire position we use closePosition=True
         # When closePosition=True, quantity must not be sent (or sent as 0/None depending on lib version)
         # CCXT usually handles 'amount': None if 'closePosition': True is in params
-        
+
         params = {
             'stopPrice': stop_price,
             'closePosition': True
         }
-        
-        # We pass amount=None. If this fails, it might be because CCXT version requires strict parameter handling
-        # or we need to cancel previous SLs first.
-        
-        # First, let's try to cancel open STOP orders for this symbol to avoid "ReduceOnly" conflicts or clutter
+
+        # First, try to cancel any existing STOP orders for this symbol to avoid conflicts.
         try:
             open_orders = self.client.get_open_orders(symbol)
             for o in open_orders:
-                if o['type'] == 'STOP_MARKET':
+                if o.get('type') == 'STOP_MARKET':
                     self.client.cancel_order(o['id'], symbol)
         except Exception as e:
             logger.warning(f"Could not cancel existing SLs: {e}")
 
-        # Now place new SL
-        # Note: For STOP_MARKET, price is None (it triggers a market order)
-        order = self.client.create_order(symbol, 'STOP_MARKET', side, amount=None, price=None, params=params)
-        return order
+        # Attempt to place the new stop loss order with retry on max stop order limit.
+        max_retries = 2
+        for attempt in range(1, max_retries + 1):
+            try:
+                order = self.client.create_order(symbol, 'STOP_MARKET', side, amount=None, price=None, params=params)
+                if order:
+                    logger.info(f"Stop loss order created: {order.get('id')}")
+                    return order
+                else:
+                    logger.error("Failed to create stop loss order (no response).")
+            except Exception as e:
+                err_msg = str(e)
+                if "Reach max stop order limit" in err_msg and attempt < max_retries:
+                    logger.warning(f"Max stop order limit reached, cancelling existing STOP orders and retrying (attempt {attempt})")
+                    # Cancel all STOP orders again before retry.
+                    try:
+                        open_orders = self.client.get_open_orders(symbol)
+                        for o in open_orders:
+                            if o.get('type') == 'STOP_MARKET':
+                                self.client.cancel_order(o['id'], symbol)
+                    except Exception as ce:
+                        logger.warning(f"Additional cancel attempt failed: {ce}")
+                    continue
+                else:
+                    logger.error(f"Error creating stop loss order: {e}")
+                    break
+        return None

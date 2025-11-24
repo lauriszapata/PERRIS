@@ -77,7 +77,7 @@ def test_pnl_accumulation_logic():
     pnl_usd = (exit_price - 50000) * 1.0 # 1000 USD
     total_pnl = pnl_usd + pos_data['accumulated_pnl'] # 1500 USD
     
-    initial_margin = (1.0 * 50000) / Config.LEVERAGE # 50000 / 3 = 16666.66
+    initial_margin = (1.0 * 50000) / Config.LEVERAGE # 50000 / 1 = 50000
     expected_roi = total_pnl / initial_margin
     
     print(f"Calculated Total PnL: {total_pnl}")

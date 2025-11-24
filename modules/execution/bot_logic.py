@@ -35,6 +35,12 @@ class BotLogic:
         # Sync Orphaned Positions
         self._sync_positions()
         
+        # Enforce Fixed Leverage (1x) on Startup
+        logger.info("🔧 Enforcing 1x Leverage for all symbols...")
+        for symbol in Config.SYMBOLS:
+            self.client.set_leverage(symbol, 1)
+            time.sleep(0.1) # Avoid rate limits
+        
         logger.info("✅ Health Check: 1s")
         logger.info("✅ Position Monitor: 2s")
         logger.info("✅ Strategy/Entry: 15m (Candle Close)")
@@ -245,14 +251,14 @@ class BotLogic:
                     is_breakeven = False
                     if direction == "LONG":
                         if sl_price < entry_price: # SL is below entry (risk)
-                            new_sl = entry_price * 1.001 # Entry + small buffer
+                            new_sl = entry_price * 1.002 # Entry + 0.2% buffer (covers fees)
                             self.executor.set_stop_loss(symbol, direction, new_sl)
                             pos_data['sl_price'] = new_sl
                             self.state.set_position(symbol, pos_data)
                             logger.info(f"🛡️ BREAKEVEN TRIGGERED for {symbol}: SL moved to {new_sl:.4f} (Profit {pnl_pct_current:.2%})")
                     else: # SHORT
                         if sl_price > entry_price: # SL is above entry (risk)
-                            new_sl = entry_price * 0.999 # Entry - small buffer
+                            new_sl = entry_price * 0.998 # Entry - 0.2% buffer (covers fees)
                             self.executor.set_stop_loss(symbol, direction, new_sl)
                             pos_data['sl_price'] = new_sl
                             self.state.set_position(symbol, pos_data)
@@ -287,9 +293,9 @@ class BotLogic:
                         # ML Update (Total PnL - Commissions)
                         total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
                         
-                        # Commission Calculation (Entry + Exit Volume * 0.05%)
+                        # Commission Calculation (Entry + Exit Volume * Rate)
                         total_volume = (size * entry_price) + (current_price * size)
-                        commission = total_volume * 0.0005
+                        commission = total_volume * Config.COMMISSION_RATE
                         net_pnl_usd = total_pnl_usd - commission
                         
                         initial_margin = (size * entry_price) / Config.LEVERAGE
@@ -845,6 +851,9 @@ class BotLogic:
 
         logger.info(f"Executing {direction} | Size: {position_size:.4f} | Entry: {entry_price} | SL: {sl_price}")
         
+        # Enforce Leverage again before entry (Safety)
+        self.client.set_leverage(symbol, 1)
+        
         # Execute
         order = self.executor.open_position(symbol, direction, position_size)
         if order:
@@ -1070,7 +1079,66 @@ class BotLogic:
                     self.state.clear_position(symbol)
                     return
         
-        # 3. Hard Exit (EMA20 vs EMA50 Cross)
+        # 3. MACD Reversal Exit (New)
+        # If MACD Histogram flips against us, it's a strong sign of momentum loss.
+        macd_hist = closed_candle['MACD_hist']
+        macd_hist_prev = prev_closed_candle['MACD_hist']
+        
+        # Check for Reversal
+        macd_reversal = False
+        if direction == "LONG":
+            # Bullish trade, but Hist becomes negative or drops significantly
+            if macd_hist < 0 and macd_hist < macd_hist_prev:
+                macd_reversal = True
+                logger.info(f"📉 EXIT: MACD Reversal (Hist {macd_hist:.4f} < 0)")
+        else:
+            # Bearish trade, but Hist becomes positive or rises significantly
+            if macd_hist > 0 and macd_hist > macd_hist_prev:
+                macd_reversal = True
+                logger.info(f"📈 EXIT: MACD Reversal (Hist {macd_hist:.4f} > 0)")
+                
+        if macd_reversal:
+            self.executor.close_position(symbol, direction, position['size'])
+            
+            # Log Closure
+            try:
+                exit_price = closed_close
+                pnl_usd = (exit_price - entry_price) * position['size'] if direction == "LONG" else (entry_price - exit_price) * position['size']
+                pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
+                duration = time.time() - entry_time
+                
+                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "MACD Reversal", pnl_usd, pnl_pct, duration)
+                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                
+                # ML Update
+                total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                commission = total_volume * 0.0005
+                net_pnl_usd = total_pnl_usd - commission
+                initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                
+                if direction == "LONG":
+                    max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                else:
+                    max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                
+                partial_data = {
+                    'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                    'final_pnl_usd': total_pnl_usd,
+                    'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                }
+                
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
+                self.state.state['tuner'] = self.tuner.get_state()
+                self.state.save_state()
+            except Exception as e:
+                logger.error(f"Failed to log closure CSV: {e}")
+
+            self.state.clear_position(symbol)
+            return
+
+        # 4. Hard Exit (EMA20 vs EMA50 Cross)
         ema20 = closed_candle['EMA20']
         ema50 = closed_candle['EMA50']
         
@@ -1173,7 +1241,7 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
-        # 4. Stagnation Exit (>45m & Negative PnL)
+        # 5. Stagnation Exit (>45m & Negative PnL)
         # If trade is open for 3 candles (45m) and is losing money, cut it.
         time_elapsed = time.time() - entry_time
         current_pnl_pct = (closed_close - entry_price) / entry_price if direction == "LONG" else (entry_price - closed_close) / entry_price
@@ -1227,7 +1295,7 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
-        # 5. Time Exit (>40 candles and |PnL| < 0.2%)
+        # 6. Time Exit (>40 candles and |PnL| < 0.2%)
         # 40 candles * 15 min = 600 min = 36000 seconds
         time_elapsed = time.time() - entry_time
         if time_elapsed > 36000:
@@ -1282,115 +1350,127 @@ class BotLogic:
                 self.state.clear_position(symbol)
                 return
 
-        # 5. Soft Exit (Slope EMA20)
+        # 7. Soft Exit (Slope EMA20) - WITH MACD FILTER
         # Slope = EMA20_current - EMA20_prev
         ema20_prev = prev_closed_candle['EMA20']
         slope = ema20 - ema20_prev
         
+        # Check MACD Momentum (if strong, skip soft exit)
+        macd_strong = False
         if direction == "LONG":
-            # "pendiente EMA20 <= 0 durante 2 velas y cierre < EMA20"
-            # We need 2 candles of slope <= 0. We only have 1 here easily.
-            # Let's check current slope <= 0 AND close < EMA20 as a proxy.
-            if slope <= 0 and closed_close < ema20:
-                 logger.info(f"📉 EXIT: Soft Trend (Slope <= 0 & Close < EMA20)")
-                 self.executor.close_position(symbol, direction, position['size'])
-                 
-                 # Log Closure
-                 try:
-                    exit_price = closed_close
-                    pnl_usd = (exit_price - entry_price) * position['size']
-                    pnl_pct = (exit_price - entry_price) / entry_price
-                    duration = time.time() - entry_time
-                    
-                    CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
-                    CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
-                    
-                    # ML Update (Total PnL - Commissions)
-                    total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
-                    
-                    # Commission Calculation
-                    total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
-                    commission = total_volume * 0.0005
-                    net_pnl_usd = total_pnl_usd - commission
-                    
-                    initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
-                    net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
-                    
-                    # Max PnL Calculation
-                    if direction == "LONG":
-                        max_pnl_pct = (position['p_max'] - entry_price) / entry_price
-                    else:
-                        max_pnl_pct = (entry_price - position['p_min']) / entry_price
-                    
-                    # Build partial data for ML
-                    partial_data = {
-                        'partial_pnl_usd': position.get('accumulated_pnl', 0),
-                        'final_pnl_usd': total_pnl_usd,
-                        'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
-                    }
-                    
-                    logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
-                    
-                    # Save Tuner State
-                    self.state.state['tuner'] = self.tuner.get_state()
-                    self.state.save_state()
-                 except Exception as e:
-                    logger.error(f"Failed to log closure CSV: {e}")
-
-                 self.state.clear_position(symbol)
-                 return
-        elif direction == "SHORT":
-            # "pendiente >= 0 dos velas y cierre > EMA20"
-            if slope >= 0 and closed_close > ema20:
-                 logger.info(f"📈 EXIT: Soft Trend (Slope >= 0 & Close > EMA20)")
-                 self.executor.close_position(symbol, direction, position['size'])
-                 
-                 # Log Closure
-                 try:
-                    exit_price = closed_close
-                    pnl_usd = (entry_price - exit_price) * position['size']
-                    pnl_pct = (entry_price - exit_price) / entry_price
-                    duration = time.time() - entry_time
-                    
-                    CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
-                    CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
-                    
-                    # ML Update (Total PnL - Commissions)
-                    total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
-                    
-                    # Commission Calculation
-                    total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
-                    commission = total_volume * 0.0005
-                    net_pnl_usd = total_pnl_usd - commission
-                    
-                    initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
-                    net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
-                    
-                    # Max PnL Calculation
-                    if direction == "LONG":
-                        max_pnl_pct = (position['p_max'] - entry_price) / entry_price
-                    else:
-                        max_pnl_pct = (entry_price - position['p_min']) / entry_price
-                    
-                    # Build partial data for ML
-                    partial_data = {
-                        'partial_pnl_usd': position.get('accumulated_pnl', 0),
-                        'final_pnl_usd': total_pnl_usd,
-                        'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
-                    }
-                    
-                    logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
-                    
-                    # Save Tuner State
-                    self.state.state['tuner'] = self.tuner.get_state()
-                    self.state.save_state()
-                 except Exception as e:
-                    logger.error(f"Failed to log closure CSV: {e}")
-
-                 self.state.clear_position(symbol)
-                 return
+            # Strong Bullish Momentum: Hist > 0 and Rising
+            if macd_hist > 0 and macd_hist > macd_hist_prev:
+                macd_strong = True
+        else:
+            # Strong Bearish Momentum: Hist < 0 and Falling (more negative)
+            if macd_hist < 0 and macd_hist < macd_hist_prev:
+                macd_strong = True
+        
+        if macd_strong:
+            logger.info(f"💪 MACD Strong Momentum ({macd_hist:.4f}). Skipping Soft Exit checks.")
+        else:
+            if direction == "LONG":
+                # "pendiente EMA20 <= 0 durante 2 velas y cierre < EMA20"
+                if slope <= 0 and closed_close < ema20:
+                     logger.info(f"📉 EXIT: Soft Trend (Slope <= 0 & Close < EMA20)")
+                     self.executor.close_position(symbol, direction, position['size'])
+                     
+                     # Log Closure
+                     try:
+                        exit_price = closed_close
+                        pnl_usd = (exit_price - entry_price) * position['size']
+                        pnl_pct = (exit_price - entry_price) / entry_price
+                        duration = time.time() - entry_time
+                        
+                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
+                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        
+                        # ML Update (Total PnL - Commissions)
+                        total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                        
+                        # Commission Calculation
+                        total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                        commission = total_volume * 0.0005
+                        net_pnl_usd = total_pnl_usd - commission
+                        
+                        initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                        net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                        
+                        # Max PnL Calculation
+                        if direction == "LONG":
+                            max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                        else:
+                            max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                        
+                        # Build partial data for ML
+                        partial_data = {
+                            'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                            'final_pnl_usd': total_pnl_usd,
+                            'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                        }
+                        
+                        logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
+                        
+                        # Save Tuner State
+                        self.state.state['tuner'] = self.tuner.get_state()
+                        self.state.save_state()
+                     except Exception as e:
+                        logger.error(f"Failed to log closure CSV: {e}")
+    
+                     self.state.clear_position(symbol)
+                     return
+            elif direction == "SHORT":
+                # "pendiente >= 0 dos velas y cierre > EMA20"
+                if slope >= 0 and closed_close > ema20:
+                     logger.info(f"📈 EXIT: Soft Trend (Slope >= 0 & Close > EMA20)")
+                     self.executor.close_position(symbol, direction, position['size'])
+                     
+                     # Log Closure
+                     try:
+                        exit_price = closed_close
+                        pnl_usd = (entry_price - exit_price) * position['size']
+                        pnl_pct = (entry_price - exit_price) / entry_price
+                        duration = time.time() - entry_time
+                        
+                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
+                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        
+                        # ML Update (Total PnL - Commissions)
+                        total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
+                        
+                        # Commission Calculation
+                        total_volume = (position['size'] * entry_price) + (exit_price * position['size'])
+                        commission = total_volume * 0.0005
+                        net_pnl_usd = total_pnl_usd - commission
+                        
+                        initial_margin = (position['size'] * entry_price) / Config.LEVERAGE
+                        net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                        
+                        # Max PnL Calculation
+                        if direction == "LONG":
+                            max_pnl_pct = (position['p_max'] - entry_price) / entry_price
+                        else:
+                            max_pnl_pct = (entry_price - position['p_min']) / entry_price
+                        
+                        # Build partial data for ML
+                        partial_data = {
+                            'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                            'final_pnl_usd': total_pnl_usd,
+                            'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                        }
+                        
+                        logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
+                        
+                        # Save Tuner State
+                        self.state.state['tuner'] = self.tuner.get_state()
+                        self.state.save_state()
+                     except Exception as e:
+                        logger.error(f"Failed to log closure CSV: {e}")
+    
+                     self.state.clear_position(symbol)
+                     return
 
         # 6. Trailing Stop Update (On Closed Candle)
         new_sl = ATRManager.calculate_trailing_stop(

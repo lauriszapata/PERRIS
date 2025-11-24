@@ -50,9 +50,9 @@ class EntrySignals:
             trend_ok = TrendManager.check_trend(df, direction)
             results['Trend'] = {'status': trend_ok, 'value': 'Pass' if trend_ok else 'Fail'}
             
-            # 4. ADX (Institutional: Strong Trend > 25)
+            # 4. ADX (Institutional: Strong Trend > 20, lowered from 25 to reduce lag)
             adx_val = last['ADX']
-            results['ADX'] = {'status': adx_val >= 25, 'value': f"{adx_val:.2f}", 'threshold': ">= 25"}
+            results['ADX'] = {'status': adx_val >= 20, 'value': f"{adx_val:.2f}", 'threshold': ">= 20"}
             
             # 5. RSI (Widened to 35-65 to catch more moves)
             rsi_val = last['RSI']
@@ -82,7 +82,6 @@ class EntrySignals:
             close_val = last['close']
             volatility_pct = atr_val / close_val
             # Max 3% volatility per candle to avoid unpredictable slippage/wicks
-            # Max 3% volatility per candle to avoid unpredictable slippage/wicks
             results['Volatility'] = {'status': volatility_pct < 0.03, 'value': f"{volatility_pct:.2%}", 'threshold': "< 3%"}
             
             # 9. MTF Trend (1H)
@@ -102,9 +101,29 @@ class EntrySignals:
                 structure_ok = bool(structure.get('LH'))
                 results['Structure'] = {'status': True, 'value': 'LH' if structure_ok else 'No LH (optional)', 'optional': True}
             
-            # Final Decision (exclude optional filters)
-            all_pass = all(r['status'] for k, r in results.items() if not r.get('optional', False))
-            return all_pass, results
+            # --- FINAL DECISION LOGIC ---
+            # Standard Entry: All Filters Pass
+            standard_entry = all(r['status'] for k, r in results.items() if not r.get('optional', False))
+            
+            # Early Entry (Fast Indicators Priority):
+            # If Trend (Long Term) Fails, but Fast Trend + MACD + RSI + Volatility are GOOD -> ALLOW
+            if not standard_entry:
+                # Check Fast Trend (EMA8 > EMA20)
+                ema8 = last['EMA8']
+                ema20 = last['EMA20']
+                fast_trend_ok = (ema8 > ema20) if direction == "LONG" else (ema8 < ema20)
+                
+                # Critical Fast Indicators
+                macd_ok = results['MACD']['status']
+                rsi_ok = results['RSI']['status']
+                vol_ok = results['Volume']['status']
+                volatility_ok = results['Volatility']['status']
+                
+                if fast_trend_ok and macd_ok and rsi_ok and vol_ok and volatility_ok:
+                    logger.info(f"🚀 EARLY ENTRY TRIGGERED: Fast Trend + MACD + RSI valid (ignoring Long Term Trend/MTF)")
+                    return True, results
+
+            return standard_entry, results
             
         except Exception as e:
             logger.error(f"Error checking signals: {e}")

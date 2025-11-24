@@ -148,3 +148,12 @@ class BinanceClient:
         except Exception as e:
             logger.error(f"Error fetching all positions: {e}")
             return None
+
+    def get_position(self, symbol):
+        try:
+            # Fetch positions for specific symbol
+            positions = self.exchange.fetch_positions([symbol])
+            return positions
+        except Exception as e:
+            logger.error(f"Error fetching position for {symbol}: {e}")
+            return []

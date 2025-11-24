@@ -8,7 +8,7 @@ class TestRiskManager(unittest.TestCase):
         # Mock Config
         Config.RISK_PER_TRADE_PCT = 0.01
         Config.MAX_TOTAL_EXPOSURE_USD = 1000
-        Config.LEVERAGE = 3
+        Config.LEVERAGE = 1
         Config.MAX_OPEN_SYMBOLS = 3
         Config.MAX_TRADES_PER_HOUR = 3
         
@@ -89,7 +89,7 @@ class TestRiskManager(unittest.TestCase):
         
         size = RiskManager.calculate_position_size(entry, sl, balance, self.client, symbol, current_positions)
         
-        self.assertEqual(size, 0) # Should be rejected
+        self.assertAlmostEqual(size, 10.0) # Should be clamped to 1000 USD exposure (1000/100 = 10)
 
 if __name__ == '__main__':
     unittest.main()
