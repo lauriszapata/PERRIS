@@ -301,8 +301,15 @@ class BotLogic:
                         else:
                             max_pnl_pct = (entry_price - pos_data['p_min']) / entry_price
                         
+                        # Build partial data for ML
+                        partial_data = {
+                            'partial_pnl_usd': pos_data.get('accumulated_pnl', 0),
+                            'final_pnl_usd': total_pnl_usd,
+                            'levels_hit': [k for k, v in pos_data.get('partials', {}).items() if v]
+                        }
+                        
                         logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                         
                         # Save Tuner State
                         self.state.state['tuner'] = self.tuner.get_state()
@@ -462,6 +469,14 @@ class BotLogic:
                     # Save updated position
                     self.state.set_position(symbol, pos_data)
                     
+                    # Send partial data to ML
+                    self.tuner.update_partial(
+                        symbol=symbol,
+                        level_name=display_name,
+                        partial_pnl_usd=profit_usd,
+                        current_total_pnl=pos_data['accumulated_pnl']
+                    )
+                    
                     # Log remaining position
                     total_closed = sum(Config.TAKE_PROFIT_LEVELS[j]['close_pct'] 
                                       for j in range(i+1) if partials.get(f"p{j+1}", False))
@@ -560,6 +575,14 @@ class BotLogic:
                     
                     # Save updated position
                     self.state.set_position(symbol, pos_data)
+                    
+                    # Send partial data to ML
+                    self.tuner.update_partial(
+                        symbol=symbol,
+                        level_name=f"D{next_dynamic_level}",
+                        partial_pnl_usd=profit_usd,
+                        current_total_pnl=pos_data['accumulated_pnl']
+                    )
                     
                     # Calculate remaining position
                     total_fixed_closed = sum(level['close_pct'] for level in Config.TAKE_PROFIT_LEVELS)
@@ -922,8 +945,15 @@ class BotLogic:
                 else:
                     max_pnl_pct = (entry_price - position['p_min']) / entry_price
                 
+                # Build partial data for ML
+                partial_data = {
+                    'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                    'final_pnl_usd': total_pnl_usd,
+                    'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                }
+                
                 logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                 
                 # Save Tuner State
                 self.state.state['tuner'] = self.tuner.get_state()
@@ -970,8 +1000,15 @@ class BotLogic:
                         else:
                             max_pnl_pct = (entry_price - position['p_min']) / entry_price
                         
+                        # Build partial data for ML
+                        partial_data = {
+                            'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                            'final_pnl_usd': total_pnl_usd,
+                            'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                        }
+                        
                         logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                         
                         # Save Tuner State
                         self.state.state['tuner'] = self.tuner.get_state()
@@ -1014,8 +1051,15 @@ class BotLogic:
                         else:
                             max_pnl_pct = (entry_price - position['p_min']) / entry_price
                         
+                        # Build partial data for ML
+                        partial_data = {
+                            'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                            'final_pnl_usd': total_pnl_usd,
+                            'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                        }
+                        
                         logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                        self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                         
                         # Save Tuner State
                         self.state.state['tuner'] = self.tuner.get_state()
@@ -1061,8 +1105,15 @@ class BotLogic:
                 else:
                     max_pnl_pct = (entry_price - position['p_min']) / entry_price
                 
+                # Build partial data for ML
+                partial_data = {
+                    'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                    'final_pnl_usd': total_pnl_usd,
+                    'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                }
+                
                 logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                 
                 # Save Tuner State
                 self.state.state['tuner'] = self.tuner.get_state()
@@ -1103,8 +1154,15 @@ class BotLogic:
                 else:
                     max_pnl_pct = (entry_price - position['p_min']) / entry_price
                 
+                # Build partial data for ML
+                partial_data = {
+                    'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                    'final_pnl_usd': total_pnl_usd,
+                    'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                }
+                
                 logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                 
                 # Save Tuner State
                 self.state.state['tuner'] = self.tuner.get_state()
@@ -1150,8 +1208,15 @@ class BotLogic:
                 else:
                     max_pnl_pct = (entry_price - position['p_min']) / entry_price
                 
+                # Build partial data for ML
+                partial_data = {
+                    'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                    'final_pnl_usd': total_pnl_usd,
+                    'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                }
+                
                 logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                 
                 # Save Tuner State
                 self.state.state['tuner'] = self.tuner.get_state()
@@ -1198,8 +1263,15 @@ class BotLogic:
                     else:
                         max_pnl_pct = (entry_price - position['p_min']) / entry_price
                     
+                    # Build partial data for ML
+                    partial_data = {
+                        'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                        'final_pnl_usd': total_pnl_usd,
+                        'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                    }
+                    
                     logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                     
                     # Save Tuner State
                     self.state.state['tuner'] = self.tuner.get_state()
@@ -1250,8 +1322,15 @@ class BotLogic:
                     else:
                         max_pnl_pct = (entry_price - position['p_min']) / entry_price
                     
+                    # Build partial data for ML
+                    partial_data = {
+                        'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                        'final_pnl_usd': total_pnl_usd,
+                        'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                    }
+                    
                     logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                     
                     # Save Tuner State
                     self.state.state['tuner'] = self.tuner.get_state()
@@ -1294,8 +1373,15 @@ class BotLogic:
                     else:
                         max_pnl_pct = (entry_price - position['p_min']) / entry_price
                     
+                    # Build partial data for ML
+                    partial_data = {
+                        'partial_pnl_usd': position.get('accumulated_pnl', 0),
+                        'final_pnl_usd': total_pnl_usd,
+                        'levels_hit': [k for k, v in position.get('partials', {}).items() if v]
+                    }
+                    
                     logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time())
+                    self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
                     
                     # Save Tuner State
                     self.state.state['tuner'] = self.tuner.get_state()
