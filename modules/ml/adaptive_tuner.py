@@ -101,42 +101,110 @@ class AdaptiveTuner:
         if wasted_ratio > 0.5:
             logger.warning(f"⚠️  ML: High Wasted Opportunity Ratio ({wasted_ratio:.1%}). {wasted_count}/{losing_trades} losses were profitable > 0.5%.")
         
-        # --- RISK ADJUSTMENT LOGIC ---
+        # --- PROFIT FACTOR & KELLY CRITERION ---
+        # Calculate Profit Factor (more direct measure of profitability than Sharpe)
+        gross_profit = sum([t['pnl'] for t in recent_trades if t['pnl'] > 0])
+        gross_loss = abs(sum([t['pnl'] for t in recent_trades if t['pnl'] < 0]))
+        profit_factor = gross_profit / gross_loss if gross_loss > 0 else 0
         
-        current_risk = Config.RISK_PER_TRADE_PCT
+        logger.info(f"📊 ML Metrics: Profit Factor = {profit_factor:.2f} | Sharpe = {sharpe:.2f} | Win Rate = {win_rate:.1%}")
         
-        if sharpe > 2.0:
-            # Stable performance -> Increase Risk slightly
-            new_risk = min(current_risk * 1.05, 0.02) # Max 2%
-            if new_risk != current_risk:
-                logger.info(f"ML: Performance Stable (Sharpe {sharpe:.2f}). Increasing Risk: {current_risk:.1%} -> {new_risk:.1%}")
-                Config.RISK_PER_TRADE_PCT = new_risk
-                
-        elif sharpe < 1.0:
-            # Unstable -> Decrease Risk... BUT CHECK EFFICIENCY FIRST
+        # Calculate Kelly Criterion for optimal position sizing
+        wins = [t['pnl'] for t in recent_trades if t['pnl'] > 0]
+        losses = [abs(t['pnl']) for t in recent_trades if t['pnl'] < 0]
+        
+        kelly_pct = 0
+        kelly_conservative = 0
+        expectancy = 0
+        
+        if wins and losses:
+            avg_win = np.mean(wins)
+            avg_loss = np.mean(losses)
+            rr_ratio = avg_win / avg_loss if avg_loss > 0 else 0
             
-            if wasted_ratio > 0.5:
-                # If we are losing because we don't take profits, reducing risk is NOT the fix.
-                # The entries are good (they go green). The exit is the problem.
-                logger.info(f"ML: Sharpe Low ({sharpe:.2f}) but Wasted Ratio High ({wasted_ratio:.1%}). MAINTAINING RISK (Entries are good). Suggestion: Tighten Trailing Stop.")
+            # Kelly Formula: W - ((1-W) / R)
+            # W = Win Rate, R = Avg Win / Avg Loss
+            if rr_ratio > 0:
+                kelly_pct = win_rate - ((1 - win_rate) / rr_ratio)
+                kelly_conservative = kelly_pct * 0.5  # Half Kelly for safety
+                
+                # Expectancy = (Win% × Avg Win) - (Loss% × Avg Loss)
+                expectancy = (win_rate * avg_win) - ((1 - win_rate) * avg_loss)
+                
+                logger.info(f"🎲 Kelly Criterion: Full = {kelly_pct:.1%} | Conservative = {kelly_conservative:.1%} | Expectancy = {expectancy:.4f}")
+        
+        # --- RISK ADJUSTMENT LOGIC (Kelly + Profit Factor based) ---
+        current_risk = Config.RISK_PER_TRADE_PCT
+        new_risk = current_risk
+        
+        # Decision Matrix:
+        # 1. Profit Factor > 1.5 + Kelly suggests higher → INCREASE (proven edge)
+        # 2. Profit Factor < 1.0 → DECREASE immediately (losing money)
+        # 3. 1.0 <= Profit Factor <= 1.5 → Maintain or slight adjustment based on Kelly
+        
+        if profit_factor > 1.5 and kelly_conservative > 0:
+            # System is profitable AND Kelly suggests we can risk more
+            if kelly_conservative > current_risk:
+                # Kelly suggests higher risk - increase towards it gradually
+                new_risk = min(kelly_conservative, current_risk * 1.15, 0.02)  # Cap at 2%
+                logger.info(f"🚀 ML: Profit Factor {profit_factor:.2f} > 1.5 & Kelly {kelly_conservative:.1%} > current. Increasing risk: {current_risk:.1%} → {new_risk:.1%}")
+                Config.RISK_PER_TRADE_PCT = new_risk
             else:
-                # Genuine bad performance (bad entries) -> Decrease Risk
-                new_risk = max(current_risk * 0.9, 0.005) # Min 0.5%
-                if new_risk != current_risk:
-                    logger.info(f"ML: Performance Unstable (Sharpe {sharpe:.2f}). Decreasing Risk: {current_risk:.1%} -> {new_risk:.1%}")
+                logger.info(f"✅ ML: Profit Factor {profit_factor:.2f} healthy. Current risk {current_risk:.1%} appropriate per Kelly.")
+                
+        elif profit_factor < 1.0:
+            # Losing money - reduce risk immediately
+            if kelly_conservative > 0:
+                new_risk = max(kelly_conservative * 0.5, 0.003)  # Use half of Kelly or 0.3% min
+            else:
+                new_risk = 0.003  # Minimal risk when no edge
+            
+            logger.warning(f"⚠️ ML: Profit Factor {profit_factor:.2f} < 1.0 (losing). Decreasing risk: {current_risk:.1%} → {new_risk:.1%}")
+            Config.RISK_PER_TRADE_PCT = new_risk
+            
+        elif 1.0 <= profit_factor <= 1.5:
+            # Marginal profitability - adjust conservatively based on Kelly
+            if kelly_conservative > 0:
+                # Move towards Kelly recommendation slowly
+                if kelly_conservative > current_risk * 1.2:
+                    new_risk = min(current_risk * 1.05, kelly_conservative * 0.8, 0.015)
+                    logger.info(f"📈 ML: Profit Factor {profit_factor:.2f} marginal. Slight increase: {current_risk:.1%} → {new_risk:.1%}")
                     Config.RISK_PER_TRADE_PCT = new_risk
-                 
+                elif kelly_conservative < current_risk * 0.8:
+                    new_risk = max(current_risk * 0.95, kelly_conservative * 1.2, 0.003)
+                    logger.info(f"📉 ML: Profit Factor {profit_factor:.2f} marginal. Slight decrease: {current_risk:.1%} → {new_risk:.1%}")
+                    Config.RISK_PER_TRADE_PCT = new_risk
+                else:
+                    logger.info(f"⚖️ ML: Profit Factor {profit_factor:.2f} marginal. Maintaining risk {current_risk:.1%}")
+            else:
+                # Kelly negative but Profit Factor > 1.0 (strange case)
+                # Likely high win rate but bad RR ratio
+                logger.warning(f"⚠️ ML: Profit Factor {profit_factor:.2f} > 1.0 but Kelly {kelly_pct:.1%} negative. Check R:R ratio.")
+                logger.info(f"💡 Suggestion: Improve avg win/loss ratio (currently {rr_ratio:.2f})")
+                
+        # Legacy Sharpe-based fallback (only if Kelly data insufficient)
+        elif len(wins) < 3 or len(losses) < 3:
+            logger.info(f"ℹ️ ML: Insufficient data for Kelly ({len(wins)} wins, {len(losses)} losses). Using Sharpe fallback.")
+            if sharpe > 2.0:
+                new_risk = min(current_risk * 1.05, 0.02)
+                if new_risk != current_risk:
+                    logger.info(f"ML: Performance Stable (Sharpe {sharpe:.2f}). Increasing Risk: {current_risk:.1%} → {new_risk:.1%}")
+                    Config.RISK_PER_TRADE_PCT = new_risk
+            elif sharpe < 1.0 and wasted_ratio < 0.5:
+                new_risk = max(current_risk * 0.9, 0.005)
+                if new_risk != current_risk:
+                    logger.info(f"ML: Performance Unstable (Sharpe {sharpe:.2f}). Decreasing Risk: {current_risk:.1%} → {new_risk:.1%}")
+                    Config.RISK_PER_TRADE_PCT = new_risk
+                  
         # Logic for Volatility Filter Adjustment (ATR_MIN_PCT)
-        # If we are getting stopped out a lot (low Win Rate), maybe increase ATR filter
-        wins = len([p for p in pnls if p > 0])
-        win_rate = wins / len(pnls)
+        # Keep existing ATR filter logic as it's complementary
         
         if win_rate < 0.4:
             # Too many losses, maybe market is choppy/noisy
             current_atr_min = Config.ATR_MIN_PCT
             new_atr_min = min(current_atr_min * 1.1, 0.5) # Max 0.5%
             if new_atr_min != current_atr_min:
-                logger.info(f"ML: Low Win Rate ({win_rate:.1%}). Tightening ATR Filter: {current_atr_min:.2%} -> {new_atr_min:.2%}")
+                logger.info(f"ML: Low Win Rate ({win_rate:.1%}). Tightening ATR Filter: {current_atr_min:.2%} → {new_atr_min:.2%}")
                 Config.ATR_MIN_PCT = new_atr_min
         elif win_rate > 0.6:
             # High win rate, maybe we are missing trades? Relax filter slightly
