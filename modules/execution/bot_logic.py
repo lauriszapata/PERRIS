@@ -293,8 +293,21 @@ class BotLogic:
                             pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
                             duration = time.time() - pos_data['entry_time']
                             
-                            CSVManager.log_closure(symbol, direction, entry_price, exit_price, actual_size, "Early Invalidation (Real-Time)", pnl_usd, pnl_pct, duration)
-                            CSVManager.log_finance(symbol, direction, actual_size, entry_price, exit_price, pnl_usd, duration)
+                            # Log Closure (CERRADOS)
+                            leverage = Config.LEVERAGE
+                            exposure = actual_size * entry_price
+                            margin = exposure / leverage
+                            
+                            CSVManager.log_closure(
+                                symbol=symbol,
+                                close_time=time.time(),
+                                pnl_usd=pnl_usd,
+                                margin=margin,
+                                leverage=leverage,
+                                exposure=exposure,
+                                duration_sec=duration,
+                                info="Early Invalidation (Real-Time)"
+                            )
                             
                             # ML Update (Total PnL - Commissions)
                             total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
@@ -451,14 +464,21 @@ class BotLogic:
                     
                     # Log Partial Closure to CSV with ACTUAL values
                     try:
+                        # Log Closure (CERRADOS)
+                        leverage = Config.LEVERAGE
+                        exposure = actual_closed_amount * entry
+                        margin = exposure / leverage
+                        duration = time.time() - pos_data['entry_time']
+
                         CSVManager.log_closure(
-                            symbol, direction, entry, actual_exit_price, actual_closed_amount, 
-                            f"Partial {display_name}", actual_profit_usd, actual_pnl_pct, 
-                            time.time() - pos_data['entry_time']
-                        )
-                        CSVManager.log_finance(
-                            symbol, direction, actual_closed_amount, entry, actual_exit_price, 
-                            actual_profit_usd, time.time() - pos_data['entry_time']
+                            symbol=symbol,
+                            close_time=time.time(),
+                            pnl_usd=actual_profit_usd,
+                            margin=margin,
+                            leverage=leverage,
+                            exposure=exposure,
+                            duration_sec=duration,
+                            info=f"Partial {display_name}"
                         )
                     except Exception as e:
                         logger.error(f"Failed to log partial CSV: {e}")
@@ -843,10 +863,10 @@ class BotLogic:
             
             if ok:
                 logger.info(f"🚀 ENTRY SIGNAL FOUND: {direction}")
-                self._execute_entry(symbol, direction, df) # Pass full DF to get current price for execution
+                self._execute_entry(symbol, direction, df, details) # Pass full DF and signal details
                 return # Only take one trade at a time
 
-    def _execute_entry(self, symbol, direction, df):
+    def _execute_entry(self, symbol, direction, df, signal_details=None):
         # Risk Check
         if not RiskManager.check_max_symbols(self.state.state['positions']):
             return
@@ -884,7 +904,8 @@ class BotLogic:
         logger.info(f"Executing {direction} | Size: {position_size:.4f} | Estimated Entry: {entry_price} | SL: {sl_price}")
         
         # Enforce Leverage again before entry (Safety)
-        self.client.set_leverage(symbol, 1)
+        leverage = Config.LEVERAGE # Default to Config leverage (usually 1 or 3)
+        self.client.set_leverage(symbol, leverage)
         
         # Execute
         order = self.executor.open_position(symbol, direction, position_size)
@@ -919,19 +940,35 @@ class BotLogic:
             # Set Initial SL
             self.executor.set_stop_loss(symbol, direction, sl_price)
             
-            # Log to CSV with ACTUAL execution price
+            # Log to CSV (ABIERTOS)
             try:
-                # Extract indicator values for logging
-                indicators = {
-                    'RSI': last['RSI'],
-                    'ADX': last['ADX'],
-                    'MACD_line': last['MACD_line'],
-                    'MACD_signal': last['MACD_signal'],
-                    'volume': last['volume']
-                }
-                CSVManager.log_entry(symbol, direction, actual_entry_price, actual_size, sl_price, atr, indicators)
+                # Calculate Metrics
+                exposure = actual_size * actual_entry_price
+                margin = exposure / leverage
+                
+                # Prepare Criteria
+                criteria = {}
+                if signal_details:
+                    for k, v in signal_details.items():
+                        criteria[k] = v.get('value', 'N/A')
+                else:
+                    # Fallback if no details passed
+                    criteria = {
+                        'RSI': last['RSI'],
+                        'ADX': last['ADX']
+                    }
+
+                CSVManager.log_entry(
+                    symbol=symbol,
+                    entry_time=time.time(),
+                    margin=margin,
+                    exposure=exposure,
+                    leverage=leverage,
+                    criteria=criteria
+                )
             except Exception as e:
                 logger.error(f"Failed to log entry CSV: {e}")
+
 
     def _manage_position(self, symbol, position, df):
         # Use Closed Candle for Logic (Trend, Structure, Trailing Update)
@@ -974,8 +1011,21 @@ class BotLogic:
                 pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
                 duration = time.time() - entry_time
                 
-                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "ATR Extreme", pnl_usd, pnl_pct, duration)
-                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                # Log Closure (CERRADOS)
+                leverage = Config.LEVERAGE
+                exposure = position['size'] * entry_price
+                margin = exposure / leverage
+                
+                CSVManager.log_closure(
+                    symbol=symbol,
+                    close_time=time.time(),
+                    pnl_usd=pnl_usd,
+                    margin=margin,
+                    leverage=leverage,
+                    exposure=exposure,
+                    duration_sec=duration,
+                    info="ATR Extreme"
+                )
                 
                 # ML Update (Total PnL - Commissions)
                 total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1029,8 +1079,21 @@ class BotLogic:
                         pnl_pct = (exit_price - entry_price) / entry_price
                         duration = time.time() - entry_time
                         
-                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Structure Break (Swing Low)", pnl_usd, pnl_pct, duration)
-                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        # Log Closure (CERRADOS)
+                        leverage = Config.LEVERAGE
+                        exposure = position['size'] * entry_price
+                        margin = exposure / leverage
+                        
+                        CSVManager.log_closure(
+                            symbol=symbol,
+                            close_time=time.time(),
+                            pnl_usd=pnl_usd,
+                            margin=margin,
+                            leverage=leverage,
+                            exposure=exposure,
+                            duration_sec=duration,
+                            info="Structure Break (Swing Low)"
+                        )
                         
                         # ML Update (Total PnL - Commissions)
                         total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1080,8 +1143,21 @@ class BotLogic:
                         pnl_pct = (entry_price - exit_price) / entry_price
                         duration = time.time() - entry_time
                         
-                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Structure Break (Swing High)", pnl_usd, pnl_pct, duration)
-                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        # Log Closure (CERRADOS)
+                        leverage = Config.LEVERAGE
+                        exposure = position['size'] * entry_price
+                        margin = exposure / leverage
+                        
+                        CSVManager.log_closure(
+                            symbol=symbol,
+                            close_time=time.time(),
+                            pnl_usd=pnl_usd,
+                            margin=margin,
+                            leverage=leverage,
+                            exposure=exposure,
+                            duration_sec=duration,
+                            info="Structure Break (Swing High)"
+                        )
                         
                         # ML Update (Total PnL - Commissions)
                         total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1147,8 +1223,21 @@ class BotLogic:
                 pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
                 duration = time.time() - entry_time
                 
-                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "MACD Reversal", pnl_usd, pnl_pct, duration)
-                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                # Log Closure (CERRADOS)
+                leverage = Config.LEVERAGE
+                exposure = position['size'] * entry_price
+                margin = exposure / leverage
+                
+                CSVManager.log_closure(
+                    symbol=symbol,
+                    close_time=time.time(),
+                    pnl_usd=pnl_usd,
+                    margin=margin,
+                    leverage=leverage,
+                    exposure=exposure,
+                    duration_sec=duration,
+                    info="MACD Reversal"
+                )
                 
                 # ML Update
                 total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1193,8 +1282,21 @@ class BotLogic:
                 pnl_pct = (exit_price - entry_price) / entry_price
                 duration = time.time() - entry_time
                 
-                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Hard Cross Exit", pnl_usd, pnl_pct, duration)
-                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                # Log Closure (CERRADOS)
+                leverage = Config.LEVERAGE
+                exposure = position['size'] * entry_price
+                margin = exposure / leverage
+                
+                CSVManager.log_closure(
+                    symbol=symbol,
+                    close_time=time.time(),
+                    pnl_usd=pnl_usd,
+                    margin=margin,
+                    leverage=leverage,
+                    exposure=exposure,
+                    duration_sec=duration,
+                    info="Hard Cross Exit"
+                )
                 
                 # ML Update (Total PnL - Commissions)
                 total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1242,8 +1344,21 @@ class BotLogic:
                 pnl_pct = (entry_price - exit_price) / entry_price
                 duration = time.time() - entry_time
                 
-                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Hard Cross Exit", pnl_usd, pnl_pct, duration)
-                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                # Log Closure (CERRADOS)
+                leverage = Config.LEVERAGE
+                exposure = position['size'] * entry_price
+                margin = exposure / leverage
+                
+                CSVManager.log_closure(
+                    symbol=symbol,
+                    close_time=time.time(),
+                    pnl_usd=pnl_usd,
+                    margin=margin,
+                    leverage=leverage,
+                    exposure=exposure,
+                    duration_sec=duration,
+                    info="Hard Cross Exit"
+                )
                 
                 # ML Update (Total PnL - Commissions)
                 total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1296,8 +1411,21 @@ class BotLogic:
                 pnl_usd = (exit_price - entry_price) * position['size'] if direction == "LONG" else (entry_price - exit_price) * position['size']
                 duration = time.time() - entry_time
                 
-                CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Stagnation Exit", pnl_usd, current_pnl_pct, duration)
-                CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                # Log Closure (CERRADOS)
+                leverage = Config.LEVERAGE
+                exposure = position['size'] * entry_price
+                margin = exposure / leverage
+                
+                CSVManager.log_closure(
+                    symbol=symbol,
+                    close_time=time.time(),
+                    pnl_usd=pnl_usd,
+                    margin=margin,
+                    leverage=leverage,
+                    exposure=exposure,
+                    duration_sec=duration,
+                    info="Stagnation Exit"
+                )
                 
                 # ML Update (Total PnL - Commissions)
                 total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1351,8 +1479,21 @@ class BotLogic:
                     pnl_usd = (exit_price - entry_price) * position['size'] if direction == "LONG" else (entry_price - exit_price) * position['size']
                     duration = time.time() - entry_time
                     
-                    CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Time Limit", pnl_usd, pnl_pct, duration)
-                    CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                    # Log Closure (CERRADOS)
+                    leverage = Config.LEVERAGE
+                    exposure = position['size'] * entry_price
+                    margin = exposure / leverage
+                    
+                    CSVManager.log_closure(
+                        symbol=symbol,
+                        close_time=time.time(),
+                        pnl_usd=pnl_usd,
+                        margin=margin,
+                        leverage=leverage,
+                        exposure=exposure,
+                        duration_sec=duration,
+                        info="Time Limit"
+                    )
                 
                     # ML Update (Total PnL - Commissions)
                     total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1422,8 +1563,21 @@ class BotLogic:
                         pnl_pct = (exit_price - entry_price) / entry_price
                         duration = time.time() - entry_time
                         
-                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
-                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        # Log Closure (CERRADOS)
+                        leverage = Config.LEVERAGE
+                        exposure = position['size'] * entry_price
+                        margin = exposure / leverage
+                        
+                        CSVManager.log_closure(
+                            symbol=symbol,
+                            close_time=time.time(),
+                            pnl_usd=pnl_usd,
+                            margin=margin,
+                            leverage=leverage,
+                            exposure=exposure,
+                            duration_sec=duration,
+                            info="Soft Trend Exit"
+                        )
                         
                         # ML Update (Total PnL - Commissions)
                         total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)
@@ -1473,8 +1627,21 @@ class BotLogic:
                         pnl_pct = (entry_price - exit_price) / entry_price
                         duration = time.time() - entry_time
                         
-                        CSVManager.log_closure(symbol, direction, entry_price, exit_price, position['size'], "Soft Trend Exit", pnl_usd, pnl_pct, duration)
-                        CSVManager.log_finance(symbol, direction, position['size'], entry_price, exit_price, pnl_usd, duration)
+                        # Log Closure (CERRADOS)
+                        leverage = Config.LEVERAGE
+                        exposure = position['size'] * entry_price
+                        margin = exposure / leverage
+                        
+                        CSVManager.log_closure(
+                            symbol=symbol,
+                            close_time=time.time(),
+                            pnl_usd=pnl_usd,
+                            margin=margin,
+                            leverage=leverage,
+                            exposure=exposure,
+                            duration_sec=duration,
+                            info="Soft Trend Exit"
+                        )
                         
                         # ML Update (Total PnL - Commissions)
                         total_pnl_usd = pnl_usd + position.get('accumulated_pnl', 0.0)

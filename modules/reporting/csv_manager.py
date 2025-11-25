@@ -5,10 +5,12 @@ from datetime import datetime
 from modules.logger import logger
 
 class CSVManager:
-    DATA_DIR = "data"
-    ENTRIES_FILE = os.path.join(DATA_DIR, "entries.csv")
-    CLOSURES_FILE = os.path.join(DATA_DIR, "closures.csv")
-    FINANCE_FILE = os.path.join(DATA_DIR, "finance.csv")
+    # Set Data Directory to Desktop
+    DATA_DIR = os.path.join(os.path.expanduser("~"), "Desktop")
+    
+    # Define File Names
+    ABIERTOS_FILE = os.path.join(DATA_DIR, "ABIERTOS.csv")
+    CERRADOS_FILE = os.path.join(DATA_DIR, "CERRADOS.csv")
 
     @staticmethod
     def _ensure_dir():
@@ -30,120 +32,53 @@ class CSVManager:
             logger.error(f"Failed to write to CSV {filepath}: {e}")
 
     @staticmethod
-    def log_entry(symbol, direction, entry_price, size, sl_price, atr, indicators):
+    def log_entry(symbol, entry_time, margin, exposure, leverage, criteria):
         """
-        Log trade entry with all technical parameters.
-        indicators: dict of indicator values (RSI, ADX, etc.)
+        Log trade entry to ABIERTOS.csv
+        criteria: dict of criteria values (e.g., {'RSI': 30, 'ADX': 25})
         """
         headers = [
-            "timestamp", "datetime", "symbol", "direction", "entry_price", "size", 
-            "sl_price", "atr", "risk_usd", "rsi", "adx", "macd_line", "macd_signal", "volume"
+            "fecha_hora", "simbolo", "margen_usd", "exposicion_usd", "leverage", 
+            "criterios_cumplidos"
         ]
         
+        # Format criteria as a string
+        criteria_str = "; ".join([f"{k}={v}" for k, v in criteria.items()])
+        
         row = {
-            "timestamp": time.time(),
-            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "symbol": symbol,
-            "direction": direction,
-            "entry_price": entry_price,
-            "size": size,
-            "sl_price": sl_price,
-            "atr": atr,
-            "risk_usd": abs(entry_price - sl_price) * size,
-            "rsi": indicators.get('RSI', 0),
-            "adx": indicators.get('ADX', 0),
-            "macd_line": indicators.get('MACD_line', 0),
-            "macd_signal": indicators.get('MACD_signal', 0),
-            "volume": indicators.get('volume', 0)
+            "fecha_hora": datetime.fromtimestamp(entry_time).strftime("%Y-%m-%d %H:%M:%S"),
+            "simbolo": symbol,
+            "margen_usd": round(margin, 2),
+            "exposicion_usd": round(exposure, 2),
+            "leverage": leverage,
+            "criterios_cumplidos": criteria_str
         }
         
-        CSVManager._write_row(CSVManager.ENTRIES_FILE, headers, row)
+        CSVManager._write_row(CSVManager.ABIERTOS_FILE, headers, row)
 
     @staticmethod
-    def log_closure(symbol, direction, entry_price, exit_price, size, reason, pnl_usd, pnl_pct, duration_sec):
+    def log_closure(symbol, close_time, pnl_usd, margin, leverage, exposure, duration_sec, info):
         """
-        Log trade closure (partial or full).
-        """
-        headers = [
-            "timestamp", "datetime", "symbol", "direction", "entry_price", "exit_price", 
-            "size", "reason", "pnl_usd", "pnl_pct", "duration_sec", "duration_min"
-        ]
-        
-        row = {
-            "timestamp": time.time(),
-            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "symbol": symbol,
-            "direction": direction,
-            "entry_price": entry_price,
-            "exit_price": exit_price,
-            "size": size,
-            "reason": reason,
-            "pnl_usd": pnl_usd,
-            "pnl_pct": pnl_pct,
-            "duration_sec": duration_sec,
-            "duration_min": duration_sec / 60
-        }
-        
-        CSVManager._write_row(CSVManager.CLOSURES_FILE, headers, row)
-
-    @staticmethod
-    def log_finance(symbol, direction, size, entry_price, exit_price, pnl_usd, duration_sec, commission_rate=None):
-        """
-        Log financial metrics (MBA style).
+        Log trade closure to CERRADOS.csv
         """
         headers = [
-            "timestamp", "datetime", "symbol", "direction", "transaction_type", 
-            "revenue", "cogs", "gross_profit", "ebitda", "net_income", 
-            "capital_deployed", "roi_pct", "eva", "notes"
+            "fecha_hora", "simbolo", "pnl_binance_usd", "margen_usd", "leverage", 
+            "exposicion_usd", "tiempo_cierre_sec", "tiempo_cierre_human", "info_adicional"
         ]
         
-        # Financial Calculations
-        # Revenue: Positive PnL (if winning)
-        # COGS: Negative PnL (if losing) + Commissions
-        
-        if commission_rate is None:
-            from config import Config
-            commission_rate = Config.COMMISSION_RATE
-
-        transaction_value = size * exit_price
-        commission_cost = transaction_value * commission_rate # Approx taker fee
-        
-        if pnl_usd >= 0:
-            revenue = pnl_usd
-            cogs = commission_cost
-        else:
-            revenue = 0
-            cogs = abs(pnl_usd) + commission_cost
-            
-        gross_profit = revenue - cogs
-        ebitda = gross_profit # Assuming no other opex for the bot per trade
-        net_income = ebitda # Assuming no taxes/interest
-        
-        capital_deployed = size * entry_price / 1 # Assuming 1x leverage
-        roi_pct = (net_income / capital_deployed) * 100 if capital_deployed > 0 else 0
-        
-        # EVA: Net Income - (Capital * Cost of Capital * Time)
-        # Cost of Capital assumption: 10% annual
-        cost_of_capital_annual = 0.10
-        time_years = duration_sec / (365 * 24 * 3600)
-        capital_charge = capital_deployed * cost_of_capital_annual * time_years
-        eva = net_income - capital_charge
+        # Format duration
+        duration_human = time.strftime("%H:%M:%S", time.gmtime(duration_sec))
         
         row = {
-            "timestamp": time.time(),
-            "datetime": datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
-            "symbol": symbol,
-            "direction": direction,
-            "transaction_type": "CLOSE",
-            "revenue": round(revenue, 4),
-            "cogs": round(cogs, 4),
-            "gross_profit": round(gross_profit, 4),
-            "ebitda": round(ebitda, 4),
-            "net_income": round(net_income, 4),
-            "capital_deployed": round(capital_deployed, 4),
-            "roi_pct": round(roi_pct, 4),
-            "eva": round(eva, 6),
-            "notes": "Winning Trade" if pnl_usd > 0 else "Losing Trade"
+            "fecha_hora": datetime.fromtimestamp(close_time).strftime("%Y-%m-%d %H:%M:%S"),
+            "simbolo": symbol,
+            "pnl_binance_usd": round(pnl_usd, 4),
+            "margen_usd": round(margin, 2),
+            "leverage": leverage,
+            "exposicion_usd": round(exposure, 2),
+            "tiempo_cierre_sec": int(duration_sec),
+            "tiempo_cierre_human": duration_human,
+            "info_adicional": info
         }
         
-        CSVManager._write_row(CSVManager.FINANCE_FILE, headers, row)
+        CSVManager._write_row(CSVManager.CERRADOS_FILE, headers, row)

@@ -1,22 +1,5 @@
 {
-    "positions": {
-        "SUI/USDT:USDT": {
-            "direction": "LONG",
-            "entry_price": 1.5352,
-            "size": 81.4,
-            "sl_price": 1.5198479999999999,
-            "atr_entry": 0.012020994131739089,
-            "p_max": 1.5352,
-            "p_min": 1.5352,
-            "partials": {
-                "p1": false,
-                "p2": false
-            },
-            "entry_time": 1764071261.345856,
-            "accumulated_pnl": 0.0,
-            "last_dynamic_level": 0
-        }
-    },
+    "positions": {},
     "daily_pnl": 0.0,
     "last_reset_time": 1764028806.0244448,
     "trades_last_hour": [
@@ -41,8 +24,21 @@
                 "pnl": 0.16707401002939626,
                 "max_pnl": 0.02369012623205941,
                 "time": 1764023425.3667772
+            },
+            {
+                "pnl": -0.005557386659718536,
+                "max_pnl": 0.0018890046899427597,
+                "time": 1764072017.329678,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -0.5697999999999915,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
             }
         ],
+        "partial_history": [],
+        "active_partials": {},
         "current_risk": 0.005,
         "current_atr_min": 0.0025
     }

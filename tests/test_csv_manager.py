@@ -2,6 +2,7 @@ import unittest
 import os
 import csv
 import shutil
+import time
 from modules.reporting.csv_manager import CSVManager
 
 class TestCSVManager(unittest.TestCase):
@@ -10,9 +11,8 @@ class TestCSVManager(unittest.TestCase):
     def setUp(self):
         # Override DATA_DIR for testing
         CSVManager.DATA_DIR = self.TEST_DIR
-        CSVManager.ENTRIES_FILE = os.path.join(self.TEST_DIR, "entries.csv")
-        CSVManager.CLOSURES_FILE = os.path.join(self.TEST_DIR, "closures.csv")
-        CSVManager.FINANCE_FILE = os.path.join(self.TEST_DIR, "finance.csv")
+        CSVManager.ABIERTOS_FILE = os.path.join(self.TEST_DIR, "ABIERTOS.csv")
+        CSVManager.CERRADOS_FILE = os.path.join(self.TEST_DIR, "CERRADOS.csv")
         
         if os.path.exists(self.TEST_DIR):
             shutil.rmtree(self.TEST_DIR)
@@ -23,46 +23,47 @@ class TestCSVManager(unittest.TestCase):
             shutil.rmtree(self.TEST_DIR)
 
     def test_log_entry(self):
-        indicators = {'RSI': 50, 'ADX': 20, 'MACD_line': 0.1, 'MACD_signal': 0.05, 'volume': 1000}
-        CSVManager.log_entry("BTC/USDT", "LONG", 50000, 0.1, 49000, 100, indicators)
+        criteria = {'RSI': 30, 'ADX': 25}
+        CSVManager.log_entry(
+            symbol="BTC/USDT", 
+            entry_time=time.time(), 
+            margin=100.0, 
+            exposure=100.0, 
+            leverage=1, 
+            criteria=criteria
+        )
         
-        self.assertTrue(os.path.exists(CSVManager.ENTRIES_FILE))
+        self.assertTrue(os.path.exists(CSVManager.ABIERTOS_FILE))
         
-        with open(CSVManager.ENTRIES_FILE, 'r') as f:
+        with open(CSVManager.ABIERTOS_FILE, 'r') as f:
             reader = csv.DictReader(f)
             rows = list(reader)
             self.assertEqual(len(rows), 1)
-            self.assertEqual(rows[0]['symbol'], "BTC/USDT")
-            self.assertEqual(rows[0]['rsi'], "50")
+            self.assertEqual(rows[0]['simbolo'], "BTC/USDT")
+            self.assertIn("RSI=30", rows[0]['criterios_cumplidos'])
+            self.assertEqual(rows[0]['margen_usd'], "100.0")
 
     def test_log_closure(self):
-        CSVManager.log_closure("ETH/USDT", "SHORT", 3000, 2900, 1, "TP", 100, 0.033, 3600)
+        CSVManager.log_closure(
+            symbol="ETH/USDT", 
+            close_time=time.time(), 
+            pnl_usd=10.5, 
+            margin=100.0, 
+            leverage=1, 
+            exposure=100.0, 
+            duration_sec=3600, 
+            info="TP Hit"
+        )
         
-        self.assertTrue(os.path.exists(CSVManager.CLOSURES_FILE))
+        self.assertTrue(os.path.exists(CSVManager.CERRADOS_FILE))
         
-        with open(CSVManager.CLOSURES_FILE, 'r') as f:
+        with open(CSVManager.CERRADOS_FILE, 'r') as f:
             reader = csv.DictReader(f)
             rows = list(reader)
             self.assertEqual(len(rows), 1)
-            self.assertEqual(rows[0]['pnl_usd'], "100")
-            self.assertEqual(rows[0]['reason'], "TP")
-
-    def test_log_finance(self):
-        # Winning Trade
-        # Size 1, Entry 100, Exit 110, PnL 10
-        CSVManager.log_finance("SOL/USDT", "LONG", 1, 100, 110, 10, 3600)
-        
-        self.assertTrue(os.path.exists(CSVManager.FINANCE_FILE))
-        
-        with open(CSVManager.FINANCE_FILE, 'r') as f:
-            reader = csv.DictReader(f)
-            rows = list(reader)
-            self.assertEqual(len(rows), 1)
-            self.assertEqual(rows[0]['revenue'], "10")
-            # COGS = Commission (1 * 110 * 0.0005 = 0.055)
-            self.assertAlmostEqual(float(rows[0]['cogs']), 0.055, places=3)
-            # EBITDA = 10 - 0.055 = 9.945
-            self.assertAlmostEqual(float(rows[0]['ebitda']), 9.945, places=3)
+            self.assertEqual(rows[0]['pnl_binance_usd'], "10.5")
+            self.assertEqual(rows[0]['info_adicional'], "TP Hit")
+            self.assertEqual(rows[0]['tiempo_cierre_human'], "01:00:00")
 
 if __name__ == '__main__':
     unittest.main()
