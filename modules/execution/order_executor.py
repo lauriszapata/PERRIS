@@ -82,22 +82,49 @@ class OrderExecutor:
             logger.error("Failed to create close order")
             return None
 
+    def _create_identified_order(self, symbol, type, side, amount, params={}):
+        """
+        Standardized method for creating identified orders (TP/SL).
+        """
+        logger.info(f"Creating identified order: {symbol} {type} {side} {params}")
+        
+        # Retry logic for identified orders
+        max_retries = 2
+        for attempt in range(1, max_retries + 1):
+            try:
+                # amount is None for closePosition=True orders in many contexts, 
+                # but let's pass what is given.
+                order = self.client.create_order(symbol, type, side, amount, price=None, params=params)
+                if order:
+                    logger.info(f"{type} order created: {order.get('id')}")
+                    return order
+                else:
+                    logger.error(f"Failed to create {type} order (no response).")
+            except Exception as e:
+                err_msg = str(e)
+                # Handle specific Binance errors if needed, e.g. "Reach max stop order limit"
+                if "Reach max stop order limit" in err_msg and attempt < max_retries:
+                    logger.warning(f"Max stop order limit reached, cancelling existing STOP orders and retrying (attempt {attempt})")
+                    try:
+                        open_orders = self.client.get_open_orders(symbol)
+                        for o in open_orders:
+                            if o.get('type') in ['STOP_MARKET', 'TAKE_PROFIT_MARKET']:
+                                self.client.cancel_order(o['id'], symbol)
+                    except Exception as ce:
+                        logger.warning(f"Additional cancel attempt failed: {ce}")
+                    continue
+                else:
+                    logger.error(f"Error creating {type} order: {e}")
+                    break
+        return None
+
     def set_stop_loss(self, symbol, direction, stop_price):
         """
-        Set or update Stop Loss.
+        Set or update Stop Loss using standardized structure.
         """
-        side = 'sell' if direction == 'LONG' else 'buy'
+        reduce_side = 'sell' if direction == 'LONG' else 'buy'
 
         logger.info(f"Setting SL for {symbol} {direction} at {stop_price}")
-
-        # For Binance Futures, to close the entire position we use closePosition=True
-        # When closePosition=True, quantity must not be sent (or sent as 0/None depending on lib version)
-        # CCXT usually handles 'amount': None if 'closePosition': True is in params
-
-        params = {
-            'stopPrice': stop_price,
-            'closePosition': True
-        }
 
         # First, try to cancel any existing STOP orders for this symbol to avoid conflicts.
         try:
@@ -108,30 +135,38 @@ class OrderExecutor:
         except Exception as e:
             logger.warning(f"Could not cancel existing SLs: {e}")
 
-        # Attempt to place the new stop loss order with retry on max stop order limit.
-        max_retries = 2
-        for attempt in range(1, max_retries + 1):
-            try:
-                order = self.client.create_order(symbol, 'STOP_MARKET', side, amount=None, price=None, params=params)
-                if order:
-                    logger.info(f"Stop loss order created: {order.get('id')}")
-                    return order
-                else:
-                    logger.error("Failed to create stop loss order (no response).")
-            except Exception as e:
-                err_msg = str(e)
-                if "Reach max stop order limit" in err_msg and attempt < max_retries:
-                    logger.warning(f"Max stop order limit reached, cancelling existing STOP orders and retrying (attempt {attempt})")
-                    # Cancel all STOP orders again before retry.
-                    try:
-                        open_orders = self.client.get_open_orders(symbol)
-                        for o in open_orders:
-                            if o.get('type') == 'STOP_MARKET':
-                                self.client.cancel_order(o['id'], symbol)
-                    except Exception as ce:
-                        logger.warning(f"Additional cancel attempt failed: {ce}")
-                    continue
-                else:
-                    logger.error(f"Error creating stop loss order: {e}")
-                    break
-        return None
+        # Standardized SL Order Structure
+        return self._create_identified_order(
+            symbol,
+            "STOP_MARKET",  # ← TIPO ESPECÍFICO DE BINANCE
+            reduce_side,
+            None, # Amount is None for closePosition=True
+            params={
+                "workingType": "MARK_PRICE", 
+                "closePosition": True,
+                "stopPrice": stop_price,
+                "priceProtect": True
+            }
+        )
+
+    def set_take_profit(self, symbol, direction, tp_price):
+        """
+        Set Take Profit using standardized structure.
+        """
+        reduce_side = 'sell' if direction == 'LONG' else 'buy'
+        
+        logger.info(f"Setting TP for {symbol} {direction} at {tp_price}")
+
+        # Standardized TP Order Structure
+        return self._create_identified_order(
+            symbol,
+            "TAKE_PROFIT_MARKET",  # ← TIPO ESPECÍFICO DE BINANCE
+            reduce_side,
+            None,
+            params={
+                "workingType": "MARK_PRICE", 
+                "closePosition": True,
+                "stopPrice": tp_price
+            }
+        )
+

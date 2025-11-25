@@ -1,51 +1,30 @@
 {
-    "positions": {
-        "BCH/USDT": {
-            "direction": "LONG",
-            "entry_price": 554.55,
-            "size": 0.17808614051720595,
-            "sl_price": 551.5347123511584,
-            "atr_entry": 3.845230856134494,
-            "p_max": 557.61,
-            "p_min": 554.55,
-            "partials": {
-                "p1": false,
-                "p2": false,
-                "p3": false,
-                "p4": false
-            },
-            "entry_time": 1764000908.5091,
-            "last_sl_update": 1764003608.334056,
-            "last_dynamic_level": 0
-        },
-        "XRP/USDT": {
-            "direction": "LONG",
-            "entry_price": 2.104,
-            "size": 39.50569893356972,
-            "sl_price": 2.120832,
-            "atr_entry": 0.016501232419138152,
-            "p_max": 2.1208,
-            "p_min": 2.104,
-            "partials": {
-                "p1": true,
-                "p2": true,
-                "p3": false,
-                "p4": false
-            },
-            "entry_time": 1764001824.75788,
-            "last_sl_update": 1764003715.3583748,
-            "last_dynamic_level": 0
-        }
-    },
+    "positions": {},
     "daily_pnl": 0.0,
-    "last_reset_time": 1763942405.4881122,
-    "trades_last_hour": [
-        1764000908.510026,
-        1764001824.759028,
-        1764003648.819992,
-        1764003714.831142
-    ],
+    "last_reset_time": 1764028806.0244448,
+    "trades_last_hour": [],
     "is_paused": false,
     "pause_reason": null,
-    "pause_until": null
+    "pause_until": null,
+    "tuner": {
+        "trade_history": [
+            {
+                "pnl": -0.02314259541984714,
+                "max_pnl": 0.0016793893129771176,
+                "time": 1764013515.5960672
+            },
+            {
+                "pnl": -0.022225005009016002,
+                "max_pnl": 0.005476524410605673,
+                "time": 1764019809.6434639
+            },
+            {
+                "pnl": 0.16707401002939626,
+                "max_pnl": 0.02369012623205941,
+                "time": 1764023425.3667772
+            }
+        ],
+        "current_risk": 0.005,
+        "current_atr_min": 0.0025
+    }
 }
