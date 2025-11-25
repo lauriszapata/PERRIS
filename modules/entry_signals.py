@@ -19,6 +19,10 @@ class EntrySignals:
             df_mtf = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
             df_mtf['close'] = df_mtf['close'].astype(float)
             
+            # VALIDATE: Ensure data from Binance contains no NaN
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(df_mtf['close'].values, f"MTF close prices for {symbol}")
+            
             # Simple EMA Trend on MTF
             df_mtf.ta.ema(length=50, append=True)
             df_mtf.ta.ema(length=200, append=True)

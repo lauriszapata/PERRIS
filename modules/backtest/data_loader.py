@@ -59,8 +59,12 @@ class DataLoader:
         df = pd.DataFrame(all_candles, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
         
+        # VALIDATE: Ensure data from Binance contains no NaN
+        from modules.utils.validation import ensure_no_nan
+        for col in ['open', 'high', 'low', 'close', 'volume']:
+            ensure_no_nan(df[col].values, f"OHLCV column '{col}' from Binance")
+        
         # Save to cache
-        df.to_csv(filename, index=False)
         df.to_csv(filename, index=False)
         return df
 
@@ -103,6 +107,12 @@ class DataLoader:
             
         df = pd.DataFrame(all_candles, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
         df['timestamp'] = pd.to_datetime(df['timestamp'], unit='ms')
+        
+        # VALIDATE: Ensure data from Binance contains no NaN
+        from modules.utils.validation import ensure_no_nan
+        for col in ['open', 'high', 'low', 'close', 'volume']:
+            ensure_no_nan(df[col].values, f"OHLCV column '{col}' from Binance (range)")
+        
         return df
 
     def load_all_symbols(self, days=30):

@@ -49,6 +49,12 @@ class Indicators:
             # We need to keep enough data, but drop the initial rows where indicators are calculating
             # EMA200 needs 200 rows.
             df.dropna(inplace=True)
+            
+            # VALIDATE: Ensure NO NaN values remain after indicator calculation
+            from modules.utils.validation import ensure_no_nan
+            if not df.empty:
+                for col in df.columns:
+                    ensure_no_nan(df[col].values, f"Indicator column '{col}'")
 
             return df
         except Exception as e:

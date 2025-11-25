@@ -44,7 +44,10 @@ class BinanceClient:
 
     def fetch_ohlcv(self, symbol, timeframe=Config.TIMEFRAME, limit=500):
         try:
-            return self._retry_call(self.exchange.fetch_ohlcv, symbol, timeframe, limit=limit)
+            data = self._retry_call(self.exchange.fetch_ohlcv, symbol, timeframe, limit=limit)
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(data, f"OHLCV data for {symbol}")
+            return data
         except Exception as e:
             logger.error(f"Error fetching OHLCV for {symbol} after retries: {e}")
             return None
@@ -52,14 +55,20 @@ class BinanceClient:
     def get_market_price(self, symbol):
         try:
             ticker = self._retry_call(self.exchange.fetch_ticker, symbol)
-            return ticker['last']
+            price = ticker['last']
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(price, f"Market price for {symbol}")
+            return price
         except Exception as e:
             logger.error(f"Error fetching price for {symbol} after retries: {e}")
             return None
 
     def get_order_book(self, symbol, limit=5):
         try:
-            return self.exchange.fetch_order_book(symbol, limit)
+            ob = self.exchange.fetch_order_book(symbol, limit)
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(ob, f"Order book for {symbol}")
+            return ob
         except Exception as e:
             logger.error(f"Error fetching order book for {symbol}: {e}")
             return None
@@ -67,7 +76,10 @@ class BinanceClient:
     def get_funding_rate(self, symbol):
         try:
             funding = self.exchange.fetch_funding_rate(symbol)
-            return funding['fundingRate']
+            rate = funding['fundingRate']
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(rate, f"Funding rate for {symbol}")
+            return rate
         except Exception as e:
             logger.error(f"Error fetching funding rate for {symbol}: {e}")
             return None
@@ -75,6 +87,7 @@ class BinanceClient:
     def set_leverage(self, symbol, leverage=Config.LEVERAGE):
         try:
             self.exchange.set_leverage(leverage, symbol)
+            # No direct return value, but ensure no exception means success
         except Exception as e:
             logger.error(f"Error setting leverage for {symbol}: {e}")
 
@@ -82,6 +95,8 @@ class BinanceClient:
         try:
             # Use retry helper with exponential backoff
             order = self._retry_call(self.exchange.create_order, symbol, type, side, amount, price, params)
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(order, f"Created order for {symbol}")
             return order
         except Exception as e:
             logger.error(f"Failed to create order for {symbol} after retries: {e}")
@@ -95,11 +110,13 @@ class BinanceClient:
 
     def get_open_orders(self, symbol):
         try:
-            return self.exchange.fetch_open_orders(symbol)
+            orders = self.exchange.fetch_open_orders(symbol)
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(orders, f"Open orders for {symbol}")
+            return orders
         except Exception as e:
             logger.error(f"Error fetching open orders for {symbol}: {e}")
-            return []
-    
+            return []    
     def cancel_all_orders(self, symbol):
         """
         Cancel all open orders for a symbol.
@@ -127,14 +144,20 @@ class BinanceClient:
 
     def get_balance(self):
         try:
-            return self.exchange.fetch_balance()
+            bal = self.exchange.fetch_balance()
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(bal, "Account balance")
+            return bal
         except Exception as e:
             logger.error(f"Error fetching balance: {e}")
             return None
     
     def get_server_time(self):
         try:
-            return self.exchange.fetch_time()
+            t = self.exchange.fetch_time()
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(t, "Server time")
+            return t
         except Exception as e:
             logger.error(f"Error fetching server time: {e}")
             return None
@@ -142,6 +165,8 @@ class BinanceClient:
     def get_all_positions(self):
         try:
             positions = self.exchange.fetch_positions()
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(positions, "All positions")
             # Filter for active positions (size != 0)
             active_positions = [p for p in positions if float(p['contracts']) > 0]
             return active_positions
@@ -153,6 +178,8 @@ class BinanceClient:
         try:
             # Fetch positions for specific symbol
             positions = self.exchange.fetch_positions([symbol])
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(positions, f"Positions for {symbol}")
             return positions
         except Exception as e:
             logger.error(f"Error fetching position for {symbol}: {e}")

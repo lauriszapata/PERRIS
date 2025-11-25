@@ -22,6 +22,11 @@ class CorrelationManager:
             
             df_new = pd.DataFrame(new_data, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
             df_new['close'] = df_new['close'].astype(float)
+            
+            # VALIDATE: Ensure data from Binance contains no NaN
+            from modules.utils.validation import ensure_no_nan
+            ensure_no_nan(df_new['close'].values, f"Close prices for {new_symbol}")
+            
             returns_new = df_new['close'].pct_change().dropna()
 
             for pos_symbol in current_positions:
@@ -36,6 +41,10 @@ class CorrelationManager:
                 
                 df_pos = pd.DataFrame(pos_data, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
                 df_pos['close'] = df_pos['close'].astype(float)
+                
+                # VALIDATE: Ensure data from Binance contains no NaN
+                ensure_no_nan(df_pos['close'].values, f"Close prices for {pos_symbol}")
+                
                 returns_pos = df_pos['close'].pct_change().dropna()
 
                 # Align dataframes on index (timestamp) if needed, but for now assuming similar fetch times/intervals
