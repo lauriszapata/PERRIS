@@ -172,11 +172,15 @@ class OrderExecutor:
 
         logger.info(f"Setting SL for {symbol} {direction} at {stop_price}")
 
-        # First, try to cancel any existing STOP orders for this symbol to avoid conflicts.
+        # CRITICAL: We MUST cancel existing STOP_MARKET orders before creating a new one.
+        # Binance has a limit on open stop orders per symbol. If we don't cancel, we hit "Reach max stop order limit".
         try:
             open_orders = self.client.get_open_orders(symbol)
             for o in open_orders:
-                if o.get('type') == 'STOP_MARKET':
+                o_type = o.get('type', '')
+                o_info_type = o.get('info', {}).get('type', '')
+                if o_type == 'STOP_MARKET' or o_info_type == 'STOP_MARKET':
+                    logger.info(f"♻️ Replacing existing SL order {o['id']} for {symbol}")
                     self.client.cancel_order(o['id'], symbol)
         except Exception as e:
             logger.warning(f"Could not cancel existing SLs: {e}")
@@ -202,6 +206,18 @@ class OrderExecutor:
         reduce_side = 'sell' if direction == 'LONG' else 'buy'
         
         logger.info(f"Setting TP for {symbol} {direction} at {tp_price}")
+
+        # CRITICAL: We MUST cancel existing TAKE_PROFIT_MARKET orders before creating a new one.
+        try:
+            open_orders = self.client.get_open_orders(symbol)
+            for o in open_orders:
+                o_type = o.get('type', '')
+                o_info_type = o.get('info', {}).get('type', '')
+                if o_type == 'TAKE_PROFIT_MARKET' or o_info_type == 'TAKE_PROFIT_MARKET':
+                    logger.info(f"♻️ Replacing existing TP order {o['id']} for {symbol}")
+                    self.client.cancel_order(o['id'], symbol)
+        except Exception as e:
+            logger.warning(f"Could not cancel existing TPs: {e}")
 
         # Standardized TP Order Structure
         return self._create_identified_order(

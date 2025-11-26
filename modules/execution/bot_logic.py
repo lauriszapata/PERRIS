@@ -237,20 +237,7 @@ class BotLogic:
         
         # Clean up orphaned orders when no positions (every 30s to avoid spam)
         if not positions:
-            now = time.time()
-            if not hasattr(self, 'last_cleanup_time'):
-                self.last_cleanup_time = 0
-            
-            if now - self.last_cleanup_time >= 30:  # Only cleanup every 30 seconds
-                total_cancelled = 0
-                for symbol in Config.SYMBOLS:
-                    cancelled = self.client.cancel_all_orders(symbol)
-                    total_cancelled += cancelled
-                
-                if total_cancelled > 0:
-                    logger.info(f"🧹 Cleaned up {total_cancelled} orphaned orders (no active positions)")
-                
-                self.last_cleanup_time = now
+            # Cleanup disabled by user request to avoid accidental protection removal
             return
 
         now = time.time()
@@ -268,10 +255,29 @@ class BotLogic:
             return
         
         # Process each position from Binance
-        for binance_pos in binance_positions:
-            symbol = binance_pos['symbol']
+        binance_map = {p['symbol']: p for p in binance_positions}
+        
+        # 1. SYNC: Remove Ghost Positions (Local state has it, but Binance doesn't)
+        local_symbols = list(positions.keys())
+        for symbol in local_symbols:
+            if symbol not in binance_map:
+                # SAFETY CHECK: Only clear if position is older than 30 seconds
+                # This prevents clearing positions that were just opened but haven't appeared in API yet
+                pos_data = positions[symbol]
+                entry_time = pos_data.get('entry_time', 0)
+                if (now - entry_time) < 30:
+                    logger.warning(f"👻 Potential Ghost {symbol} detected, but too new ({now - entry_time:.1f}s). Waiting for sync...")
+                    continue
+                
+                logger.warning(f"👻 Ghost position detected: {symbol} is in local state but CLOSED on Binance. Clearing...")
+                self.state.clear_position(symbol)
+                # Do NOT cancel orders here blindly. If it's truly closed, orders should be gone or handled by cleanup.
+                # If we cancel orders here, we risk leaving a position naked if it was just a sync glitch.
+        
+        # 2. Process Active Positions
+        for symbol, binance_pos in binance_map.items():
             
-            # Skip if we don't have this position in local state
+            # Skip if we don't have this position in local state (we only manage what we opened)
             if symbol not in positions:
                 continue
             
@@ -293,6 +299,14 @@ class BotLogic:
                     logger.info(f"🔄 Syncing size for {symbol}: Local {pos_data['size']:.6f} -> Binance {actual_size:.6f}")
                     pos_data['size'] = actual_size
                     self.state.set_position(symbol, pos_data)
+                
+                # Update PnL in local state for logging/decisions
+                pos_data['pnl_usd'] = unrealized_pnl
+                pos_data['pnl_pct'] = pnl_percentage
+                
+                # --- VERIFY PROTECTION (SL/TP) ---
+                # Ensure orders exist on Binance (Critical for safety)
+                self._verify_protection(symbol, pos_data)
                 
                 self._check_partials(symbol, pos_data, current_price, should_log)
             
@@ -325,6 +339,52 @@ class BotLogic:
                             pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                             self.state.set_position(symbol, pos_data)
                             logger.info(f"🛡️ BREAKEVEN TRIGGERED for {symbol}: SL moved to {new_sl:.4f} (Profit {pnl_pct_current:.2%})")
+
+                # --- TRAILING STOP (Step-based) ---
+                if getattr(Config, 'TRAILING_STOP_ENABLED', False):
+                    # Initialize High/Low Water Mark
+                    if direction == "LONG":
+                        if 'highest_price' not in pos_data:
+                            pos_data['highest_price'] = entry_price
+                        # Update Highest Price
+                        if current_price > pos_data['highest_price']:
+                            pos_data['highest_price'] = current_price
+                            
+                        # Calculate Trailing SL (Highest Price - Fixed Distance)
+                        # Distance is defined by FIXED_SL_PCT (e.g., 3%)
+                        trailing_dist = pos_data['highest_price'] * Config.FIXED_SL_PCT
+                        proposed_sl = pos_data['highest_price'] - trailing_dist
+                        
+                        # Check if we should update (Step Check)
+                        # Only move if proposed SL is higher than current SL + Step
+                        step_val = entry_price * Config.TRAILING_STOP_STEP
+                        if proposed_sl > (sl_price + step_val):
+                            logger.info(f"🛡️ Trailing SL Update for {symbol}: {sl_price:.4f} -> {proposed_sl:.4f} (Price: {current_price:.4f})")
+                            self.executor.set_stop_loss(symbol, direction, proposed_sl)
+                            pos_data['sl_price'] = proposed_sl
+                            pos_data['last_sl_update'] = time.time()
+                            self.state.set_position(symbol, pos_data)
+                            
+                    else: # SHORT
+                        if 'lowest_price' not in pos_data:
+                            pos_data['lowest_price'] = entry_price
+                        # Update Lowest Price
+                        if current_price < pos_data['lowest_price']:
+                            pos_data['lowest_price'] = current_price
+                            
+                        # Calculate Trailing SL (Lowest Price + Fixed Distance)
+                        trailing_dist = pos_data['lowest_price'] * Config.FIXED_SL_PCT
+                        proposed_sl = pos_data['lowest_price'] + trailing_dist
+                        
+                        # Check if we should update (Step Check)
+                        # Only move if proposed SL is lower than current SL - Step
+                        step_val = entry_price * Config.TRAILING_STOP_STEP
+                        if proposed_sl < (sl_price - step_val):
+                            logger.info(f"🛡️ Trailing SL Update for {symbol}: {sl_price:.4f} -> {proposed_sl:.4f} (Price: {current_price:.4f})")
+                            self.executor.set_stop_loss(symbol, direction, proposed_sl)
+                            pos_data['sl_price'] = proposed_sl
+                            pos_data['last_sl_update'] = time.time()
+                            self.state.set_position(symbol, pos_data)
 
                 # --- REAL-TIME EARLY INVALIDATION (1.5 ATR) ---
                 # Check if price moved > 1.5 ATR against us
@@ -448,7 +508,7 @@ class BotLogic:
         
         # Initialize partials dict if not present
         if not partials:
-            partials = {f"p{i+1}": False for i in range(len(Config.TAKE_PROFIT_LEVELS))}
+            partials = {f"p{i+1}": False for i in range(len(Config.TP_LEVELS))}
             pos_data['partials'] = partials
             
         # Initialize accumulated PnL if not present
@@ -471,7 +531,7 @@ class BotLogic:
         next_target_log = "None"
         
         # 1. Check FIXED levels first (P1-P6)
-        for i, level_config in enumerate(Config.TAKE_PROFIT_LEVELS):
+        for i, level_config in enumerate(Config.TP_LEVELS):
             level_name = f"p{i+1}"
             target_pct = level_config['pct']
             close_pct = level_config['close_pct']
@@ -583,7 +643,7 @@ class BotLogic:
                             pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                     
                     else:  # P2+: Move SL to previous level price
-                        prev_level_pct = Config.TAKE_PROFIT_LEVELS[i-1]['pct']
+                        prev_level_pct = Config.TP_LEVELS[i-1]['pct']
                         if direction == "LONG":
                             new_sl = entry * (1 + prev_level_pct)
                         else:
@@ -609,7 +669,7 @@ class BotLogic:
                     )
                     
                     # Log remaining position
-                    total_closed = sum(Config.TAKE_PROFIT_LEVELS[j]['close_pct'] 
+                    total_closed = sum(Config.TP_LEVELS[j]['close_pct'] 
                                       for j in range(i+1) if partials.get(f"p{j+1}", False))
                     remaining_pct = 100 * (1 - total_closed)
                     logger.info(f"📊 Remaining position: {remaining_pct:.0f}%")
@@ -647,7 +707,7 @@ class BotLogic:
                 break
         
         # 2. Check DYNAMIC levels (after all fixed levels are done)
-        all_fixed_done = all(partials.get(f"p{i+1}", False) for i in range(len(Config.TAKE_PROFIT_LEVELS)))
+        all_fixed_done = all(partials.get(f"p{i+1}", False) for i in range(len(Config.TP_LEVELS)))
         
         if all_fixed_done and not executed_any:
             # Calculate the next dynamic level to check
@@ -740,7 +800,7 @@ class BotLogic:
                     )
                     
                     # Calculate remaining position
-                    total_fixed_closed = sum(level['close_pct'] for level in Config.TAKE_PROFIT_LEVELS)
+                    total_fixed_closed = sum(level['close_pct'] for level in Config.TP_LEVELS)
                     total_dynamic_closed = next_dynamic_level * Config.DYNAMIC_SCALPING_CLOSE_PCT
                     remaining_pct = 100 * (1 - total_fixed_closed - total_dynamic_closed)
                     logger.info(f"📊 Remaining position: {remaining_pct:.0f}% (Dynamic level {next_dynamic_level})")
@@ -1146,6 +1206,48 @@ class BotLogic:
         if best_opportunity:
             self._check_opportunity_switch(best_opportunity)
 
+    def _verify_protection(self, symbol, pos_data):
+        """
+        Verify that SL and TP orders exist on Binance.
+        If not, restore them immediately.
+        """
+        try:
+            open_orders = self.client.get_open_orders(symbol)
+            if open_orders is None: return # API fail
+            
+            has_sl = False
+            has_tp = False
+            
+            for o in open_orders:
+                # Check both CCXT type and raw Binance type for robustness
+                o_type = o.get('type', '')
+                o_info_type = o.get('info', {}).get('type', '')
+                
+                if o_type == 'STOP_MARKET' or o_info_type == 'STOP_MARKET': has_sl = True
+                if o_type == 'TAKE_PROFIT_MARKET' or o_info_type == 'TAKE_PROFIT_MARKET': has_tp = True
+                
+            # Restore SL if missing
+            if not has_sl:
+                logger.warning(f"🛡️ SL missing for {symbol}! Restoring at {pos_data['sl_price']}")
+                self.executor.set_stop_loss(symbol, pos_data['direction'], pos_data['sl_price'])
+                
+            # Restore TP if missing (Sniper Mode)
+            if not has_tp:
+                # Calculate TP
+                is_sniper = len(Config.TP_LEVELS) == 1 and Config.TP_LEVELS[0].get('name') == 'TP_FINAL'
+                if is_sniper:
+                    tp_pct = Config.TP_LEVELS[0]['pct']
+                    entry = pos_data['entry_price']
+                    if pos_data['direction'] == "LONG":
+                        tp_price = entry * (1 + tp_pct)
+                    else:
+                        tp_price = entry * (1 - tp_pct)
+                    
+                    logger.warning(f"🎯 TP missing for {symbol}! Restoring at {tp_price}")
+                    self.executor.set_take_profit(symbol, pos_data['direction'], tp_price)
+        except Exception as e:
+            logger.error(f"Error verifying protection for {symbol}: {e}")
+
     def _calculate_position_health(self, symbol, pos_data, current_price, df):
         """
         Calculate health score (0-100) for current position.
@@ -1485,7 +1587,7 @@ class BotLogic:
                 "atr_entry": atr,
                 "p_max": actual_entry_price, # Track highest favorable price (for trailing)
                 "p_min": actual_entry_price, # Track lowest favorable price (for trailing)
-                "partials": {f"p{i+1}": False for i in range(len(Config.TAKE_PROFIT_LEVELS))},  # Dynamic based on config
+                "partials": {f"p{i+1}": False for i in range(len(Config.TP_LEVELS))},  # Dynamic based on config
                 "entry_time": time.time(),
                 "last_sl_update": time.time(),  # Track when SL was last updated
                 # Health tracking for intelligent switching

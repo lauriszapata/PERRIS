@@ -131,11 +131,13 @@ class RiskManager:
                 # Check Min Notional (Value)
                 min_notional = Config.MIN_NOTIONAL_USD
                 if exposure < min_notional:
+                    # Add 5% buffer to avoid rejection due to price fluctuations
+                    safe_min_notional = min_notional * 1.05
                     logger.warning(
-                        f"Calculated exposure {exposure:.2f} USD is below minimum notional {min_notional} USD. Adjusting to minimum."
+                        f"Calculated exposure {exposure:.2f} USD is below minimum notional {min_notional} USD. Adjusting to {safe_min_notional:.2f} USD."
                     )
-                    size = min_notional / entry_price
-                    exposure = min_notional
+                    size = safe_min_notional / entry_price
+                    exposure = safe_min_notional
                 
                 # Re-check Balance and Max Exposure after adjustments
                 required_margin = (exposure * commission_buffer) / Config.LEVERAGE

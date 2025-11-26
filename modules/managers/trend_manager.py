@@ -10,12 +10,12 @@ class TrendManager:
             # Get last row
             last = df.iloc[-1]
             
-            # 1. EMA8 vs EMA21
-            ema8_cross = False
+            # 1. EMA9 vs EMA21
+            ema_cross = False
             if direction == "LONG":
-                ema8_cross = last['EMA8'] > last['EMA21']
+                ema_cross = last['EMA9'] > last['EMA21']
             else:
-                ema8_cross = last['EMA8'] < last['EMA21']
+                ema_cross = last['EMA9'] < last['EMA21']
             
             # 2. Trend Local (EMA50)
             trend_local = False
@@ -31,7 +31,7 @@ class TrendManager:
             # else:
             #     trend_major = last['EMA20'] < last['EMA50']
                 
-            return ema8_cross and trend_local # Removed trend_major
+            return ema_cross and trend_local # Removed trend_major
             
         except Exception as e:
             logger.error(f"Error checking trend: {e}")

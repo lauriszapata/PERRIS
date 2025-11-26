@@ -17,7 +17,7 @@ class TestStructureExit(unittest.TestCase):
         self.state.get_position.return_value = None
         
         # Mock Config
-        Config.TAKE_PROFIT_LEVELS = []
+        Config.TP_LEVELS = []
 
     def test_structure_manager_swings(self):
         # Create a DF with a clear Swing High and Swing Low

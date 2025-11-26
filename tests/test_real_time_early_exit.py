@@ -16,7 +16,7 @@ class TestRealTimeEarlyExit(unittest.TestCase):
         self.state.state = {'positions': {}}
         
         # Mock Config
-        Config.TAKE_PROFIT_LEVELS = []
+        Config.TP_LEVELS = []
 
     def test_real_time_early_invalidation_short(self):
         # Setup SHORT position

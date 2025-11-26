@@ -18,6 +18,7 @@ class Indicators:
 
             # EMAs
             df['EMA8'] = ta.ema(df['close'], length=8)
+            df['EMA9'] = ta.ema(df['close'], length=9)
             df['EMA20'] = ta.ema(df['close'], length=20)
             df['EMA21'] = ta.ema(df['close'], length=21)
             df['EMA50'] = ta.ema(df['close'], length=50)
@@ -26,11 +27,17 @@ class Indicators:
             # RSI
             df['RSI'] = ta.rsi(df['close'], length=14)
 
-            # MACD
+            # MACD Standard (12, 26, 9)
             macd = ta.macd(df['close'])
             df['MACD_line'] = macd['MACD_12_26_9']
             df['MACD_signal'] = macd['MACDs_12_26_9']
             df['MACD_hist'] = macd['MACDh_12_26_9']
+
+            # MACD Fast (6, 13, 5) - For Scalping
+            macd_fast = ta.macd(df['close'], fast=6, slow=13, signal=5)
+            df['MACD_fast_line'] = macd_fast['MACD_6_13_5']
+            df['MACD_fast_signal'] = macd_fast['MACDs_6_13_5']
+            df['MACD_fast_hist'] = macd_fast['MACDh_6_13_5']
 
             # ADX
             adx = ta.adx(df['high'], df['low'], df['close'], length=14)

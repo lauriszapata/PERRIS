@@ -15,7 +15,7 @@ class TestOptimization(unittest.TestCase):
         
         # Mock Config
         Config.LEVERAGE = 1
-        Config.TAKE_PROFIT_LEVELS = []
+        Config.TP_LEVELS = []
 
     def test_early_entry_signal(self):
         # Create a DF where Long Term Trend (EMA50 vs EMA200) is BAD

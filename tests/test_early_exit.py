@@ -17,7 +17,7 @@ class TestEarlyExit(unittest.TestCase):
         self.state.get_position.return_value = None
         
         # Mock Config
-        Config.TAKE_PROFIT_LEVELS = []
+        Config.TP_LEVELS = []
 
     def test_early_invalidation_short(self):
         # Setup SHORT position

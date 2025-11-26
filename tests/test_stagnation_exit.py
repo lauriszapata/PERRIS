@@ -17,7 +17,7 @@ class TestStagnationExit(unittest.TestCase):
         self.state.get_position.return_value = None
         
         # Mock Config
-        Config.TAKE_PROFIT_LEVELS = []
+        Config.TP_LEVELS = []
 
     def test_stagnation_exit_triggered(self):
         # Setup position open for 50 mins with negative PnL
