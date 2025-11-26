@@ -4,28 +4,33 @@ class ATRManager:
     @staticmethod
     def calculate_initial_stop(entry_price, atr_entry, direction):
         """
-        Calculate initial Stop Loss (OPTIMIZED for 15min).
-        SL_inicial = entry_price - 2.5 × ATR_entry (for LONG)
-        SL_inicial = entry_price + 2.5 × ATR_entry (for SHORT)
-        2.5x gives tighter risk control while still allowing for 15min noise
+        Calculate initial stop loss price.
+        SNIPER STRATEGY: Use Fixed % if configured, otherwise ATR.
         """
+        if hasattr(Config, 'FIXED_SL_PCT') and Config.FIXED_SL_PCT > 0:
+            if direction == "LONG":
+                return entry_price * (1 - Config.FIXED_SL_PCT)
+            else:
+                return entry_price * (1 + Config.FIXED_SL_PCT)
+        
+        # Fallback to ATR logic
+        multiplier = Config.DEFAULT_SL_ATR_MULTIPLIER
         if direction == "LONG":
-            sl = entry_price - (2.5 * atr_entry)  # 2.5x for tighter risk control
-            # Limit check: distance between 0.5% and 10.0% (appropriate for 15min)
+            sl = entry_price - (multiplier * atr_entry)
+            # Safety check: SL not too close (0.5%) or too far (20%)
             dist_pct = (entry_price - sl) / entry_price
             if dist_pct < 0.005:
                 sl = entry_price * (1 - 0.005)
-            elif dist_pct > 0.10:
-                sl = entry_price * (1 - 0.10)
+            elif dist_pct > 0.20:
+                sl = entry_price * (1 - 0.20)
             return sl
         else:
-            sl = entry_price + (2.5 * atr_entry)  # 2.5x for tighter risk control
-            # Limit check
+            sl = entry_price + (multiplier * atr_entry)
             dist_pct = (sl - entry_price) / entry_price
             if dist_pct < 0.005:
                 sl = entry_price * (1 + 0.005)
-            elif dist_pct > 0.10:
-                sl = entry_price * (1 + 0.10)
+            elif dist_pct > 0.20:
+                sl = entry_price * (1 + 0.20)
             return sl
 
     @staticmethod

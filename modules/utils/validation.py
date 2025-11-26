@@ -8,20 +8,34 @@ def ensure_no_nan(value, name: str):
     """
     if value is None:
         raise ValueError(f"{name} is None")
-    # Convert to numpy array for uniform check where possible
-    if isinstance(value, (list, tuple, np.ndarray)):
-        arr = np.array(value, dtype=object)
-        if np.isnan(arr).any():
-            raise ValueError(f"{name} contains NaN values")
-    elif isinstance(value, (pd.Series, pd.DataFrame)):
+    
+    # Handle pandas structures
+    if isinstance(value, (pd.Series, pd.DataFrame)):
         if value.isnull().any().any():
             raise ValueError(f"{name} contains NaN values")
-    else:
-        # Assume scalar numeric
+        return True
+    
+    # Handle list/tuple/array-like (e.g., OHLCV data)
+    if isinstance(value, (list, tuple, np.ndarray)):
         try:
-            if np.isnan(value):
-                raise ValueError(f"{name} is NaN")
-        except TypeError:
-            # Non‑numeric scalar, ignore
-            pass
+            # Try to convert to float array for NaN checking
+            # This handles OHLCV data which has mixed int/float numeric types
+            arr = np.asarray(value, dtype=float)
+            if np.isnan(arr).any():
+                raise ValueError(f"{name} contains NaN values")
+        except (ValueError, TypeError):
+            # If conversion fails, data might be non-numeric (strings, dicts, etc.)
+            # For complex structures like order books or order responses, just check if not empty
+            if len(value) == 0:
+                raise ValueError(f"{name} is empty")
+        return True
+    
+    # Handle scalar numeric
+    try:
+        if np.isnan(value):
+            raise ValueError(f"{name} is NaN")
+    except (TypeError, ValueError):
+        # Non-numeric scalar, that's okay (e.g., dict, string)
+        pass
+    
     return True

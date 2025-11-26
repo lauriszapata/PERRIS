@@ -1,10 +1,8 @@
 {
     "positions": {},
     "daily_pnl": 0.0,
-    "last_reset_time": 1764028806.0244448,
-    "trades_last_hour": [
-        1764071128.7747169
-    ],
+    "last_reset_time": 1764115214.7852218,
+    "trades_last_hour": [],
     "is_paused": false,
     "pause_reason": null,
     "pause_until": null,
@@ -35,11 +33,148 @@
                     "levels_hit": []
                 },
                 "partial_efficiency": -0.0
+            },
+            {
+                "pnl": -0.00047357794943818235,
+                "max_pnl": 0.004915730337078734,
+                "time": 1764074710.792212,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": 0.06570000000000248,
+                    "levels_hit": []
+                },
+                "partial_efficiency": 0.0
+            },
+            {
+                "pnl": 0.00022831811797762662,
+                "max_pnl": 0.002984550561797814,
+                "time": 1764075630.682704,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": 0.1533000000000123,
+                    "levels_hit": []
+                },
+                "partial_efficiency": 0.0
+            },
+            {
+                "pnl": -0.0007991762105686007,
+                "max_pnl": 0.002344116268166829,
+                "time": 1764077408.58596,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": 0.02511000000000188,
+                    "levels_hit": []
+                },
+                "partial_efficiency": 0.0
+            },
+            {
+                "pnl": -0.0025214871194380525,
+                "max_pnl": 0.0022248243559718703,
+                "time": 1764089108.961387,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -0.19019000000001415,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
+            },
+            {
+                "pnl": -0.003647966490047189,
+                "max_pnl": 0.0015036517256194184,
+                "time": 1764091807.601274,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -0.29599999999999227,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
+            },
+            {
+                "pnl": -0.009681239143022583,
+                "max_pnl": 0.004169079328314991,
+                "time": 1764097226.464608,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -1.08525,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
+            },
+            {
+                "pnl": -0.005937965656002196,
+                "max_pnl": 0.0036654846806646957,
+                "time": 1764108007.199807,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -0.6162799999999956,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
+            },
+            {
+                "pnl": 0.005138761061946856,
+                "max_pnl": 0.007787610619468986,
+                "time": 1764108910.051828,
+                "partial_data": {
+                    "partial_pnl_usd": 0,
+                    "final_pnl_usd": 0.7664799999999942,
+                    "levels_hit": []
+                },
+                "partial_efficiency": 0.0
+            },
+            {
+                "pnl": -0.019190909090909036,
+                "max_pnl": 0.00031897926634765226,
+                "time": 1764115224.521205,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -2.268599999999993,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
+            },
+            {
+                "pnl": -0.01285550462720451,
+                "max_pnl": 0.0004801815959490575,
+                "time": 1764118888.357425,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": -1.493300000000005,
+                    "levels_hit": []
+                },
+                "partial_efficiency": -0.0
             }
         ],
         "partial_history": [],
-        "active_partials": {},
+        "active_partials": {
+            "XMR/USDT:USDT": {
+                "levels_hit": [
+                    "P1",
+                    "P2",
+                    "P3",
+                    "P4",
+                    "D1"
+                ],
+                "partial_pnl_usd": 8.01674036,
+                "partial_count": 5
+            }
+        },
         "current_risk": 0.005,
         "current_atr_min": 0.0025
+    },
+    "last_trade_per_symbol": {
+        "XMR/USDT": 1764087719.023783,
+        "XMR/USDT:USDT": 1764088083.163519,
+        "AVAX/USDT": 1764088514.0418508,
+        "LTC/USDT:USDT": 1764097226.465858,
+        "AVAX/USDT:USDT": 1764091807.602216,
+        "LTC/USDT": 1764108910.0529642,
+        "LINK/USDT": 1764103642.96353,
+        "XLM/USDT": 1764104883.1151512,
+        "XLM/USDT:USDT": 1764108007.201235,
+        "STX/USDT": 1764109520.880252,
+        "STX/USDT:USDT": 1764115224.522806,
+        "APT/USDT": 1764117455.8772202,
+        "APT/USDT:USDT": 1764118888.359113
     }
 }

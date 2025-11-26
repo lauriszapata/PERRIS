@@ -33,6 +33,10 @@ class BinanceClient:
             try:
                 return func(*args, **kwargs)
             except Exception as e:
+                if "-2022" in str(e):
+                    # ReduceOnly order rejected; do not retry further
+                    logger.error(f"ReduceOnly error encountered: {e}. Not retrying.")
+                    raise
                 if attempt < max_retries - 1:
                     wait_time = delay * (2 ** attempt)  # Exponential backoff
                     logger.warning(f"API call failed (attempt {attempt + 1}/{max_retries}): {e}. Retrying in {wait_time}s...")
@@ -99,8 +103,56 @@ class BinanceClient:
             ensure_no_nan(order, f"Created order for {symbol}")
             return order
         except Exception as e:
-            logger.error(f"Failed to create order for {symbol} after retries: {e}")
-            return None
+            # Handle "ReduceOnly Order is rejected" (Code -2022)
+            # This happens if position is already closed or size mismatch
+            if "-2022" in str(e):
+                logger.warning(f"⚠️ ReduceOnly rejected for {symbol}. Verifying if position is already closed and side matches...")
+                try:
+                    # Check actual position on Binance
+                    positions = self.get_position(symbol)
+                    is_closed = True
+                    # Determine the intended direction from the 'side' of the order
+                    direction = 'LONG' if side.lower() == 'buy' else 'SHORT'
+                    
+                    for p in positions:
+                        # Ensure the position matches the intended side
+                        pos_side = p.get('side')
+                        contracts = float(p.get('contracts', 0))
+                        if contracts > 0:
+                            if pos_side:
+                                if (direction == 'LONG' and pos_side.lower() == 'long') or (direction == 'SHORT' and pos_side.lower() == 'short'):
+                                    is_closed = False
+                                    break
+                            else:
+                                # No side info, assume matching
+                                is_closed = False
+                                break
+                    
+                    if is_closed:
+                        logger.info(f"✅ Position for {symbol} is ALREADY_CLOSED on Binance. Proceeding with state cleanup.")
+                        # Return a dummy order object to satisfy the caller and allow cleanup
+                        return {'id': 'ALREADY_CLOSED', 'status': 'closed', 'filled': amount}
+                    else:
+                        logger.error(f"❌ Position {symbol} exists but ReduceOnly failed. Attempting normal market order...")
+                        # If position still exists, try to close with a normal market order (without reduceOnly)
+                        try:
+                            # Directly create a market order without reduceOnly to avoid recursion
+                            normal_order = self.exchange.create_order(symbol, 'market', side, amount)
+                            if normal_order:
+                                logger.info(f"Close order created (normal market): {normal_order['id']}")
+                                return normal_order
+                            else:
+                                logger.error("Failed to create normal market close order.")
+                                return None
+                        except Exception as normal_e:
+                            logger.error(f"Failed to create normal market close order after ReduceOnly rejection: {normal_e}")
+                            return None
+                except Exception as ve:
+                    logger.error(f"Failed to verify position status after ReduceOnly error: {ve}")
+                    return None
+            else:
+                logger.error(f"Failed to create order for {symbol} after retries: {e}")
+                return None
 
     def cancel_order(self, order_id, symbol):
         try:

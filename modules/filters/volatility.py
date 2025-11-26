@@ -10,7 +10,7 @@ class VolatilityFilters:
         if current_price == 0:
             return False
             
-        atr_pct = (current_atr / current_price) * 100
+        atr_pct = current_atr / current_price
         
         if Config.ATR_MIN_PCT <= atr_pct <= Config.ATR_MAX_PCT:
             return True

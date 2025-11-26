@@ -1,0 +1,5 @@
+fecha_hora,simbolo,pnl_binance_usd,margen_usd,leverage,exposicion_usd,tiempo_cierre_sec,tiempo_cierre_human,info_adicional
+2025-11-26 04:51:34,BTC/USDT,-2.0,33.33,3,100.0,1764150694,09:51:34,Stagnation Exit
+2025-11-26 04:51:34,ETH/USDT,2.0,100.0,1,100,1764150694,09:51:34,MACD Reversal
+2025-11-26 04:51:35,BTC/USDT,-1.0,100.0,1,100.0,3000,00:50:00,Stagnation Exit
+2025-11-26 04:51:35,BTC/USDT,-6.0,100.0,1,100.0,1764150695,09:51:35,Structure Break (Swing High)

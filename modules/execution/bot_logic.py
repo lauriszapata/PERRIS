@@ -35,10 +35,10 @@ class BotLogic:
         # Sync Orphaned Positions
         self._sync_positions()
         
-        # Enforce Fixed Leverage (1x) on Startup
-        logger.info("🔧 Enforcing 1x Leverage for all symbols...")
+        # Enforce Fixed Leverage on Startup
+        logger.info(f"🔧 Enforcing {Config.LEVERAGE}x Leverage for all symbols...")
         for symbol in Config.SYMBOLS:
-            self.client.set_leverage(symbol, 1)
+            self.client.set_leverage(symbol, Config.LEVERAGE)
             time.sleep(0.1) # Avoid rate limits
         
         logger.info("✅ Health Check: 1s")
@@ -131,6 +131,30 @@ class BotLogic:
                 logger.critical(f"Unhandled exception in main loop: {e}")
                 time.sleep(5)
 
+    def _get_binance_position_data(self, symbol):
+        """
+        Fetch real-time position data (PnL, ROI, etc.) directly from Binance.
+        Returns dict with unrealizedPnl, percentage (ROI), markPrice, contracts (size)
+        """
+        try:
+            binance_positions = self.client.get_all_positions()
+            if not binance_positions:
+                return None
+            
+            for pos in binance_positions:
+                if pos['symbol'] == symbol:
+                    return {
+                        'unrealizedPnl': float(pos.get('unrealizedPnl', 0)),
+                        'percentage': float(pos.get('percentage', 0)),  # ROI%
+                        'markPrice': float(pos.get('markPrice', 0)),
+                        'contracts': float(pos.get('contracts', 0)),
+                        'notional': float(pos.get('notional', 0))  # Exposure
+                    }
+            return None
+        except Exception as e:
+            logger.error(f"Error fetching Binance position data for {symbol}: {e}")
+            return None
+
     def _sync_positions(self):
         """
         Sync local state with actual exchange positions.
@@ -197,6 +221,11 @@ class BotLogic:
             if symbol not in exchange_symbols:
                 logger.warning(f"👻 Found GHOST position in state: {symbol}. Removing...")
                 self.state.clear_position(symbol)
+                
+                # Also clean up active_partials in tuner
+                if symbol in self.tuner.active_partials:
+                    logger.info(f"🧹 Cleaning active_partials for ghost position: {symbol}")
+                    del self.tuner.active_partials[symbol]
 
     def _monitor_positions(self):
         """
@@ -227,25 +256,56 @@ class BotLogic:
         now = time.time()
         should_log = (now - self.last_monitor_log) >= 20
 
-        # We need current prices for all open positions
-        # Fetching ticker is faster than OHLCV
-        for symbol, pos_data in positions.items():
+        # FETCH REAL POSITIONS FROM BINANCE (every 2 seconds)
+        # Instead of calculating PnL locally, read actual data from exchange
+        try:
+            binance_positions = self.client.get_all_positions()
+            if binance_positions is None:
+                logger.warning("⚠️ Failed to fetch positions from Binance for monitoring")
+                return
+        except Exception as e:
+            logger.error(f"Error fetching positions from Binance: {e}")
+            return
+        
+        # Process each position from Binance
+        for binance_pos in binance_positions:
+            symbol = binance_pos['symbol']
+            
+            # Skip if we don't have this position in local state
+            if symbol not in positions:
+                continue
+            
+            pos_data = positions[symbol]
+            
             try:
-                current_price = self.client.get_market_price(symbol)
-                if not current_price: continue
+                # Extract REAL data from Binance
+                current_price = float(binance_pos.get('markPrice', 0))
+                unrealized_pnl = float(binance_pos.get('unrealizedPnl', 0))
+                pnl_percentage = float(binance_pos.get('percentage', 0))
+                actual_size = float(binance_pos.get('contracts', 0))
                 
-                self._check_partials(symbol, pos_data, current_price)
+                if current_price == 0:
+                    logger.warning(f"⚠️ Invalid price from Binance for {symbol}")
+                    continue
+                
+                # Update size if different (could have been reduced by partials outside our tracking)
+                if abs(actual_size - pos_data['size']) > 0.001:
+                    logger.info(f"🔄 Syncing size for {symbol}: Local {pos_data['size']:.6f} -> Binance {actual_size:.6f}")
+                    pos_data['size'] = actual_size
+                    self.state.set_position(symbol, pos_data)
+                
+                self._check_partials(symbol, pos_data, current_price, should_log)
             
                 direction = pos_data['direction']
                 entry_price = pos_data['entry_price']
                 atr_entry = pos_data['atr_entry']
-                size = pos_data['size']
+                size = actual_size
                 sl_price = pos_data['sl_price']
                 
                 # --- BREAKEVEN TRIGGER ---
-                # If profit > BREAKEVEN_TRIGGER_PCT (0.6%), move SL to Entry
+                # If profit > BREAKEVEN_TRIGGER_PCT (0.8%), move SL to Entry
                 # Only if SL is not already at or better than Entry
-                pnl_pct_current = (current_price - entry_price) / entry_price if direction == "LONG" else (entry_price - current_price) / entry_price
+                pnl_pct_current = pnl_percentage / 100  # Binance returns percentage as number (e.g., 1.5 for 1.5%)
                 
                 if pnl_pct_current >= Config.BREAKEVEN_TRIGGER_PCT:
                     is_breakeven = False
@@ -254,6 +314,7 @@ class BotLogic:
                             new_sl = entry_price * 1.002 # Entry + 0.2% buffer (covers fees)
                             self.executor.set_stop_loss(symbol, direction, new_sl)
                             pos_data['sl_price'] = new_sl
+                            pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                             self.state.set_position(symbol, pos_data)
                             logger.info(f"🛡️ BREAKEVEN TRIGGERED for {symbol}: SL moved to {new_sl:.4f} (Profit {pnl_pct_current:.2%})")
                     else: # SHORT
@@ -261,6 +322,7 @@ class BotLogic:
                             new_sl = entry_price * 0.998 # Entry - 0.2% buffer (covers fees)
                             self.executor.set_stop_loss(symbol, direction, new_sl)
                             pos_data['sl_price'] = new_sl
+                            pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                             self.state.set_position(symbol, pos_data)
                             logger.info(f"🛡️ BREAKEVEN TRIGGERED for {symbol}: SL moved to {new_sl:.4f} (Profit {pnl_pct_current:.2%})")
 
@@ -341,23 +403,30 @@ class BotLogic:
                             self.state.save_state()
                         except Exception as e:
                             logger.error(f"Failed to log closure CSV: {e}")
-
                     self.state.clear_position(symbol)
                     continue # Skip logging and next steps for this symbol
                 
                 if should_log:
-                    entry = pos_data['entry_price']
-                    direction = pos_data['direction']
+                    # Display REAL data from Binance
                     sl = pos_data['sl_price']
                     
                     if direction == "LONG":
-                        pnl_pct = (current_price - entry) / entry * 100
                         dist_sl = (current_price - sl) / current_price * 100
                     else:
-                        pnl_pct = (entry - current_price) / entry * 100
                         dist_sl = (sl - current_price) / current_price * 100
-                        
-                    logger.info(f"👀 MONITOR {symbol} {direction}: Price {current_price:.4f} | PnL: {pnl_pct:+.2f}% | Dist to SL: {dist_sl:.2f}%")
+                    
+                    # Show REAL Binance PnL (not calculated)
+                    logger.info(
+                        f"👀 MONITOR {symbol} {direction}: "
+                        f"Price {current_price:.4f} | "
+                        f"PnL: {pnl_percentage:+.2f}% ({unrealized_pnl:+.2f} USD) [Binance] | "
+                        f"Dist to SL: {dist_sl:.2f}% | "
+                        f"Size: {actual_size:.6f}"
+                    )
+                    # For now, the logs inside _check_partials are fine as they are info level.
+                    # To avoid spam, we should wrap the "Waiting" logs in _check_partials with a check or rate limit.
+                    # But the user ASKED for detailed logs. So spam is better than silence.
+                    # But the user ASKED for detailed logs. So spam is better than silence.
                 
             except Exception as e:
                 logger.error(f"Error monitoring {symbol}: {e}")
@@ -365,7 +434,7 @@ class BotLogic:
         if should_log:
             self.last_monitor_log = now
 
-    def _check_partials(self, symbol, pos_data, current_price):
+    def _check_partials(self, symbol, pos_data, current_price, should_log=False):
         """
         INFINITE SCALPING STRATEGY:
         - Fixed levels (P1-P6) secure base profits at 0.3%, 0.4%, 0.5%, 0.6%, 0.8%, 1.0%
@@ -398,6 +467,9 @@ class BotLogic:
         
         executed_any = False
         
+        # Log status of partials
+        next_target_log = "None"
+        
         # 1. Check FIXED levels first (P1-P6)
         for i, level_config in enumerate(Config.TAKE_PROFIT_LEVELS):
             level_name = f"p{i+1}"
@@ -408,6 +480,18 @@ class BotLogic:
             # Skip if already taken
             if partials.get(level_name, False):
                 continue
+            
+            # Found the next untaken level
+            if next_target_log == "None":
+                 if direction == "LONG":
+                     tgt_price = entry * (1 + target_pct)
+                 else:
+                     tgt_price = entry * (1 - target_pct)
+                 next_target_log = f"{display_name} ({target_pct:.1%}) at {tgt_price:.4f}"
+                 
+                 # Log waiting status (only if not about to execute and should_log is True)
+                 if pnl_pct < target_pct and should_log:
+                     logger.info(f"⏳ Waiting for {display_name}: Current PnL {pnl_pct:.2%} < Target {target_pct:.1%} (Dist: {abs(target_pct-pnl_pct):.2%})")
             
             # Check if this level is hit
             if pnl_pct >= target_pct:
@@ -496,6 +580,7 @@ class BotLogic:
                             self.executor.set_stop_loss(symbol, direction, new_sl)
                             pos_data['sl_price'] = new_sl
                             pos_data['last_sl_update'] = time.time()
+                            pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                     
                     else:  # P2+: Move SL to previous level price
                         prev_level_pct = Config.TAKE_PROFIT_LEVELS[i-1]['pct']
@@ -510,6 +595,7 @@ class BotLogic:
                             self.executor.set_stop_loss(symbol, direction, new_sl)
                             pos_data['sl_price'] = new_sl
                             pos_data['last_sl_update'] = time.time()
+                            pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                     
                     # Save updated position
                     self.state.set_position(symbol, pos_data)
@@ -567,6 +653,16 @@ class BotLogic:
             # Calculate the next dynamic level to check
             next_dynamic_level = pos_data['last_dynamic_level'] + 1
             dynamic_target_pct = Config.DYNAMIC_SCALPING_START + (next_dynamic_level * Config.DYNAMIC_SCALPING_INCREMENT)
+            
+            if direction == "LONG":
+                 tgt_price = entry * (1 + dynamic_target_pct)
+            else:
+                 tgt_price = entry * (1 - dynamic_target_pct)
+            
+            if next_target_log == "None":
+                next_target_log = f"Dynamic D{next_dynamic_level} ({dynamic_target_pct:.1%}) at {tgt_price:.4f}"
+                if pnl_pct < dynamic_target_pct and should_log:
+                     logger.info(f"⏳ Waiting for Dynamic D{next_dynamic_level}: Current PnL {pnl_pct:.2%} < Target {dynamic_target_pct:.1%} (Dist: {abs(dynamic_target_pct-pnl_pct):.2%})")
             
             # Check if we've hit this dynamic level
             if pnl_pct >= dynamic_target_pct:
@@ -630,6 +726,7 @@ class BotLogic:
                         self.executor.set_stop_loss(symbol, direction, new_sl)
                         pos_data['sl_price'] = new_sl
                         pos_data['last_sl_update'] = time.time()
+                        pos_data['sl_moved_count'] = pos_data.get('sl_moved_count', 0) + 1
                     
                     # Save updated position
                     self.state.set_position(symbol, pos_data)
@@ -729,11 +826,17 @@ class BotLogic:
         target_symbols = set(Config.SYMBOLS)
         symbols_to_process = target_symbols.union(active_symbols)
         
+        # OPPORTUNITY COST LOGIC:
+        # We scan ALL symbols even if full. If we find a BETTER opportunity, we switch.
+        
         logger.info(f"Starting loop for {len(symbols_to_process)} symbols")
         rejection_stats = Counter()
         
         active_positions_count = 0
         total_unrealized_pnl = 0.0
+        
+        # Track best opportunity found in this cycle
+        best_opportunity = None
         
         for symbol in symbols_to_process:
             try:
@@ -757,27 +860,174 @@ class BotLogic:
                 
                 if position:
                     active_positions_count += 1
-                    # Calculate Unrealized PnL
-                    entry_price = position['entry_price']
-                    size = position['size']
-                    direction = position['direction']
                     
-                    if direction == "LONG":
-                        pnl = (current_price - entry_price) * size
+                    # Get Real PnL from Binance (preferred over calculation)
+                    binance_data = self._get_binance_position_data(symbol)
+                    if binance_data:
+                        pnl = binance_data['unrealizedPnl']
+                        pnl_pct = binance_data['percentage'] / 100  # Convert to decimal
+                        logger.info(f"📊 {symbol} Position | PnL: ${pnl:.2f} ({pnl_pct:.2%}) | From Binance")
                     else:
-                        pnl = (entry_price - current_price) * size
+                        # Fallback to calculation if Binance data unavailable
+                        entry_price = position['entry_price']
+                        size = position['size']
+                        direction = position['direction']
+                        
+                        if direction == "LONG":
+                            pnl = (current_price - entry_price) * size
+                        else:
+                            pnl = (entry_price - current_price) * size
+                        logger.info(f"📊 {symbol} Position | PnL: ${pnl:.2f} (Calculated)")
                         
                     total_unrealized_pnl += pnl
                     
                     self._manage_position(symbol, position, df)
-                elif symbol in target_symbols and allow_entries:
-                    # Only look for NEW entries if the symbol is in our target list AND entries are allowed
-                    self._look_for_entry(symbol, df, rejection_stats)
+                    continue # Skip entry check for this symbol
+                
+                # Only look for NEW entries if the symbol is in our target list AND entries are allowed
+                if symbol in target_symbols and allow_entries and not self.state.state['positions']:
+                    # Use iloc[-2] for SIGNALS (Closed Candle)
+                    # Use iloc[-1] for CURRENT PRICE (Execution/Context)
+                    closed_candle = df.iloc[-2]
+                    current_candle = df.iloc[-1]
+                    
+                    atr = closed_candle['ATR']
+                    price = closed_candle['close']  # Price for signal checks is the close of the candle
+                    current_price = current_candle['close']
+                    
+                    logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    logger.info(f"📊 ANALYZING {symbol}")
+                    logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    logger.info(f"  • Closed Candle Price: {price:.4f}")
+                    logger.info(f"  • Current Price: {current_price:.4f}")
+                    logger.info(f"  • ATR: {atr:.4f} ({atr/price:.2%})")
+                    
+                    # Volatility Filter Check (ATR)
+                    atr_check_pass = VolatilityFilters.check_atr(atr, price)
+                    atr_min = Config.ATR_MIN_PCT
+                    atr_max = Config.ATR_MAX_PCT
+                    atr_pct = atr / price * 100  # Convert to percentage for display
+                    if atr_check_pass:
+                        logger.info(f"  ✅ ATR Filter: {atr_pct:.2%} (Range: {atr_min:.2%} - {atr_max:.2%})")
+                    else:
+                        logger.info(f"  ❌ ATR Filter: {atr_pct:.2%} OUT OF RANGE (Need: {atr_min:.2%} - {atr_max:.2%})")
+                        rejection_stats['Volatility (ATR)'] += 1
+                        continue  # Skip this symbol
+                    
+                    # Volatility Filter Check (Range Extreme)
+                    range_check_pass = VolatilityFilters.check_range_extreme(df.iloc[:-1], atr)
+                    if range_check_pass:
+                        logger.info(f"  ✅ Range Filter: Sufficient volatility")
+                    else:
+                        logger.info(f"  ❌ Range Filter: Low volatility detected")
+                        rejection_stats['Volatility (Range)'] += 1
+                        continue  # Skip this symbol
+                    
+                    # Order Book Check
+                    ob = self.client.get_order_book(symbol)
+                    if not ob:
+                        logger.info(f"  ❌ Order Book: Failed to fetch")
+                        continue
+                    
+                    spread_check_pass = LiquiditySpreadFilters.check_spread(ob)
+                    if spread_check_pass:
+                        # Calculate actual spread
+                        bid = ob['bids'][0][0]
+                        ask = ob['asks'][0][0]
+                        spread_pct = (ask - bid) / bid * 100
+                        logger.info(f"  ✅ Spread: {spread_pct:.3f}% (Max: {Config.MAX_SPREAD_PCT*100:.3f}%)")
+                    else:
+                        logger.info(f"  ❌ Spread: Too high (Max: {Config.MAX_SPREAD_PCT*100:.3f}%)")
+                        rejection_stats['Spread High'] += 1
+                        continue  # Skip this symbol
+                    
+                    # Funding Rate
+                    funding = self.client.get_funding_rate(symbol)
+                    logger.info(f"  📊 Funding Rate: {funding:.4%}")
+
+                    # Check Signals
+                    # We pass the DF excluding the last open candle to ensure all indicators (Trend, Structure) use closed data
+                    df_closed = df.iloc[:-1]
+                    
+                    logger.info(f"")
+                    logger.info(f"  🔍 CHECKING ENTRY SIGNALS...")
+                    
+                    for direction in ["LONG", "SHORT"]:
+                        # Signal Check
+                        ok, details = EntrySignals.check_signals(df_closed, direction)
+                        
+                        # Log Details - ALWAYS show parameter by parameter
+                        logger.info(f"")
+                        logger.info(f"  {'═' * 44}")
+                        logger.info(f"  📈 {direction} SIGNAL BREAKDOWN:")
+                        logger.info(f"  {'═' * 44}")
+                        for k, v in details.items():
+                            status_icon = "✅" if v.get('status') else "❌"
+                            value_str = v.get('value')
+                            threshold_str = v.get('threshold', '')
+                            
+                            if threshold_str:
+                                logger.info(f"    {status_icon} {k}: {value_str} (Requirement: {threshold_str})")
+                            else:
+                                logger.info(f"    {status_icon} {k}: {value_str}")
+                            
+                            # Track signal failures
+                            if not v.get('status'):
+                                rejection_stats[f"Signal: {k}"] += 1
+                        
+                        # If signal is OK, proceed with opportunity scoring and potential entry
+                        if ok:
+                            logger.info(f"")
+                            logger.info(f"  🚀 ✅ ENTRY SIGNAL CONFIRMED: {direction}")
+                            
+                            # Calculate Score for this opportunity
+                            score = EntrySignals.calculate_score(details)
+                            logger.info(f"  ⭐ Opportunity Score: {score}/100")
+                            logger.info(f"")
+                            
+                            # If we are NOT full, execute immediately
+                            if RiskManager.check_max_symbols(self.state.state['positions']):
+                                self._execute_entry(symbol, direction, df, details)
+                                # Log immediate confirmation
+                                logger.info(f"✅ Position opened! Monitor will track every 2 seconds.")
+                                logger.info(f"📊 ACTIVE POSITIONS: 1")
+                                return # Take one trade per cycle
+                            else:
+                                # We are FULL. Check if this is a better opportunity.
+                                # We only consider switching if we haven't found a better one yet
+                                if best_opportunity is None or score > best_opportunity['score']:
+                                    best_opportunity = {
+                                        'symbol': symbol,
+                                        'direction': direction,
+                                        'score': score,
+                                        'df': df,
+                                        'details': details
+                                    }
+                                    logger.info(f"  💡 Best opportunity updated: {symbol} {direction} (Score: {score})")
+                        else:
+                            logger.info(f"")
+                            logger.info(f"  ❌ {direction} SIGNAL REJECTED")
+                    
+                    logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
+                    logger.info(f"")
+                
+                # The original `_look_for_entry` call is now effectively inlined and expanded here.
+                # The `continue` from the snippet would skip the rest of the loop for this symbol,
+                # which is not what `_look_for_entry` does (it just returns).
+                # So, removing the `continue` here to allow the loop to naturally proceed to the next symbol
+                # or the opportunity switching logic.
                     
             except Exception as e:
                 logger.error(f"Error processing {symbol}: {e}")
                 continue
         
+        # End of Symbol Loop
+        
+        # OPPORTUNITY SWITCHING CHECK
+        # If we found a great opportunity but were full, check if we should swap.
+        if best_opportunity:
+            self._check_opportunity_switch(best_opportunity)
+
         # Log Summary
         logger.info("=== 📉 TOP 3 REJECTION REASONS ===")
         for reason, count in rejection_stats.most_common(3):
@@ -787,13 +1037,18 @@ class BotLogic:
         # Log Active Positions Summary
         if active_positions_count > 0:
             logger.info(f"📊 ACTIVE POSITIONS: {active_positions_count}")
-            logger.info(f"💰 UNREALIZED PnL: {total_unrealized_pnl:.2f} USDT")
+            logger.info(f"💰 UNREALIZED PnL: {total_unrealized_pnl:.2f} USDT (from Binance)")
             logger.info("====================================")
         else:
             logger.info("💤 NO ACTIVE POSITIONS")
             logger.info("====================================")
 
     def _look_for_entry(self, symbol, df, stats):
+        # Symbol Cooldown Check
+        if not self.state.check_symbol_cooldown(symbol, time.time()):
+            stats['Symbol Cooldown'] += 1
+            return
+        
         # Time Filters - Moved to Global Check in _run_strategy_cycle
         # if not TimeFilter.check_daily_close_window():
         #     logger.info("Filter Fail: Daily Close Window (23:45-00:15 UTC)")
@@ -863,8 +1118,311 @@ class BotLogic:
             
             if ok:
                 logger.info(f"🚀 ENTRY SIGNAL FOUND: {direction}")
-                self._execute_entry(symbol, direction, df, details) # Pass full DF and signal details
-                return # Only take one trade at a time
+                
+                # Calculate Score for this opportunity
+                score = EntrySignals.calculate_score(details)
+                logger.info(f"⭐ Opportunity Score for {symbol}: {score}")
+                
+                # If we are NOT full, execute immediately
+                if RiskManager.check_max_symbols(self.state.state['positions']):
+                    self._execute_entry(symbol, direction, df, details)
+                    return # Take one trade per cycle
+                else:
+                    # We are FULL. Check if this is a better opportunity.
+                    # We only consider switching if we haven't found a better one yet
+                    if best_opportunity is None or score > best_opportunity['score']:
+                        best_opportunity = {
+                            'symbol': symbol,
+                            'direction': direction,
+                            'score': score,
+                            'df': df,
+                            'details': details
+                        }
+                        
+        # End of Symbol Loop
+        
+        # OPPORTUNITY SWITCHING CHECK
+        # If we found a great opportunity but were full, check if we should swap.
+        if best_opportunity:
+            self._check_opportunity_switch(best_opportunity)
+
+    def _calculate_position_health(self, symbol, pos_data, current_price, df):
+        """
+        Calculate health score (0-100) for current position.
+        Higher score = healthier position that should be kept.
+        """
+        score = 0
+        details = {}
+        
+        direction = pos_data['direction']
+        entry_price = pos_data['entry_price']
+        entry_time = pos_data['entry_time']
+        
+        # Calculate current PnL%
+        if direction == "LONG":
+            pnl_pct = (current_price - entry_price) / entry_price
+        else:
+            pnl_pct = (entry_price - current_price) / entry_price
+        
+        # 1. PnL TREND (30 pts) - Is it improving?
+        pnl_history = pos_data.get('pnl_history', [])
+        if len(pnl_history) >= 2:
+            # Compare last pnl with previous
+            if pnl_history[-1] > pnl_history[-2]:
+                score += 30
+                details['PnL Trend'] = f"✅ Growing ({pnl_history[-2]:.2%} → {pnl_history[-1]:.2%})"
+            elif pnl_history[-1] > pnl_history[-2] - 0.001:  # Stable (within 0.1%)
+                score += 15
+                details['PnL Trend'] = f"⚖️ Stable ({pnl_history[-1]:.2%})"
+            else:
+                details['PnL Trend'] = f"❌ Declining ({pnl_history[-2]:.2%} → {pnl_history[-1]:.2%})"
+        else:
+            # First evaluation, give partial credit if positive
+            if pnl_pct > 0:
+                score += 15
+                details['PnL Trend'] = f"⚖️ New position ({pnl_pct:.2%})"
+            else:
+                details['PnL Trend'] = f"⚖️ New position ({pnl_pct:.2%})"
+        
+        # 2. SL MOVEMENTS (25 pts) - Has it achieved profit?
+        sl_moved = pos_data.get('sl_moved_count', 0)
+        if sl_moved >= 3:
+            score += 25
+            details['SL History'] = f"✅ Moved {sl_moved}x (strong profit)"
+        elif sl_moved >= 1:
+            score += 15
+            details['SL History'] = f"✅ Moved {sl_moved}x"
+        else:
+            details['SL History'] = "❌ No moves yet"
+        
+        # 3. TECHNICAL MOMENTUM (25 pts) - Direction alignment
+        try:
+            last_candle = df.iloc[-1]
+            macd_line = last_candle['MACD_line']
+            macd_signal = last_candle['MACD_signal']
+            rsi = last_candle['RSI']
+            ema8 = last_candle['EMA8']
+            ema20 = last_candle['EMA20']
+            
+            momentum_score = 0
+            momentum_details = []
+            
+            # MACD alignment
+            if direction == "LONG":
+                if macd_line > macd_signal:
+                    momentum_score += 10
+                    momentum_details.append("MACD✅")
+                else:
+                    momentum_details.append("MACD❌")
+            else:  # SHORT
+                if macd_line < macd_signal:
+                    momentum_score += 10
+                    momentum_details.append("MACD✅")
+                else:
+                    momentum_details.append("MACD❌")
+            
+            # RSI (not overbought/oversold)
+            if direction == "LONG":
+                if 45 < rsi < 70:
+                    momentum_score += 8
+                    momentum_details.append(f"RSI✅({rsi:.0f})")
+                else:
+                    momentum_details.append(f"RSI⚖️({rsi:.0f})")
+            else:  # SHORT
+                if 30 < rsi < 55:
+                    momentum_score += 8
+                    momentum_details.append(f"RSI✅({rsi:.0f})")
+                else:
+                    momentum_details.append(f"RSI⚖️({rsi:.0f})")
+            
+            # EMA alignment
+            if direction == "LONG":
+                if ema8 > ema20:
+                    momentum_score += 7
+                    momentum_details.append("EMA✅")
+                else:
+                    momentum_details.append("EMA❌")
+            else:  # SHORT
+                if ema8 < ema20:
+                    momentum_score += 7
+                    momentum_details.append("EMA✅")
+                else:
+                    momentum_details.append("EMA❌")
+            
+            score += momentum_score
+            details['Momentum'] = f"{', '.join(momentum_details)}"
+        except Exception as e:
+            details['Momentum'] = "❌ Error calculating"
+        
+        # 4. TIME FACTOR (20 pts) - Penalize stagnation
+        age_minutes = (time.time() - entry_time) / 60
+        if age_minutes < 15:
+            score += 20
+            details['Time Factor'] = f"✅ Fresh ({age_minutes:.1f}m)"
+        elif age_minutes < 30:
+            score += 10
+            details['Time Factor'] = f"⚖️ Moderate ({age_minutes:.1f}m)"
+        else:
+            # After 30 min, score depends on performance
+            if pnl_pct > 0.003:  # If >0.3% profit, age doesn't matter much
+                score += 15
+                details['Time Factor'] = f"✅ Mature but profitable ({age_minutes:.1f}m, +{pnl_pct:.2%})"
+            else:
+                details['Time Factor'] = f"❌ Stagnant ({age_minutes:.1f}m, {pnl_pct:.2%})"
+        
+        return score, details
+
+    def _check_opportunity_switch(self, new_opp):
+        """
+        Intelligent Position Evaluation & Switching.
+        Only switches if current position is unhealthy AND new opportunity is significantly better.
+        Displays detailed evaluation every 15 minutes.
+        """
+        new_symbol = new_opp['symbol']
+        new_score = new_opp['score']
+        new_direction = new_opp['direction']
+        
+        logger.info("=" * 60)
+        logger.info("📊 POSITION EVALUATION (Every 15m)")
+        logger.info("=" * 60)
+        
+        # Iterate through current positions
+        for current_symbol, pos_data in self.state.state['positions'].items():
+            entry_price = pos_data['entry_price']
+            direction = pos_data['direction']
+            entry_time = pos_data['entry_time']
+            age_minutes = (time.time() - entry_time) / 60
+            
+            # Get current price and fetch DF for analysis
+            try:
+                ohlcv = self.client.fetch_ohlcv(current_symbol)
+                if not ohlcv:
+                    logger.warning(f"Could not fetch OHLCV for {current_symbol}, skipping evaluation.")
+                    continue
+                    
+                df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+                df = Indicators.calculate_all(df)
+                current_price = df.iloc[-1]['close']
+            except Exception as e:
+                logger.warning(f"Error fetching data for {current_symbol}: {e}")
+                continue
+            
+            # Calculate current PnL
+            if direction == "LONG":
+                pnl_pct = (current_price - entry_price) / entry_price
+            else:
+                pnl_pct = (entry_price - current_price) / entry_price
+            
+            pnl_usd = pnl_pct * (pos_data['size'] * entry_price)
+            
+            # Update PnL history
+            pnl_history = pos_data.get('pnl_history', [])
+            pnl_history.append(pnl_pct)
+            if len(pnl_history) > 5:  # Keep last 5 evaluations
+                pnl_history = pnl_history[-5:]
+            pos_data['pnl_history'] = pnl_history
+            pos_data['last_evaluation_time'] = time.time()
+            self.state.set_position(current_symbol, pos_data)
+            
+            # Calculate Position Health
+            health_score, health_details = self._calculate_position_health(current_symbol, pos_data, current_price, df)
+            
+            # Log Current Position Evaluation
+            logger.info(f"\nCurrent Position: {current_symbol} {direction}")
+            logger.info(f"  • Entry: {entry_price:.4f} | Current: {current_price:.4f} | PnL: {pnl_pct:+.2%} ({pnl_usd:+.2f} USD)")
+            logger.info(f"  • Age: {age_minutes:.1f}m | SL Moved: {pos_data.get('sl_moved_count', 0)}x")
+            logger.info(f"  • Health Score: {health_score}/100")
+            for key, value in health_details.items():
+                logger.info(f"    - {key}: {value}")
+            
+            # Log Alternative Opportunity
+            logger.info(f"\nAlternative Opportunity:")
+            logger.info(f"  • {new_symbol} {new_direction} - Score: {new_score}/100")
+            
+            # DECISION LOGIC
+            # NEVER switch if:
+            # 1. SL has moved (position has achieved profit)
+            # 2. Position is less than 15 min old
+            # 3. Health score is >= 60 (healthy position)
+            # 4. Current PnL is > 0.3%
+            
+            sl_moved = pos_data.get('sl_moved_count', 0)
+            
+            if sl_moved > 0:
+                logger.info(f"\n✅ DECISION: KEEP {current_symbol}")
+                logger.info(f"REASON: SL moved {sl_moved}x - Position has achieved profit")
+                logger.info("=" * 60)
+                return
+            
+            if pnl_pct > 0.003:
+                logger.info(f"\n✅ DECISION: KEEP {current_symbol}")
+                logger.info(f"REASON: Profitable position ({pnl_pct:+.2%})")
+                logger.info("=" * 60)
+                return
+            
+            if age_minutes < 15:
+                logger.info(f"\n✅ DECISION: KEEP {current_symbol}")
+                logger.info(f"REASON: Too fresh ({age_minutes:.1f}m < 15m minimum)")
+                logger.info("=" * 60)
+                return
+            
+            if health_score >= 60:
+                logger.info(f"\n✅ DECISION: KEEP {current_symbol}")
+                logger.info(f"REASON: Healthy position (Score {health_score} >= 60)")
+                logger.info("=" * 60)
+                return
+            
+            # Consider switching ONLY if:
+            # - Position age >= 30 min without growth
+            # - Health score < 40 (unhealthy)
+            # - New opportunity score >= 80 (very strong)
+            # - New score > Health score + 30 (significantly better)
+            
+            MIN_AGE_FOR_SWITCH = 30  # minutes
+            MAX_HEALTH_TO_SWITCH = 40
+            MIN_NEW_SCORE = 80
+            SCORE_DIFF_REQUIRED = 30
+            
+            can_switch = (
+                age_minutes >= MIN_AGE_FOR_SWITCH and
+                health_score < MAX_HEALTH_TO_SWITCH and
+                new_score >= MIN_NEW_SCORE and
+                new_score > health_score + SCORE_DIFF_REQUIRED
+            )
+            
+            if can_switch:
+                logger.info(f"\n♻️ DECISION: SWITCH {current_symbol} → {new_symbol}")
+                logger.info(f"REASON:")
+                logger.info(f"  • Age: {age_minutes:.1f}m >= {MIN_AGE_FOR_SWITCH}m")
+                logger.info(f"  • Health: {health_score} < {MAX_HEALTH_TO_SWITCH} (unhealthy)")
+                logger.info(f"  • New Score: {new_score} >= {MIN_NEW_SCORE} (very strong)")
+                logger.info(f"  • Score Diff: {new_score - health_score} > {SCORE_DIFF_REQUIRED}")
+                logger.info("=" * 60)
+                
+                # Execute Switch
+                logger.info(f"👋 Closing {current_symbol}...")
+                self.executor.close_position(current_symbol, direction, pos_data['size'])
+                self.state.clear_position(current_symbol)
+                
+                logger.info(f"🚀 Opening {new_symbol}...")
+                self._execute_entry(new_opp['symbol'], new_opp['direction'], new_opp['df'], new_opp['details'])
+                return
+            else:
+                logger.info(f"\n✅ DECISION: KEEP {current_symbol}")
+                logger.info(f"REASON: Switch criteria not met")
+                if age_minutes < MIN_AGE_FOR_SWITCH:
+                    logger.info(f"  • Age: {age_minutes:.1f}m < {MIN_AGE_FOR_SWITCH}m")
+                if health_score >= MAX_HEALTH_TO_SWITCH:
+                    logger.info(f"  • Health: {health_score} >= {MAX_HEALTH_TO_SWITCH}")
+                if new_score < MIN_NEW_SCORE:
+                    logger.info(f"  • New Score: {new_score} < {MIN_NEW_SCORE}")
+                if new_score <= health_score + SCORE_DIFF_REQUIRED:
+                    logger.info(f"  • Score Diff: {new_score - health_score} <= {SCORE_DIFF_REQUIRED}")
+                logger.info("=" * 60)
+                return
+        
+        logger.info("\n✋ No position to evaluate.")
+        logger.info("=" * 60)
 
     def _execute_entry(self, symbol, direction, df, signal_details=None):
         # Risk Check
@@ -929,7 +1487,11 @@ class BotLogic:
                 "p_min": actual_entry_price, # Track lowest favorable price (for trailing)
                 "partials": {f"p{i+1}": False for i in range(len(Config.TAKE_PROFIT_LEVELS))},  # Dynamic based on config
                 "entry_time": time.time(),
-                "last_sl_update": time.time()  # Track when SL was last updated
+                "last_sl_update": time.time(),  # Track when SL was last updated
+                # Health tracking for intelligent switching
+                "sl_moved_count": 0,  # How many times SL was moved (profit indicator)
+                "pnl_history": [],  # Track PnL % at each 15min evaluation
+                "last_evaluation_time": time.time()  # Last time we evaluated this position
             }
             self.state.set_position(symbol, pos_data)
             
@@ -939,6 +1501,32 @@ class BotLogic:
             
             # Set Initial SL
             self.executor.set_stop_loss(symbol, direction, sl_price)
+
+            # Set Take Profit
+            # SNIPER STRATEGY: Set Fixed TP immediately
+            # Check if we have a single "TP_FINAL" level configured
+            is_sniper_mode = len(Config.TP_LEVELS) == 1 and Config.TP_LEVELS[0].get('name') == 'TP_FINAL'
+            
+            if is_sniper_mode:
+                tp_pct = Config.TP_LEVELS[0]['pct']
+                if direction == "LONG":
+                    tp_price = actual_entry_price * (1 + tp_pct)
+                else:
+                    tp_price = actual_entry_price * (1 - tp_pct)
+                
+                logger.info(f"🎯 Setting SNIPER TP at {tp_price:.4f} (+{tp_pct:.2%})")
+                self.executor.set_take_profit(symbol, direction, tp_price)
+            else:
+                # Fallback / Legacy: Use a default emergency TP if not in Sniper mode
+                # Since EMERGENCY_TP_PCT was removed, we use a hardcoded safe value (e.g. 20%)
+                safe_tp_pct = 0.20
+                if direction == "LONG":
+                    tp_price = actual_entry_price * (1 + safe_tp_pct)
+                else:
+                    tp_price = actual_entry_price * (1 - safe_tp_pct)
+                
+                logger.info(f"🚀 Setting Safety Hard TP at {tp_price:.4f} (+{safe_tp_pct:.0%})")
+                self.executor.set_take_profit(symbol, direction, tp_price)
             
             # Log to CSV (ABIERTOS)
             try:
@@ -986,6 +1574,7 @@ class BotLogic:
         entry_price = position['entry_price']
         atr_entry = position['atr_entry']
         entry_time = position['entry_time']
+        logger.info(f"🔧 Managing position for {symbol}: direction={direction}, entry_price={entry_price}")
         
         # Update P_max / P_min using Closed Candle data
         if direction == "LONG":
@@ -994,11 +1583,13 @@ class BotLogic:
         else:
             if closed_low < position['p_min']:
                 position['p_min'] = closed_low
+        logger.info(f"📈 Updated P_max/P_min: P_max={position.get('p_max')}, P_min={position.get('p_min')}")
             
         # --- EXIT CONDITIONS (Priority Order) ---
         
         # 0. Early Invalidation (Moved to Real-Time Monitor)
         
+        logger.info("🔎 Checking ATR Extreme condition")
         # 1. ATR Extreme (ATR_actual > 1.8 * ATR_entry)
         if closed_atr > 1.8 * atr_entry:
             logger.info(f"🚨 EXIT: ATR Extreme ({closed_atr:.2f} > 1.8x {atr_entry:.2f})")
@@ -1063,6 +1654,7 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
+        logger.info("🔎 Checking Structure Break condition")
         # 2. Structure Break (Swing High/Low)
         swings = StructureManager.get_last_swings(df)
         if swings:
@@ -1195,10 +1787,11 @@ class BotLogic:
                     self.state.clear_position(symbol)
                     return
         
+        logger.info("🔎 Checking MACD Reversal condition")
         # 3. MACD Reversal Exit (New)
         # If MACD Histogram flips against us, it's a strong sign of momentum loss.
-        macd_hist = closed_candle['MACD_hist']
-        macd_hist_prev = prev_closed_candle['MACD_hist']
+        macd_hist = closed_candle.get('MACD_hist', 0)
+        macd_hist_prev = prev_closed_candle.get('MACD_hist', 0)
         
         # Check for Reversal
         macd_reversal = False
@@ -1267,6 +1860,7 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
+        logger.info("🔎 Checking Hard EMA20 vs EMA50 cross condition")
         # 4. Hard Exit (EMA20 vs EMA50 Cross)
         ema20 = closed_candle['EMA20']
         ema50 = closed_candle['EMA50']
@@ -1396,6 +1990,7 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
+        logger.info("🔎 Checking Stagnation Exit condition (>45m & negative PnL)")
         # 5. Stagnation Exit (>45m & Negative PnL)
         # If trade is open for 3 candles (45m) and is losing money, cut it.
         time_elapsed = time.time() - entry_time
@@ -1463,6 +2058,7 @@ class BotLogic:
             self.state.clear_position(symbol)
             return
 
+        logger.info("🔎 Checking Time Exit condition (>40 candles & low PnL)")
         # 6. Time Exit (>40 candles and |PnL| < 0.2%)
         # 40 candles * 15 min = 600 min = 36000 seconds
         time_elapsed = time.time() - entry_time
@@ -1511,7 +2107,7 @@ class BotLogic:
                         max_pnl_pct = (position['p_max'] - entry_price) / entry_price
                     else:
                         max_pnl_pct = (entry_price - position['p_min']) / entry_price
-                    
+                
                     # Build partial data for ML
                     partial_data = {
                         'partial_pnl_usd': position.get('accumulated_pnl', 0),
@@ -1531,6 +2127,7 @@ class BotLogic:
                 self.state.clear_position(symbol)
                 return
 
+        logger.info("🔎 Checking Soft Trend Exit condition with MACD filter")
         # 7. Soft Exit (Slope EMA20) - WITH MACD FILTER
         # Slope = EMA20_current - EMA20_prev
         ema20_prev = prev_closed_candle['EMA20']
@@ -1595,7 +2192,7 @@ class BotLogic:
                             max_pnl_pct = (position['p_max'] - entry_price) / entry_price
                         else:
                             max_pnl_pct = (entry_price - position['p_min']) / entry_price
-                        
+                
                         # Build partial data for ML
                         partial_data = {
                             'partial_pnl_usd': position.get('accumulated_pnl', 0),
@@ -1659,7 +2256,7 @@ class BotLogic:
                             max_pnl_pct = (position['p_max'] - entry_price) / entry_price
                         else:
                             max_pnl_pct = (entry_price - position['p_min']) / entry_price
-                        
+                
                         # Build partial data for ML
                         partial_data = {
                             'partial_pnl_usd': position.get('accumulated_pnl', 0),
@@ -1679,6 +2276,7 @@ class BotLogic:
                      self.state.clear_position(symbol)
                      return
 
+        logger.info("🔎 Updating Trailing Stop based on latest ATR and price")
         # 6. Trailing Stop Update (On Closed Candle)
         new_sl = ATRManager.calculate_trailing_stop(
             position['sl_price'], 
@@ -1702,3 +2300,6 @@ class BotLogic:
                 position['last_sl_update'] = time.time()
                 
         self.state.set_position(symbol, position)
+        logger.info(f"✅ Position for {symbol} held. Age: {(time.time()-entry_time)/60:.1f}m, Current PnL: {(closed_close-entry_price)/entry_price if direction=='LONG' else (entry_price-closed_close)/entry_price:.2%}")
+
+

@@ -72,15 +72,61 @@ class OrderExecutor:
                 logger.error(f"Failed to fetch position size for closing: {e}")
                 return None
 
-        params = {'reduceOnly': True}
-        order = self.client.create_order(symbol, 'market', side, amount, params=params)
-        
-        if order:
-            logger.info(f"Close order created: {order['id']}")
-            return order
-        else:
-            logger.error("Failed to create close order")
-            return None
+        try:
+            params = {'reduceOnly': True}
+            order = self.client.create_order(symbol, 'market', side, amount, params=params)
+            
+            if order:
+                logger.info(f"Close order created: {order['id']}")
+                return order
+            else:
+                logger.error("Failed to create close order")
+                return None
+        except Exception as e:
+            # Handle "ReduceOnly Order is rejected" (Code -2022)
+            # This happens if position is already closed or size mismatch
+            if "-2022" in str(e):
+                logger.warning(f"⚠️ ReduceOnly rejected for {symbol}. Verifying if position is already closed...")
+                max_retries = 2
+                for attempt in range(1, max_retries + 1):
+                    try:
+                        # Check actual position on Binance
+                        positions = self.client.get_position(symbol)
+                        is_closed = True
+                        for p in positions:
+                            contracts = float(p.get('contracts', 0))
+                            if contracts > 0:
+                                # Verify side matches intended direction
+                                pos_side = p.get('side')
+                                target_side = 'long' if direction == 'LONG' else 'short'
+                                if pos_side and pos_side.lower() != target_side:
+                                    continue
+                                is_closed = False
+                                break
+                        if is_closed:
+                            logger.info(f"✅ Position for {symbol} is ALREADY CLOSED on Binance. Proceeding with state cleanup.")
+                            # Return a dummy order object to satisfy the caller and allow cleanup
+                            return {'id': 'ALREADY_CLOSED', 'status': 'closed', 'filled': amount}
+                        else:
+                            logger.error(f"❌ Position {symbol} exists but ReduceOnly failed. Attempting normal market order (attempt {attempt})...")
+                            # Try normal market order without reduceOnly
+                            normal_order = self.client.exchange.create_order(symbol, 'market', side, amount)
+                            if normal_order:
+                                logger.info(f"Close order created (normal market): {normal_order['id']}")
+                                return normal_order
+                            else:
+                                logger.error("Failed to create normal market close order.")
+                    except Exception as inner_e:
+                        logger.error(f"Attempt {attempt} failed while handling ReduceOnly error: {inner_e}")
+                        if attempt == max_retries:
+                            raise
+                        time.sleep(1)  # simple backoff between retries
+                # If all retries exhausted
+                logger.error(f"All retries exhausted for ReduceOnly handling on {symbol}.")
+                return None
+            else:
+                logger.error(f"Failed to create close order: {e}")
+                return None
 
     def _create_identified_order(self, symbol, type, side, amount, params={}):
         """
@@ -170,3 +216,27 @@ class OrderExecutor:
             }
         )
 
+    def open_multiple_positions(self, positions):
+        """
+        Open several positions sequentially.
+        `positions` should be an iterable of dicts or tuples containing:
+            - symbol (str)
+            - direction ('LONG' or 'SHORT')
+            - amount (float)
+            - optional price (float or None)
+        Returns a list with the order objects (or None for failures).
+        """
+        orders = []
+        for pos in positions:
+            if isinstance(pos, dict):
+                symbol = pos["symbol"]
+                direction = pos["direction"]
+                amount = pos["amount"]
+                price = pos.get("price")
+            else:
+                # tuple/list format: (symbol, direction, amount, price?)
+                symbol, direction, amount, *rest = pos
+                price = rest[0] if rest else None
+            order = self.open_position(symbol, direction, amount, price)
+            orders.append(order)
+        return orders

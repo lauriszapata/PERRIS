@@ -54,9 +54,9 @@ class EntrySignals:
             trend_ok = TrendManager.check_trend(df, direction)
             results['Trend'] = {'status': trend_ok, 'value': 'Pass' if trend_ok else 'Fail'}
             
-            # 4. ADX (Institutional: Strong Trend > 20, lowered from 25 to reduce lag)
+            # 4. ADX (Institutional: Strong Trend >= Config.ADX_MIN)
             adx_val = last['ADX']
-            results['ADX'] = {'status': adx_val >= 20, 'value': f"{adx_val:.2f}", 'threshold': ">= 20"}
+            results['ADX'] = {'status': adx_val >= Config.ADX_MIN, 'value': f"{adx_val:.2f}", 'threshold': f">= {Config.ADX_MIN}"}
             
             # 5. RSI (Widened to 35-65 to catch more moves)
             rsi_val = last['RSI']
@@ -79,14 +79,14 @@ class EntrySignals:
             # 7. Volume
             vol = last['volume']
             vol_avg = last['Vol_SMA20']
-            results['Volume'] = {'status': vol >= 1.0 * vol_avg, 'value': f"{vol:.2f}", 'threshold': f">= {1.0*vol_avg:.2f}"}
+            results['Volume'] = {'status': vol >= Config.VOLUME_MIN_MULTIPLIER * vol_avg, 'value': f"{vol:.2f}", 'threshold': f">= {Config.VOLUME_MIN_MULTIPLIER*vol_avg:.2f}"}
 
             # 8. Volatility (Institutional: Avoid extreme chaos)
             atr_val = last['ATR']
             close_val = last['close']
             volatility_pct = atr_val / close_val
-            # Max 3% volatility per candle to avoid unpredictable slippage/wicks
-            results['Volatility'] = {'status': volatility_pct < 0.03, 'value': f"{volatility_pct:.2%}", 'threshold': "< 3%"}
+            # Max volatility per candle to avoid unpredictable slippage/wicks
+            results['Volatility'] = {'status': volatility_pct < Config.ATR_MAX_PCT, 'value': f"{volatility_pct:.2%}", 'threshold': f"< {Config.ATR_MAX_PCT:.1%}"}
             
             # 9. MTF Trend (1H)
             if client and symbol:
@@ -132,3 +132,38 @@ class EntrySignals:
         except Exception as e:
             logger.error(f"Error checking signals: {e}")
             return False, {'Error': str(e)}
+
+    @staticmethod
+    def calculate_score(details):
+        """
+        Calculate a score (0-100) for a signal based on its components.
+        Used for Opportunity Cost comparison.
+        """
+        score = 0
+        
+        # 1. Trend (30 pts)
+        if details.get('Trend', {}).get('status'):
+            score += 30
+            
+        # 2. ADX Strength (20 pts)
+        # Higher ADX = Stronger Trend
+        try:
+            adx_val = float(details.get('ADX', {}).get('value', 0))
+            if adx_val >= 25: score += 10
+            if adx_val >= 35: score += 10
+        except: pass
+        
+        # 3. Volume (20 pts)
+        if details.get('Volume', {}).get('status'):
+            score += 20
+            
+        # 4. RSI Optimality (15 pts)
+        # Not overbought/oversold is good, but momentum is better
+        if details.get('RSI', {}).get('status'):
+            score += 15
+            
+        # 5. MACD (15 pts)
+        if details.get('MACD', {}).get('status'):
+            score += 15
+            
+        return score
