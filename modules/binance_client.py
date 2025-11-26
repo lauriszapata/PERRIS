@@ -220,7 +220,13 @@ class BinanceClient:
             from modules.utils.validation import ensure_no_nan
             ensure_no_nan(positions, "All positions")
             # Filter for active positions (size != 0)
-            active_positions = [p for p in positions if float(p['contracts']) > 0]
+            active_positions = []
+            for p in positions:
+                if float(p['contracts']) > 0:
+                    # Normalize symbol: Remove :USDT suffix if present
+                    if p['symbol'].endswith(':USDT'):
+                        p['symbol'] = p['symbol'].replace(':USDT', '')
+                    active_positions.append(p)
             return active_positions
         except Exception as e:
             logger.error(f"Error fetching all positions: {e}")
@@ -229,9 +235,22 @@ class BinanceClient:
     def get_position(self, symbol):
         try:
             # Fetch positions for specific symbol
+            # CCXT might expect the colon format for fetching, but we should try both or rely on fetch_positions filtering
+            # Ideally, fetch_positions([symbol]) works, but if symbol is AVAX/USDT and exchange expects AVAX/USDT:USDT...
+            # Let's try fetching all and filtering, or just handle the return.
+            # For safety, let's fetch all (cached usually) or just the specific one if we trust the input.
+            
+            # If we pass AVAX/USDT, ccxt might need AVAX/USDT:USDT. 
+            # But let's assume the input symbol is correct for the request, and we just normalize the output.
             positions = self.exchange.fetch_positions([symbol])
             from modules.utils.validation import ensure_no_nan
             ensure_no_nan(positions, f"Positions for {symbol}")
+            
+            # Normalize symbols in the result
+            for p in positions:
+                if p['symbol'].endswith(':USDT'):
+                    p['symbol'] = p['symbol'].replace(':USDT', '')
+                    
             return positions
         except Exception as e:
             logger.error(f"Error fetching position for {symbol}: {e}")

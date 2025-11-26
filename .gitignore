@@ -1,0 +1,9 @@
+__pycache__/
+*.pyc
+bot_state.json
+bot_trading.log
+.DS_Store
+.env
+venv/
+.idea/
+.vscode/

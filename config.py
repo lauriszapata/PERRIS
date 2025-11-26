@@ -29,7 +29,7 @@ class Config:
     LEVERAGE = 1  # 1x Leverage (Safe)
     MAX_OPEN_SYMBOLS = 1  # Single simultaneous position
     RISK_PER_TRADE = 0.015  # 1.5% risk per trade
-    FIXED_TRADE_EXPOSURE_USD = 450  # Fixed $450 exposure
+    FIXED_TRADE_EXPOSURE_USD = 400  # Fixed $400 exposure
     
     # Risk Management
     DAILY_DRAWDOWN_LIMIT = -0.03  # -3%
