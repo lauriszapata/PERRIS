@@ -897,6 +897,7 @@ class BotLogic:
         
         # Track best opportunity found in this cycle
         best_opportunity = None
+        candidates = []
         
         for symbol in symbols_to_process:
             try:
@@ -1045,25 +1046,15 @@ class BotLogic:
                             logger.info(f"  ⭐ Opportunity Score: {score}/100")
                             logger.info(f"")
                             
-                            # If we are NOT full, execute immediately
-                            if RiskManager.check_max_symbols(self.state.state['positions']):
-                                self._execute_entry(symbol, direction, df, details)
-                                # Log immediate confirmation
-                                logger.info(f"✅ Position opened! Monitor will track every 2 seconds.")
-                                logger.info(f"📊 ACTIVE POSITIONS: 1")
-                                return # Take one trade per cycle
-                            else:
-                                # We are FULL. Check if this is a better opportunity.
-                                # We only consider switching if we haven't found a better one yet
-                                if best_opportunity is None or score > best_opportunity['score']:
-                                    best_opportunity = {
-                                        'symbol': symbol,
-                                        'direction': direction,
-                                        'score': score,
-                                        'df': df,
-                                        'details': details
-                                    }
-                                    logger.info(f"  💡 Best opportunity updated: {symbol} {direction} (Score: {score})")
+                            # Add to candidates list
+                            candidates.append({
+                                'symbol': symbol,
+                                'direction': direction,
+                                'score': score,
+                                'df': df,
+                                'details': details
+                            })
+                            logger.info(f"  📝 Candidate added: {symbol} {direction} (Score: {score})")
                         else:
                             logger.info(f"")
                             logger.info(f"  ❌ {direction} SIGNAL REJECTED")
@@ -1083,10 +1074,30 @@ class BotLogic:
         
         # End of Symbol Loop
         
-        # OPPORTUNITY SWITCHING CHECK
-        # If we found a great opportunity but were full, check if we should swap.
-        if best_opportunity:
-            self._check_opportunity_switch(best_opportunity)
+        # Select Best Candidate
+        if candidates:
+            # Sort by score descending
+            candidates.sort(key=lambda x: x['score'], reverse=True)
+            
+            best_candidate = candidates[0]
+            logger.info(f"🏆 Best Candidate: {best_candidate['symbol']} {best_candidate['direction']} (Score: {best_candidate['score']})")
+            
+            # Log other candidates if any
+            if len(candidates) > 1:
+                logger.info(f"  Other candidates: {', '.join([f'{c['symbol']} ({c['score']})' for c in candidates[1:]])}")
+            
+            # Execute or Check Switch
+            if RiskManager.check_max_symbols(self.state.state['positions']):
+                self._execute_entry(
+                    best_candidate['symbol'], 
+                    best_candidate['direction'], 
+                    best_candidate['df'], 
+                    best_candidate['details']
+                )
+                logger.info(f"✅ Position opened for best candidate!")
+            else:
+                # We are FULL. Check if this is a better opportunity.
+                self._check_opportunity_switch(best_candidate)
 
         # Log Summary
         logger.info("=== 📉 TOP 3 REJECTION REASONS ===")

@@ -29,14 +29,14 @@ class Config:
     LEVERAGE = 1  # 1x Leverage (Safe)
     MAX_OPEN_SYMBOLS = 1  # Single simultaneous position
     RISK_PER_TRADE = 0.015  # 1.5% risk per trade
-    FIXED_TRADE_EXPOSURE_USD = 400  # Fixed $400 exposure
+    FIXED_TRADE_EXPOSURE_USD = 1000  # Fixed $1000 exposure
     
     # Risk Management
     DAILY_DRAWDOWN_LIMIT = -0.03  # -3%
     MAX_TRADES_PER_HOUR = 6 # Allow up to 6 positions per hour
     RISK_PER_TRADE_PCT = 0 # Set to 0 to use FIXED_TRADE_EXPOSURE_USD
     # MAX_EXPOSURE_USD = 500 # DEPRECATED
-    MAX_TOTAL_EXPOSURE_USD = 2000  # Increased to allow full exposure
+    MAX_TOTAL_EXPOSURE_USD = 1000  # Increased to allow full exposure
     MIN_NOTIONAL_USD = 100 # Minimum order value (Binance requirement)
     SYMBOL_COOLDOWN_MINUTES = 30  # Wait 30 minutes before re-entering same symbol
     

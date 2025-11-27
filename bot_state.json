@@ -1,10 +1,51 @@
 {
     "positions": {},
     "daily_pnl": 0.0,
-    "last_reset_time": null,
-    "trades_last_hour": [],
-    "last_trade_per_symbol": {},
+    "last_reset_time": 1764201613.1905122,
+    "trades_last_hour": [
+        1764207917.279784,
+        1764208809.527606,
+        1764210610.340883
+    ],
+    "last_trade_per_symbol": {
+        "XLM/USDT": 1764203410.279762,
+        "AVAX/USDT": 1764205505.025378,
+        "DOGE/USDT": 1764207009.101599,
+        "XMR/USDT": 1764208539.350335,
+        "ETH/USDT": 1764210073.4396749,
+        "SUI/USDT": 1764210692.837854
+    },
     "is_paused": false,
     "pause_reason": null,
-    "pause_until": null
+    "pause_until": null,
+    "tuner": {
+        "trade_history": [
+            {
+                "pnl": -0.0005336932458152271,
+                "max_pnl": 0.001281702722647287,
+                "time": 1764203410.279109,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": 0.1864799999999277,
+                    "levels_hit": []
+                },
+                "partial_efficiency": 0.0
+            },
+            {
+                "pnl": 0.000683580350786423,
+                "max_pnl": 0.002524108471943573,
+                "time": 1764207009.100677,
+                "partial_data": {
+                    "partial_pnl_usd": 0.0,
+                    "final_pnl_usd": 0.6728800000000265,
+                    "levels_hit": []
+                },
+                "partial_efficiency": 0.0
+            }
+        ],
+        "partial_history": [],
+        "active_partials": {},
+        "current_risk": 0,
+        "current_atr_min": 0.0025
+    }
 }
