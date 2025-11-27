@@ -386,6 +386,67 @@ class BotLogic:
                             pos_data['last_sl_update'] = time.time()
                             self.state.set_position(symbol, pos_data)
 
+                # --- TIME-BASED EXIT (1 Hour Limit) ---
+                # If position > 60 mins and TP not hit, close it.
+                duration_minutes = (now - pos_data['entry_time']) / 60
+                if duration_minutes > Config.MAX_POSITION_DURATION_MINUTES:
+                    logger.info(f"⏰ TIME LIMIT EXCEEDED for {symbol}: Open for {duration_minutes:.1f} min > {Config.MAX_POSITION_DURATION_MINUTES} min. Closing...")
+                    close_order = self.executor.close_position(symbol, direction, size)
+                    
+                    if close_order:
+                        try:
+                            exit_price = close_order.get('average') or close_order.get('price') or current_price
+                            actual_size = close_order.get('filled') or size
+                            
+                            logger.info(f"✅ Time Exit Filled | Exit: {exit_price:.4f} | Size: {actual_size:.6f}")
+                            
+                            pnl_usd = (exit_price - entry_price) * actual_size if direction == "LONG" else (entry_price - exit_price) * actual_size
+                            duration = time.time() - pos_data['entry_time']
+                            
+                            leverage = Config.LEVERAGE
+                            exposure = actual_size * entry_price
+                            margin = exposure / leverage
+                            
+                            CSVManager.log_closure(
+                                symbol=symbol,
+                                close_time=time.time(),
+                                pnl_usd=pnl_usd,
+                                margin=margin,
+                                leverage=leverage,
+                                exposure=exposure,
+                                duration_sec=duration,
+                                info="Time Limit Exceeded"
+                            )
+                            
+                            # ML Update
+                            total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
+                            total_volume = (actual_size * entry_price) + (exit_price * actual_size)
+                            commission = total_volume * Config.COMMISSION_RATE
+                            net_pnl_usd = total_pnl_usd - commission
+                            initial_margin = (actual_size * entry_price) / Config.LEVERAGE
+                            net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
+                            
+                            if direction == "LONG":
+                                max_pnl_pct = (pos_data['p_max'] - entry_price) / entry_price
+                            else:
+                                max_pnl_pct = (entry_price - pos_data['p_min']) / entry_price
+                                
+                            partial_data = {
+                                'partial_pnl_usd': pos_data.get('accumulated_pnl', 0),
+                                'final_pnl_usd': total_pnl_usd,
+                                'levels_hit': [k for k, v in pos_data.get('partials', {}).items() if v]
+                            }
+                            
+                            self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
+                            self.state.state['tuner'] = self.tuner.get_state()
+                            self.state.save_state()
+                            
+                        except Exception as e:
+                            logger.error(f"Failed to log time exit CSV: {e}")
+                    
+                    self.state.clear_position(symbol)
+                    continue # Skip further checks
+
                 # --- REAL-TIME EARLY INVALIDATION (1.5 ATR) ---
                 # Check if price moved > 1.5 ATR against us
                 
@@ -1538,8 +1599,23 @@ class BotLogic:
         logger.info("=" * 60)
 
     def _execute_entry(self, symbol, direction, df, signal_details=None):
+        # 5. Check Trading Schedule
+        # Colombia Time (UTC-5) - Assuming system time is local or configured correctly
+        from datetime import datetime
+        now_dt = datetime.fromtimestamp(time.time())
+        is_trading_day = now_dt.weekday() in Config.TRADING_DAYS
+        is_trading_hour = Config.TRADING_HOURS_START <= now_dt.hour < Config.TRADING_HOURS_END
+        
+        if not is_trading_day:
+            logger.info(f"📅 Outside Trading Days (Today: {now_dt.strftime('%A')}). Entries Disabled.")
+            return
+        elif not is_trading_hour:
+            logger.info(f"⏰ Outside Trading Hours ({now_dt.hour}:00 not in {Config.TRADING_HOURS_START}-{Config.TRADING_HOURS_END}). Entries Disabled.")
+            return
+            
         # Risk Check
         if not RiskManager.check_max_symbols(self.state.state['positions']):
+            logger.warning(f"Entry rejected for {symbol}: Max symbols reached.")
             return
 
         # Correlation Check
@@ -1577,6 +1653,10 @@ class BotLogic:
         # Enforce Leverage again before entry (Safety)
         leverage = Config.LEVERAGE # Default to Config leverage (usually 1 or 3)
         self.client.set_leverage(symbol, leverage)
+        
+        # Cancel any residual orders before opening new position
+        logger.info(f"🧹 Cancelling residual orders for {symbol} before entry...")
+        self.client.cancel_all_orders(symbol)
         
         # Execute
         order = self.executor.open_position(symbol, direction, position_size)

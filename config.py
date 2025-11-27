@@ -39,11 +39,17 @@ class Config:
     MAX_TOTAL_EXPOSURE_USD = 1000  # Increased to allow full exposure
     MIN_NOTIONAL_USD = 100 # Minimum order value (Binance requirement)
     SYMBOL_COOLDOWN_MINUTES = 30  # Wait 30 minutes before re-entering same symbol
+    MAX_POSITION_DURATION_MINUTES = 55 # Close position if open for more than 55 minutes
+    
+    # --- Trading Schedule (Colombia Time) ---
+    TRADING_HOURS_START = 6
+    TRADING_HOURS_END = 15
+    TRADING_DAYS = [0, 1, 2, 3, 4] # Mon=0, Sun=6
     
     # --- Profit Taking ---
-    # Single Fixed TP at 0.28%
+    # Single Fixed TP at 0.4%
     TP_LEVELS = [
-        {"pct": 0.0028, "close_pct": 1.0, "name": "TP_FINAL"}, # 0.28% -> Close 100%
+        {"pct": 0.004, "close_pct": 1.0, "name": "TP_FINAL"}, # 0.4% -> Close 100%
     ]
     
     # --- Stop Loss ---
