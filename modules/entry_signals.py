@@ -76,10 +76,21 @@ class EntrySignals:
                 # Bearish Cross: Line < Signal
                 results['MACD'] = {'status': macd_line < macd_signal, 'value': f"L:{macd_line:.4f}/S:{macd_signal:.4f}", 'threshold': "Line < Sig"}
             
-            # 7. Volume
+            # 7. Volume (1.5x Media - Confirmación de interés)
             vol = last['volume']
             vol_avg = last['Vol_SMA20']
-            results['Volume'] = {'status': vol >= Config.VOLUME_MIN_MULTIPLIER * vol_avg, 'value': f"{vol:.2f}", 'threshold': f">= {Config.VOLUME_MIN_MULTIPLIER*vol_avg:.2f}"}
+            vol_multiplier = Config.VOLUME_MIN_MULTIPLIER  # 1.5x para filtrar mejor
+            results['Volume'] = {'status': vol >= vol_multiplier * vol_avg, 'value': f"{vol:.2f}", 'threshold': f">= {vol_multiplier*vol_avg:.2f}"}
+            
+            # 7b. DI Confirmation (+DI > -DI para LONG, -DI > +DI para SHORT)
+            di_plus = last['DI_plus']
+            di_minus = last['DI_minus']
+            if direction == "LONG":
+                di_ok = di_plus > di_minus
+                results['DI_Confirm'] = {'status': di_ok, 'value': f"+DI:{di_plus:.1f} -DI:{di_minus:.1f}", 'threshold': "+DI > -DI"}
+            else:
+                di_ok = di_minus > di_plus
+                results['DI_Confirm'] = {'status': di_ok, 'value': f"+DI:{di_plus:.1f} -DI:{di_minus:.1f}", 'threshold': "-DI > +DI"}
 
             # 8. Volatility (Institutional: Avoid extreme chaos)
             atr_val = last['ATR']

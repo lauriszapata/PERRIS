@@ -12,10 +12,10 @@ def main():
         
         # Initialize Components
         logger.info("===================================================")
-        logger.info("🏆 STARTING PERRIS SNIPER 3X WINNER 🏆")
-        logger.info("   • Strategy: Fixed TP 1.5% / SL 3.0%")
-        logger.info("   • Leverage: 3x (Exposure $450)")
-        logger.info("   • Config: Winner 2025 (+$2,192/yr)")
+        logger.info(f"🏆 STARTING {Config.BOT_NAME} 🏆")
+        logger.info(f"   • Strategy: Fixed TP {Config.TP_LEVELS[0]['pct']*100:.2f}% / SL {Config.FIXED_SL_PCT*100:.2f}%")
+        logger.info(f"   • Leverage: {Config.LEVERAGE}x")
+        logger.info(f"   • Margin/Exposure: ${Config.FIXED_TRADE_EXPOSURE_USD}")
         logger.info("===================================================")
         logger.info("Initializing components...")
         state_handler = StateHandler()

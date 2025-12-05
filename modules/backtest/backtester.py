@@ -99,11 +99,15 @@ class Backtester:
             entry_price = row['close']
             sl = ATRManager.calculate_initial_stop(entry_price, atr, direction)
             
-            # Risk Calculation
-            risk_amt = self.balance * Config.RISK_PER_TRADE_PCT
-            dist = abs(entry_price - sl)
-            if dist == 0: return
-            size = risk_amt / dist
+            # Fixed exposure sizing (use Config.FIXED_TRADE_EXPOSURE_USD)
+            target_exposure = Config.FIXED_TRADE_EXPOSURE_USD
+            size = target_exposure / entry_price
+            exposure = size * entry_price
+            # Assuming 'logger' is defined elsewhere or will be handled by the user.
+            # If not, this line will cause a NameError.
+            # logger.info(f"⚖️ Fixed Exposure Sizing: Target {target_exposure:.2f} USD | Entry {entry_price:.4f} | Size {size:.4f} | Exposure {exposure:.2f} USD")
+            # No risk‑based sizing needed
+            # exposure variable retained for compatibility,
             
             self.current_position = {
                 'type': direction,
@@ -123,69 +127,39 @@ class Backtester:
             pass
 
     def _check_exit(self, pos, row):
-        # 1. Check SL
+        # Simple fixed TP/SL exit logic using Config values
         if pos['type'] == 'LONG':
-            if row['low'] <= pos['sl']:
+            sl_price = pos['entry_price'] * (1 - Config.FIXED_SL_PCT)
+            tp_price = pos['entry_price'] * (1 + Config.TP_LEVELS[0]['pct'])
+            # Stop Loss
+            if row['low'] <= sl_price:
                 pos['status'] = 'CLOSED'
-                pos['exit_price'] = pos['sl']
-                pos['pnl'] = (pos['sl'] - pos['entry_price']) * pos['size']
+                pos['exit_price'] = sl_price
+                pos['pnl'] = (sl_price - pos['entry_price']) * pos['size']
                 return
-            
-            # Breakeven Check
-            if not pos.get('breakeven_triggered', False):
-                pnl_pct = (row['high'] - pos['entry_price']) / pos['entry_price']
-                if pnl_pct >= Config.BREAKEVEN_TRIGGER_PCT:
-                    pos['sl'] = max(pos['sl'], pos['entry_price'] * 1.001)
-                    pos['breakeven_triggered'] = True
-
-            # Update Trailing
-            if row['high'] > pos['highest_price']:
-                pos['highest_price'] = row['high']
-                # Take-Profit trigger at +4.5%
-                if not pos.get('tp_triggered', False):
-                    if (pos['highest_price'] - pos['entry_price']) / pos['entry_price'] >= 0.045:
-                        pos['tp_triggered'] = True
-                        pos['tp_price'] = pos['highest_price']
-                # Check TP pullback exit: 3.5% drop from TP price
-                if pos.get('tp_triggered', False) and row['low'] <= pos['tp_price'] * 0.965:
-                    pos['status'] = 'CLOSED'
-                    pos['exit_price'] = row['low']
-                    pos['pnl'] = (row['low'] - pos['entry_price']) * pos['size']
-                    return
-                # Recalculate Trailing SL
-                new_sl = ATRManager.calculate_trailing_stop(pos['sl'], pos['highest_price'], row['ATR'], "LONG", pos['entry_price'])
-                pos['sl'] = max(pos['sl'], new_sl)
-
-        else: # SHORT
-            if row['high'] >= pos['sl']:
+            # Take Profit
+            if row['high'] >= tp_price:
                 pos['status'] = 'CLOSED'
-                pos['exit_price'] = pos['sl']
-                pos['pnl'] = (pos['entry_price'] - pos['sl']) * pos['size']
+                pos['exit_price'] = tp_price
+                pos['pnl'] = (tp_price - pos['entry_price']) * pos['size']
                 return
-
-            # Take-Profit trigger at +4.5% (price drop for short)
-            if row['low'] < pos['lowest_price']:
-                pos['lowest_price'] = row['low']
-                if not pos.get('tp_triggered', False):
-                    if (pos['entry_price'] - pos['lowest_price']) / pos['entry_price'] >= 0.045:
-                        pos['tp_triggered'] = True
-                        pos['tp_price'] = pos['lowest_price']
-                # Check TP pullback exit: 3.5% rise from TP price
-                if pos.get('tp_triggered', False) and row['high'] >= pos['tp_price'] * 1.035:
-                    pos['status'] = 'CLOSED'
-                    pos['exit_price'] = row['high']
-                    pos['pnl'] = (pos['entry_price'] - row['high']) * pos['size']
-                    return
-                # Update Trailing after TP logic
-                new_sl = ATRManager.calculate_trailing_stop(pos['sl'], pos['lowest_price'], row['ATR'], "SHORT", pos['entry_price'])
-                pos['sl'] = min(pos['sl'], new_sl)
-
-            # Breakeven Check (only if not already closed)
-            if not pos.get('breakeven_triggered', False):
-                pnl_pct = (pos['entry_price'] - row['low']) / pos['entry_price']
-                if pnl_pct >= Config.BREAKEVEN_TRIGGER_PCT:
-                    pos['sl'] = min(pos['sl'], pos['entry_price'] * 0.999)
-                    pos['breakeven_triggered'] = True
+            # No exit, keep position open
+        else:  # SHORT
+            sl_price = pos['entry_price'] * (1 + Config.FIXED_SL_PCT)
+            tp_price = pos['entry_price'] * (1 - Config.TP_LEVELS[0]['pct'])
+            # Stop Loss
+            if row['high'] >= sl_price:
+                pos['status'] = 'CLOSED'
+                pos['exit_price'] = sl_price
+                pos['pnl'] = (pos['entry_price'] - sl_price) * pos['size']
+                return
+            # Take Profit
+            if row['low'] <= tp_price:
+                pos['status'] = 'CLOSED'
+                pos['exit_price'] = tp_price
+                pos['pnl'] = (pos['entry_price'] - tp_price) * pos['size']
+                return
+            # No exit, keep position open
 
     def _calculate_metrics(self):
         if not self.trades:

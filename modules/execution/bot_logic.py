@@ -32,8 +32,8 @@ class BotLogic:
     def run(self):
         logger.info("Bot started. Initializing Hybrid Frequency Loop...")
         
-        # Sync Orphaned Positions
-        self._sync_positions()
+        # Sync Orphaned Positions - DISABLED
+        # self._sync_positions()
         
         # Enforce Fixed Leverage on Startup
         logger.info(f"🔧 Enforcing {Config.LEVERAGE}x Leverage for all symbols...")
@@ -45,11 +45,15 @@ class BotLogic:
         logger.info("✅ Position Monitor: 2s")
         logger.info("✅ Strategy/Entry: 15m (Candle Close)")
         
+        # Run strategy immediately on startup
+        logger.info("🚀 Running initial strategy evaluation on startup...")
+        self._run_strategy_cycle()
+        
         last_health_check = 0
         last_monitor_check = 0
         last_status_log = 0
         self.last_monitor_log = 0 # For detailed position logging
-        last_strategy_run_candle = 0 # Track the timestamp of the last processed candle
+        last_strategy_run_candle = int(time.time() // 900) * 900 # Mark current candle as processed
         
         self.is_paused_latency = False
         self.good_latency_counter = 0
@@ -155,6 +159,51 @@ class BotLogic:
             logger.error(f"Error fetching Binance position data for {symbol}: {e}")
             return None
 
+    def _adopt_orphan(self, pos):
+        """
+        Adopt a position found on Binance that is not in local state.
+        """
+        symbol = pos['symbol']
+        size = float(pos['contracts'])
+        direction = "LONG" if pos['side'] == 'long' else "SHORT"
+        entry_price = float(pos['entryPrice'])
+        
+        logger.warning(f"👶 Found ORPHAN position: {symbol} {direction} Size: {size}")
+        
+        # Reconstruct state
+        try:
+            ohlcv = self.client.fetch_ohlcv(symbol)
+            if ohlcv:
+                df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
+                df = Indicators.calculate_all(df)
+                current_atr = df.iloc[-1]['ATR']
+            else:
+                current_atr = entry_price * 0.01 # Fallback 1%
+        except:
+            current_atr = entry_price * 0.01
+        
+        # Check for existing SL order
+        sl_price = entry_price * (0.99 if direction == "LONG" else 1.01) # Default 1% SL
+        open_orders = self.client.get_open_orders(symbol)
+        for o in open_orders:
+            if o['type'] == 'STOP_MARKET':
+                sl_price = float(o['stopPrice'])
+                break
+        
+        pos_data = {
+            "direction": direction,
+            "entry_price": entry_price,
+            "size": size,
+            "sl_price": sl_price,
+            "atr_entry": current_atr, # Best guess
+            "p_max": entry_price, 
+            "p_min": entry_price,
+            "partials": {"p1": False, "p2": False}, # Assume not taken
+            "entry_time": time.time() # Unknown, set to now
+        }
+        self.state.set_position(symbol, pos_data)
+        logger.info(f"✅ Adopted {symbol}. SL: {sl_price}")
+
     def _sync_positions(self):
         """
         Sync local state with actual exchange positions.
@@ -169,49 +218,11 @@ class BotLogic:
 
         local_positions = self.state.state['positions']
         
-        # 1. Adopt Orphans (Exchange has it, Local doesn't)
-        for pos in exchange_positions:
-            symbol = pos['symbol']
-            size = float(pos['contracts'])
-            direction = "LONG" if pos['side'] == 'long' else "SHORT"
-            entry_price = float(pos['entryPrice'])
-            
-            if symbol not in local_positions:
-                logger.warning(f"👶 Found ORPHAN position: {symbol} {direction} Size: {size}")
-                
-                # Reconstruct state
-                try:
-                    ohlcv = self.client.fetch_ohlcv(symbol)
-                    if ohlcv:
-                        df = pd.DataFrame(ohlcv, columns=['timestamp', 'open', 'high', 'low', 'close', 'volume'])
-                        df = Indicators.calculate_all(df)
-                        current_atr = df.iloc[-1]['ATR']
-                    else:
-                        current_atr = entry_price * 0.01 # Fallback 1%
-                except:
-                    current_atr = entry_price * 0.01
-                
-                # Check for existing SL order
-                sl_price = entry_price * (0.99 if direction == "LONG" else 1.01) # Default 1% SL
-                open_orders = self.client.get_open_orders(symbol)
-                for o in open_orders:
-                    if o['type'] == 'STOP_MARKET':
-                        sl_price = float(o['stopPrice'])
-                        break
-                
-                pos_data = {
-                    "direction": direction,
-                    "entry_price": entry_price,
-                    "size": size,
-                    "sl_price": sl_price,
-                    "atr_entry": current_atr, # Best guess
-                    "p_max": entry_price, 
-                    "p_min": entry_price,
-                    "partials": {"p1": False, "p2": False}, # Assume not taken
-                    "entry_time": time.time() # Unknown, set to now
-                }
-                self.state.set_position(symbol, pos_data)
-                logger.info(f"✅ Adopted {symbol}. SL: {sl_price}")
+        # 1. Adopt Orphans - DISABLED
+        # for pos in exchange_positions:
+        #     symbol = pos['symbol']
+        #     if symbol not in local_positions:
+        #         self._adopt_orphan(pos)
 
         # 2. Remove Ghosts (Local has it, Exchange doesn't)
         exchange_symbols = [p['symbol'] for p in exchange_positions]
@@ -238,7 +249,7 @@ class BotLogic:
         # Clean up orphaned orders when no positions (every 30s to avoid spam)
         if not positions:
             # Cleanup disabled by user request to avoid accidental protection removal
-            return
+            pass
 
         now = time.time()
         should_log = (now - self.last_monitor_log) >= 20
@@ -256,6 +267,14 @@ class BotLogic:
         
         # Process each position from Binance
         binance_map = {p['symbol']: p for p in binance_positions}
+        
+        # 0. ADOPT ORPHANS - DISABLED
+        # If Binance has a position we don't know about, we now IGNORE it
+        # for symbol, binance_pos in binance_map.items():
+        #     if symbol not in positions:
+        #         self._adopt_orphan(binance_pos)
+        #         # Refresh local positions reference after adoption
+        #         positions = self.state.state['positions']
         
         # 1. SYNC: Remove Ghost Positions (Local state has it, but Binance doesn't)
         local_symbols = list(positions.keys())
@@ -446,86 +465,6 @@ class BotLogic:
                     
                     self.state.clear_position(symbol)
                     continue # Skip further checks
-
-                # --- REAL-TIME EARLY INVALIDATION (1.5 ATR) ---
-                # Check if price moved > 1.5 ATR against us
-                
-                early_exit_triggered = False
-                if direction == "LONG":
-                    if current_price < entry_price - (1.5 * atr_entry):
-                        logger.info(f"🚨 REAL-TIME EXIT: Early Invalidation (Price {current_price:.4f} < Entry {entry_price:.4f} - 1.5 ATR)")
-                        early_exit_triggered = True
-                else: # SHORT
-                    if current_price > entry_price + (1.5 * atr_entry):
-                        logger.info(f"🚨 REAL-TIME EXIT: Early Invalidation (Price {current_price:.4f} > Entry {entry_price:.4f} + 1.5 ATR)")
-                        early_exit_triggered = True
-                
-                if early_exit_triggered:
-                    close_order = self.executor.close_position(symbol, direction, size)
-                    
-                    # Log Closure with ACTUAL exit price
-                    if close_order:
-                        try:
-                            # Get ACTUAL exit price from Binance
-                            exit_price = close_order.get('average') or close_order.get('price') or current_price
-                            actual_size = close_order.get('filled') or size
-                            
-                            logger.info(f"✅ Early Exit Filled | Exit: {exit_price:.4f} | Size: {actual_size:.6f}")
-                            
-                            pnl_usd = (exit_price - entry_price) * actual_size if direction == "LONG" else (entry_price - exit_price) * actual_size
-                            pnl_pct = (exit_price - entry_price) / entry_price if direction == "LONG" else (entry_price - exit_price) / entry_price
-                            duration = time.time() - pos_data['entry_time']
-                            
-                            # Log Closure (CERRADOS)
-                            leverage = Config.LEVERAGE
-                            exposure = actual_size * entry_price
-                            margin = exposure / leverage
-                            
-                            CSVManager.log_closure(
-                                symbol=symbol,
-                                close_time=time.time(),
-                                pnl_usd=pnl_usd,
-                                margin=margin,
-                                leverage=leverage,
-                                exposure=exposure,
-                                duration_sec=duration,
-                                info="Early Invalidation (Real-Time)"
-                            )
-                            
-                            # ML Update (Total PnL - Commissions)
-                            total_pnl_usd = pnl_usd + pos_data.get('accumulated_pnl', 0.0)
-                            
-                            # Commission Calculation (Entry + Exit Volume * Rate)
-                            total_volume = (actual_size * entry_price) + (exit_price * actual_size)
-                            commission = total_volume * Config.COMMISSION_RATE
-                            net_pnl_usd = total_pnl_usd - commission
-                            
-                            initial_margin = (actual_size * entry_price) / Config.LEVERAGE
-                            net_roi_pct = net_pnl_usd / initial_margin if initial_margin > 0 else 0
-                            
-                            # Max PnL Calculation
-                            if direction == "LONG":
-                                max_pnl_pct = (pos_data['p_max'] - entry_price) / entry_price
-                            else:
-                                max_pnl_pct = (entry_price - pos_data['p_min']) / entry_price
-                            
-                            # Build partial data for ML
-                            partial_data = {
-                                'partial_pnl_usd': pos_data.get('accumulated_pnl', 0),
-                                'final_pnl_usd': total_pnl_usd,
-                                'levels_hit': [k for k, v in pos_data.get('partials', {}).items() if v]
-                            }
-                            
-                            logger.info(f"🧠 ML Update: Net PnL {net_pnl_usd:.2f} USD (Comm: {commission:.2f}) | ROI {net_roi_pct:.2%} | Max {max_pnl_pct:.2%}")
-                            self.tuner.update_trade(net_roi_pct, max_pnl_pct, time.time(), symbol=symbol, partial_data=partial_data)
-                            
-                            # Save Tuner State
-                            self.state.state['tuner'] = self.tuner.get_state()
-                            self.state.save_state()
-                        except Exception as e:
-                            logger.error(f"Failed to log closure CSV: {e}")
-                    self.state.clear_position(symbol)
-                    continue # Skip logging and next steps for this symbol
                 
                 if should_log:
                     # Display REAL data from Binance
@@ -1008,6 +947,12 @@ class BotLogic:
                 
                 # Only look for NEW entries if the symbol is in our target list AND entries are allowed
                 if symbol in target_symbols and allow_entries and not self.state.state['positions']:
+                    
+                    # --- COOLDOWN CHECK ---
+                    if not self.state.check_symbol_cooldown(symbol, time.time()):
+                        rejection_stats['Symbol Cooldown'] += 1
+                        continue
+
                     # Use iloc[-2] for SIGNALS (Closed Candle)
                     # Use iloc[-1] for CURRENT PRICE (Execution/Context)
                     closed_candle = df.iloc[-2]
@@ -1083,6 +1028,9 @@ class BotLogic:
                         logger.info(f"  {'═' * 44}")
                         logger.info(f"  📈 {direction} SIGNAL BREAKDOWN:")
                         logger.info(f"  {'═' * 44}")
+                        
+                        failed_reasons = []
+                        
                         for k, v in details.items():
                             status_icon = "✅" if v.get('status') else "❌"
                             value_str = v.get('value')
@@ -1096,6 +1044,11 @@ class BotLogic:
                             # Track signal failures
                             if not v.get('status'):
                                 rejection_stats[f"Signal: {k}"] += 1
+                                # Add to failed reasons list for summary
+                                reason_str = f"{k} ({value_str})"
+                                if threshold_str:
+                                    reason_str += f" [Req: {threshold_str}]"
+                                failed_reasons.append(reason_str)
                         
                         # If signal is OK, proceed with opportunity scoring and potential entry
                         if ok:
@@ -1118,7 +1071,9 @@ class BotLogic:
                             logger.info(f"  📝 Candidate added: {symbol} {direction} (Score: {score})")
                         else:
                             logger.info(f"")
-                            logger.info(f"  ❌ {direction} SIGNAL REJECTED")
+                            # Log the consolidated rejection reason
+                            reasons_str = ", ".join(failed_reasons)
+                            logger.info(f"  ❌ {direction} REJECTED due to: {reasons_str}")
                     
                     logger.info(f"━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━")
                     logger.info(f"")
@@ -1599,19 +1554,8 @@ class BotLogic:
         logger.info("=" * 60)
 
     def _execute_entry(self, symbol, direction, df, signal_details=None):
-        # 5. Check Trading Schedule
-        # Colombia Time (UTC-5) - Assuming system time is local or configured correctly
-        from datetime import datetime
-        now_dt = datetime.fromtimestamp(time.time())
-        is_trading_day = now_dt.weekday() in Config.TRADING_DAYS
-        is_trading_hour = Config.TRADING_HOURS_START <= now_dt.hour < Config.TRADING_HOURS_END
-        
-        if not is_trading_day:
-            logger.info(f"📅 Outside Trading Days (Today: {now_dt.strftime('%A')}). Entries Disabled.")
-            return
-        elif not is_trading_hour:
-            logger.info(f"⏰ Outside Trading Hours ({now_dt.hour}:00 not in {Config.TRADING_HOURS_START}-{Config.TRADING_HOURS_END}). Entries Disabled.")
-            return
+        # Trading Schedule check REMOVED - bot operates 24/7
+        # Signals already filter by optimal conditions
             
         # Risk Check
         if not RiskManager.check_max_symbols(self.state.state['positions']):
@@ -1692,34 +1636,34 @@ class BotLogic:
             self.state.add_trade_timestamp(time.time())
             logger.info(f"✅ Trade timestamp recorded. Total trades in last hour: {len(self.state.state['trades_last_hour'])}")
             
-            # Set Initial SL
-            self.executor.set_stop_loss(symbol, direction, sl_price)
-
-            # Set Take Profit
-            # SNIPER STRATEGY: Set Fixed TP immediately
-            # Check if we have a single "TP_FINAL" level configured
-            is_sniper_mode = len(Config.TP_LEVELS) == 1 and Config.TP_LEVELS[0].get('name') == 'TP_FINAL'
+            # ============================================================================
+            # 🛡️ PROTECCIÓN SIMULTÁNEA: TP + SL (MENITA CHECHIS)
+            # ============================================================================
+            # Calcular precios de TP y SL basados en la configuración
             
-            if is_sniper_mode:
-                tp_pct = Config.TP_LEVELS[0]['pct']
-                if direction == "LONG":
-                    tp_price = actual_entry_price * (1 + tp_pct)
-                else:
-                    tp_price = actual_entry_price * (1 - tp_pct)
-                
-                logger.info(f"🎯 Setting SNIPER TP at {tp_price:.4f} (+{tp_pct:.2%})")
-                self.executor.set_take_profit(symbol, direction, tp_price)
+            # Recalcular SL con el precio REAL de entrada
+            sl_price = ATRManager.calculate_initial_stop(actual_entry_price, atr, direction)
+            
+            # Calcular TP basado en Config.TP_LEVELS (siempre usa el primer nivel)
+            tp_pct = Config.TP_LEVELS[0]['pct'] if Config.TP_LEVELS else 0.05
+            if direction == "LONG":
+                tp_price = actual_entry_price * (1 + tp_pct)
             else:
-                # Fallback / Legacy: Use a default emergency TP if not in Sniper mode
-                # Since EMERGENCY_TP_PCT was removed, we use a hardcoded safe value (e.g. 20%)
-                safe_tp_pct = 0.20
-                if direction == "LONG":
-                    tp_price = actual_entry_price * (1 + safe_tp_pct)
-                else:
-                    tp_price = actual_entry_price * (1 - safe_tp_pct)
-                
-                logger.info(f"🚀 Setting Safety Hard TP at {tp_price:.4f} (+{safe_tp_pct:.0%})")
-                self.executor.set_take_profit(symbol, direction, tp_price)
+                tp_price = actual_entry_price * (1 - tp_pct)
+            
+            logger.info(f"🛡️ Colocando protección simultánea:")
+            logger.info(f"   • TP: {tp_price:.4f} (+{tp_pct:.2%})")
+            logger.info(f"   • SL: {sl_price:.4f} (-{Config.FIXED_SL_PCT:.2%})")
+            
+            # Colocar SL y TP simultáneamente
+            self.executor.set_stop_loss(symbol, direction, sl_price)
+            self.executor.set_take_profit(symbol, direction, tp_price)
+            
+            # Actualizar SL en el estado con el precio recalculado
+            pos_data['sl_price'] = sl_price
+            self.state.set_position(symbol, pos_data)
+            
+            logger.info(f"✅ Protección activada: TP={tp_price:.4f} | SL={sl_price:.4f}")
             
             # Log to CSV (ABIERTOS)
             try:

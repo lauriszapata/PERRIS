@@ -1,9 +1,11 @@
 __pycache__/
 *.pyc
 bot_state.json
-bot_trading.log
+*.log
 .DS_Store
 .env
 venv/
 .idea/
 .vscode/
+data/
+*.csv

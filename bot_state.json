@@ -1,43 +1,39 @@
 {
     "positions": {
-        "SUI/USDT": {
+        "TRX/USDT": {
             "direction": "SHORT",
-            "entry_price": 1.5297,
-            "size": 653.9,
-            "sl_price": 1.544492,
-            "atr_entry": 0.008187606026160787,
-            "p_max": 1.5297,
-            "p_min": 1.5297,
+            "entry_price": 0.27855,
+            "size": 5379.0,
+            "sl_price": 0.2792231934985661,
+            "atr_entry": 0.0006925491784577179,
+            "p_max": 0.27855,
+            "p_min": 0.27819,
             "partials": {
-                "p1": false
+                "p1": false,
+                "p2": false
             },
-            "entry_time": 1764243923.236756,
-            "last_sl_update": 1764243923.236757,
-            "sl_moved_count": 0,
-            "pnl_history": [],
-            "last_evaluation_time": 1764243923.236758,
-            "pnl_usd": -0.39234,
-            "pnl_pct": -0.03,
+            "entry_time": 1764775572.147572,
+            "pnl_usd": -2.01846975,
+            "pnl_pct": -1.34,
             "accumulated_pnl": 0.0,
-            "last_dynamic_level": 0
+            "last_dynamic_level": 0,
+            "lowest_price": 0.27849,
+            "last_sl_update": 1764776725.245582
         }
     },
     "daily_pnl": 0.0,
-    "last_reset_time": 1764201613.1905122,
-    "trades_last_hour": [
-        1764243923.238252
-    ],
+    "last_reset_time": 1764720005.7095208,
+    "trades_last_hour": [],
     "last_trade_per_symbol": {
-        "XLM/USDT": 1764203410.279762,
-        "AVAX/USDT": 1764205505.025378,
-        "DOGE/USDT": 1764236709.581978,
-        "XMR/USDT": 1764216912.2636201,
-        "ETH/USDT": 1764210073.4396749,
-        "SUI/USDT": 1764210692.837854,
-        "BTC/USDT": 1764238511.260003,
-        "ETC/USDT": 1764223014.595217,
-        "XRP/USDT": 1764243624.813026,
-        "HBAR/USDT": 1764232207.747915
+        "ETC/USDT": 1764270232.855756,
+        "AVAX/USDT": 1764350235.640398,
+        "SOL/USDT": 1764346508.1373749,
+        "LINK/USDT": 1764639153.957524,
+        "ARB/USDT": 1764639153.955511,
+        "ETH/USDT": 1764774007.281297,
+        "ICP/USDT": 1764774095.177431,
+        "ATOM/USDT": 1764777100.098048,
+        "TRX/USDT": 1764774953.600826
     },
     "is_paused": false,
     "pause_reason": null,
@@ -45,144 +41,45 @@
     "tuner": {
         "trade_history": [
             {
-                "pnl": -0.0005336932458152271,
-                "max_pnl": 0.001281702722647287,
-                "time": 1764203410.279109,
+                "pnl": -0.02446328207847271,
+                "max_pnl": 0.0005302226935313425,
+                "time": 1764346506.895904,
                 "partial_data": {
                     "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": 0.1864799999999277,
-                    "levels_hit": []
-                },
-                "partial_efficiency": 0.0
-            },
-            {
-                "pnl": 0.000683580350786423,
-                "max_pnl": 0.002524108471943573,
-                "time": 1764207009.100677,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": 0.6728800000000265,
-                    "levels_hit": []
-                },
-                "partial_efficiency": 0.0
-            },
-            {
-                "pnl": -0.006461072726381288,
-                "max_pnl": 0.0,
-                "time": 1764212410.620669,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -5.1060000000000585,
+                    "final_pnl_usd": -4.211999999999952,
                     "levels_hit": []
                 },
                 "partial_efficiency": -0.0
             },
             {
-                "pnl": -0.0033441684003065486,
-                "max_pnl": 0.0024854921712471256,
-                "time": 1764215111.8769312,
+                "pnl": -0.017193832132259168,
+                "max_pnl": 0.0007065140596297466,
+                "time": 1764346508.1371782,
                 "partial_data": {
                     "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -2.141999999999971,
+                    "final_pnl_usd": -0.9915999999999815,
                     "levels_hit": []
                 },
                 "partial_efficiency": -0.0
             },
             {
-                "pnl": -0.0004307307390099754,
-                "max_pnl": 0.0012106969136498032,
-                "time": 1764216012.479839,
+                "pnl": -0.024431143182681622,
+                "max_pnl": 0.0010634257500948992,
+                "time": 1764348307.691208,
                 "partial_data": {
                     "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": 0.5689739999999911,
-                    "levels_hit": []
-                },
-                "partial_efficiency": 0.0
-            },
-            {
-                "pnl": -0.002982793572562664,
-                "max_pnl": 0.0007158309469150278,
-                "time": 1764216912.262589,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -1.9808963999999878,
+                    "final_pnl_usd": -2.993900000000038,
                     "levels_hit": []
                 },
                 "partial_efficiency": -0.0
             },
             {
-                "pnl": -0.0049114010364578325,
-                "max_pnl": 0.0001818347122467497,
-                "time": 1764224108.3691661,
+                "pnl": -0.052467040814013016,
+                "max_pnl": 0.014032144719243737,
+                "time": 1764774007.280449,
                 "partial_data": {
                     "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -3.9095599999999733,
-                    "levels_hit": []
-                },
-                "partial_efficiency": -0.0
-            },
-            {
-                "pnl": -0.005032409897794443,
-                "max_pnl": 0.0011430876815492436,
-                "time": 1764229508.22862,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -4.036199999999929,
-                    "levels_hit": []
-                },
-                "partial_efficiency": -0.0
-            },
-            {
-                "pnl": -0.002082442128062957,
-                "max_pnl": 0.0034520102883442714,
-                "time": 1764232207.746818,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -1.084000000000144,
-                    "levels_hit": []
-                },
-                "partial_efficiency": -0.0
-            },
-            {
-                "pnl": -0.002139573556881838,
-                "max_pnl": 0.0007289625951069606,
-                "time": 1764235811.652967,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -1.1384999999999756,
-                    "levels_hit": []
-                },
-                "partial_efficiency": -0.0
-            },
-            {
-                "pnl": -0.0026253492754564965,
-                "max_pnl": 0.0007147962830593215,
-                "time": 1764236709.580715,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -1.6247500000000015,
-                    "levels_hit": []
-                },
-                "partial_efficiency": -0.0
-            },
-            {
-                "pnl": -0.002850518251661207,
-                "max_pnl": 0.0005037497737487171,
-                "time": 1764238511.258451,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -1.698000000000029,
-                    "levels_hit": []
-                },
-                "partial_efficiency": -0.0
-            },
-            {
-                "pnl": -0.0017686049168342227,
-                "max_pnl": 0.0015079510144399115,
-                "time": 1764243624.811776,
-                "partial_data": {
-                    "partial_pnl_usd": 0.0,
-                    "final_pnl_usd": -0.8681100000000058,
+                    "final_pnl_usd": -0.8921599999999926,
                     "levels_hit": []
                 },
                 "partial_efficiency": -0.0
@@ -191,6 +88,6 @@
         "partial_history": [],
         "active_partials": {},
         "current_risk": 0,
-        "current_atr_min": 0.0025
+        "current_atr_min": 0.0015
     }
 }

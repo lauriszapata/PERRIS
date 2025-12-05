@@ -1,9 +1,40 @@
 from modules.logger import logger
 from config import Config
+import time
+import uuid
 
 class OrderExecutor:
     def __init__(self, client):
         self.client = client
+        self.dry_run = getattr(Config, 'DRY_RUN', False)
+        if self.dry_run:
+            logger.info("🧪 DRY RUN MODE ACTIVADO - No se ejecutarán trades reales")
+
+    def _simulate_order(self, symbol, order_type, side, amount, price=None):
+        """Simula una orden sin ejecutar en Binance"""
+        sim_price = price or self._get_simulated_price(symbol)
+        order_id = f"DRY_{uuid.uuid4().hex[:8].upper()}"
+        simulated_order = {
+            'id': order_id,
+            'symbol': symbol,
+            'type': order_type,
+            'side': side,
+            'amount': amount,
+            'price': sim_price,
+            'filled': amount,
+            'status': 'closed',
+            'timestamp': int(time.time() * 1000),
+            'dry_run': True
+        }
+        logger.info(f"🧪 [DRY RUN] Orden simulada: {side.upper()} {amount} {symbol} @ {sim_price:.4f}")
+        return simulated_order
+    
+    def _get_simulated_price(self, symbol):
+        """Obtiene precio actual para simulación"""
+        try:
+            return self.client.get_market_price(symbol)
+        except:
+            return 0.0
 
     def open_position(self, symbol, direction, amount, price=None):
         """
@@ -11,6 +42,11 @@ class OrderExecutor:
         """
         side = 'buy' if direction == 'LONG' else 'sell'
         logger.info(f"Opening {direction} position for {symbol}, amount: {amount}")
+        
+        # DRY RUN: Simular orden
+        if self.dry_run:
+            order_type = 'market' if price is None else 'limit'
+            return self._simulate_order(symbol, order_type, side, amount, price)
         
         # Market order for entry usually, or limit if price specified
         order_type = 'market' if price is None else 'limit'
@@ -29,6 +65,11 @@ class OrderExecutor:
         """
         side = 'sell' if direction == 'LONG' else 'buy'
         logger.info(f"Closing {direction} position for {symbol}, amount: {amount if amount else 'ALL'}")
+        
+        # DRY RUN: Simular cierre
+        if self.dry_run:
+            sim_amount = amount or 1.0  # Valor por defecto si es ALL
+            return self._simulate_order(symbol, 'market', side, sim_amount)
         
         # Dust handling: if amount is provided and its notional value is very small, close full position
         if amount is not None:
@@ -134,6 +175,21 @@ class OrderExecutor:
         """
         logger.info(f"Creating identified order: {symbol} {type} {side} {params}")
         
+        # DRY RUN: Simular orden TP/SL
+        if self.dry_run:
+            order_id = f"DRY_{uuid.uuid4().hex[:8].upper()}"
+            stop_price = params.get('stopPrice', 0)
+            logger.info(f"🧪 [DRY RUN] {type} simulado para {symbol} @ {stop_price}")
+            return {
+                'id': order_id,
+                'symbol': symbol,
+                'type': type,
+                'side': side,
+                'stopPrice': stop_price,
+                'status': 'open',
+                'dry_run': True
+            }
+        
         # Retry logic for identified orders
         max_retries = 2
         for attempt in range(1, max_retries + 1):
@@ -172,18 +228,20 @@ class OrderExecutor:
 
         logger.info(f"Setting SL for {symbol} {direction} at {stop_price}")
 
-        # CRITICAL: We MUST cancel existing STOP_MARKET orders before creating a new one.
-        # Binance has a limit on open stop orders per symbol. If we don't cancel, we hit "Reach max stop order limit".
-        try:
-            open_orders = self.client.get_open_orders(symbol)
-            for o in open_orders:
-                o_type = o.get('type', '')
-                o_info_type = o.get('info', {}).get('type', '')
-                if o_type == 'STOP_MARKET' or o_info_type == 'STOP_MARKET':
-                    logger.info(f"♻️ Replacing existing SL order {o['id']} for {symbol}")
-                    self.client.cancel_order(o['id'], symbol)
-        except Exception as e:
-            logger.warning(f"Could not cancel existing SLs: {e}")
+        # En DRY RUN no necesitamos cancelar órdenes existentes
+        if not self.dry_run:
+            # CRITICAL: We MUST cancel existing STOP_MARKET orders before creating a new one.
+            # Binance has a limit on open stop orders per symbol. If we don't cancel, we hit "Reach max stop order limit".
+            try:
+                open_orders = self.client.get_open_orders(symbol)
+                for o in open_orders:
+                    o_type = o.get('type', '')
+                    o_info_type = o.get('info', {}).get('type', '')
+                    if o_type == 'STOP_MARKET' or o_info_type == 'STOP_MARKET':
+                        logger.info(f"♻️ Replacing existing SL order {o['id']} for {symbol}")
+                        self.client.cancel_order(o['id'], symbol)
+            except Exception as e:
+                logger.warning(f"Could not cancel existing SLs: {e}")
 
         # Standardized SL Order Structure
         return self._create_identified_order(
@@ -207,17 +265,19 @@ class OrderExecutor:
         
         logger.info(f"Setting TP for {symbol} {direction} at {tp_price}")
 
-        # CRITICAL: We MUST cancel existing TAKE_PROFIT_MARKET orders before creating a new one.
-        try:
-            open_orders = self.client.get_open_orders(symbol)
-            for o in open_orders:
-                o_type = o.get('type', '')
-                o_info_type = o.get('info', {}).get('type', '')
-                if o_type == 'TAKE_PROFIT_MARKET' or o_info_type == 'TAKE_PROFIT_MARKET':
-                    logger.info(f"♻️ Replacing existing TP order {o['id']} for {symbol}")
-                    self.client.cancel_order(o['id'], symbol)
-        except Exception as e:
-            logger.warning(f"Could not cancel existing TPs: {e}")
+        # En DRY RUN no necesitamos cancelar órdenes existentes
+        if not self.dry_run:
+            # CRITICAL: We MUST cancel existing TAKE_PROFIT_MARKET orders before creating a new one.
+            try:
+                open_orders = self.client.get_open_orders(symbol)
+                for o in open_orders:
+                    o_type = o.get('type', '')
+                    o_info_type = o.get('info', {}).get('type', '')
+                    if o_type == 'TAKE_PROFIT_MARKET' or o_info_type == 'TAKE_PROFIT_MARKET':
+                        logger.info(f"♻️ Replacing existing TP order {o['id']} for {symbol}")
+                        self.client.cancel_order(o['id'], symbol)
+            except Exception as e:
+                logger.warning(f"Could not cancel existing TPs: {e}")
 
         # Standardized TP Order Structure
         return self._create_identified_order(

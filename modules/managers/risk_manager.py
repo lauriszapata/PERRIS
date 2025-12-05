@@ -109,11 +109,19 @@ class RiskManager:
             # 4. Add commission buffer and check required margin
             commission_buffer = 1.001
             required_margin = (exposure * commission_buffer) / Config.LEVERAGE
+            
             if balance < required_margin:
+                # User requested: "bajas hasta que se pueda colocar la posicion"
+                # Calculate max affordable exposure
+                max_affordable_exposure = (balance * Config.LEVERAGE) / commission_buffer
+                
                 logger.warning(
-                    f"Insufficient balance for {exposure:.2f} USD exposure. Required Margin (with buffer): {required_margin:.2f}, Balance: {balance:.2f}"
+                    f"⚠️ Insufficient balance for target exposure {exposure:.2f} USD. "
+                    f"Adjusting down to max affordable: {max_affordable_exposure:.2f} USD (Balance: {balance:.2f})"
                 )
-                return 0
+                
+                exposure = max_affordable_exposure
+                size = exposure / entry_price
 
             # 5. Validate against exchange minimum order size and notional
             try:

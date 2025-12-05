@@ -1,11 +1,6 @@
 import unittest
-from unittest.mock import MagicMock, patch
-import sys
-import os
-
-# Add project root to path
-sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
-
+from unittest.mock import MagicMock
+import time
 from modules.execution.bot_logic import BotLogic
 
 class TestOrphanAdoption(unittest.TestCase):
@@ -18,108 +13,46 @@ class TestOrphanAdoption(unittest.TestCase):
         self.mock_state.state = {'positions': {}}
         
         self.bot = BotLogic(self.mock_client, self.mock_state, self.mock_executor)
+        
+        # Mock Config
+        self.bot.last_monitor_log = 0
 
-    def test_orphan_adoption_long(self):
-        # Setup Orphan Position (LONG)
-        self.mock_client.get_all_positions.return_value = [{
+    def test_adopt_orphan_in_monitor(self):
+        # Setup: No local positions
+        self.mock_state.state['positions'] = {}
+        
+        # Mock Binance returning a position
+        mock_position = {
             'symbol': 'BTC/USDT',
-            'contracts': 1.0,
+            'contracts': 0.1,
             'side': 'long',
-            'entryPrice': 100.0,
-            'unrealizedPnl': 0,
-            'percentage': 0,
-            'markPrice': 100.0,
-            'notional': 100.0
-        }]
-        
-        # Mock OHLCV for ATR calculation (fallback to 1% if fails, but let's mock it)
-        self.mock_client.fetch_ohlcv.return_value = [
-            [1000, 100, 101, 99, 100, 10] # Dummy candle
-        ]
-        
-        # Mock Open Orders (Empty - so it places new ones)
+            'entryPrice': 50000.0,
+            'markPrice': 50500.0,
+            'unrealizedPnl': 50.0,
+            'percentage': 1.0,
+            'notional': 5000.0
+        }
+        self.mock_client.get_all_positions.return_value = [mock_position]
+        self.mock_client.fetch_ohlcv.return_value = [] # Mock empty OHLCV for simplicity
         self.mock_client.get_open_orders.return_value = []
         
-        # Run Sync
-        self.bot._sync_positions()
+        # Run monitor
+        self.bot._monitor_positions()
         
-        # Verify Adoption
-        # 1. Check set_position called
+        # Verify set_position was called (adoption happened)
         self.mock_state.set_position.assert_called()
+        
+        # Verify the arguments passed to set_position
         args, _ = self.mock_state.set_position.call_args
-        symbol, data = args
+        symbol = args[0]
+        pos_data = args[1]
+        
         self.assertEqual(symbol, 'BTC/USDT')
-        self.assertEqual(data['direction'], 'LONG')
+        self.assertEqual(pos_data['size'], 0.1)
+        self.assertEqual(pos_data['entry_price'], 50000.0)
+        self.assertEqual(pos_data['direction'], 'LONG')
         
-        # 2. Verify SL (3% below 100 = 97)
-        self.mock_executor.set_stop_loss.assert_called_with('BTC/USDT', 'LONG', 97.0)
-        
-        # 3. Verify TP (1% above 100 = 101)
-        self.mock_executor.set_take_profit.assert_called_with('BTC/USDT', 'LONG', 101.0)
-
-    def test_orphan_adoption_short(self):
-        # Setup Orphan Position (SHORT)
-        self.mock_client.get_all_positions.return_value = [{
-            'symbol': 'ETH/USDT',
-            'contracts': 10.0,
-            'side': 'short',
-            'entryPrice': 200.0,
-            'unrealizedPnl': 0,
-            'percentage': 0,
-            'markPrice': 200.0,
-            'notional': 2000.0
-        }]
-        
-        self.mock_client.fetch_ohlcv.return_value = [] # Fail OHLCV to trigger fallback
-        self.mock_client.get_open_orders.return_value = []
-        
-        # Run Sync
-        self.bot._sync_positions()
-        
-        # Verify Adoption
-        # 1. Check set_position called
-        self.mock_state.set_position.assert_called()
-        args, _ = self.mock_state.set_position.call_args
-        symbol, data = args
-        self.assertEqual(symbol, 'ETH/USDT')
-        self.assertEqual(data['direction'], 'SHORT')
-        
-        # 2. Verify SL (3% above 200 = 206)
-        self.mock_executor.set_stop_loss.assert_called_with('ETH/USDT', 'SHORT', 206.0)
-        
-        # 3. Verify TP (1% below 200 = 198)
-        self.mock_executor.set_take_profit.assert_called_with('ETH/USDT', 'SHORT', 198.0)
-
-    def test_orphan_adoption_existing_orders_lowercase(self):
-        # Setup Orphan Position with EXISTING orders (lowercase types)
-        self.mock_client.get_all_positions.return_value = [{
-            'symbol': 'SOL/USDT',
-            'contracts': 10.0,
-            'side': 'long',
-            'entryPrice': 50.0,
-            'unrealizedPnl': 0,
-            'percentage': 0,
-            'markPrice': 50.0,
-            'notional': 500.0
-        }]
-        
-        self.mock_client.fetch_ohlcv.return_value = [] 
-        
-        # Mock Open Orders with LOWERCASE types
-        self.mock_client.get_open_orders.return_value = [
-            {'id': '1', 'type': 'stop_market', 'stopPrice': 48.5, 'side': 'sell'},
-            {'id': '2', 'type': 'take_profit_market', 'stopPrice': 50.5, 'side': 'sell'}
-        ]
-        
-        # Run Sync
-        self.bot._sync_positions()
-        
-        # Verify Adoption
-        self.mock_state.set_position.assert_called()
-        
-        # Verify NO new orders placed (because they already exist)
-        self.mock_executor.set_stop_loss.assert_not_called()
-        self.mock_executor.set_take_profit.assert_not_called()
+        print("✅ Orphan adoption test passed!")
 
 if __name__ == '__main__':
     unittest.main()

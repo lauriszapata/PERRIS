@@ -39,9 +39,11 @@ class Indicators:
             df['MACD_fast_signal'] = macd_fast['MACDs_6_13_5']
             df['MACD_fast_hist'] = macd_fast['MACDh_6_13_5']
 
-            # ADX
+            # ADX con +DI y -DI
             adx = ta.adx(df['high'], df['low'], df['close'], length=14)
             df['ADX'] = adx['ADX_14']
+            df['DI_plus'] = adx['DMP_14']  # +DI (Directional Movement Plus)
+            df['DI_minus'] = adx['DMN_14']  # -DI (Directional Movement Minus)
 
             # ATR
             df['ATR'] = ta.atr(df['high'], df['low'], df['close'], length=14)
